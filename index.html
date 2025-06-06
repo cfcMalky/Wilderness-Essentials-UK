@@ -504,7 +504,10 @@
     <div class="background-float" aria-hidden="true"></div>
     <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open menu">☰ Menu</button>
     <div class="layout">
-        <nav class="sidebar" id="sidebar" aria-label="Categories"></nav>
+        <nav class="sidebar" id="sidebar" aria-label="Categories">
+            <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
+            <ul class="sidebar-menu"></ul>
+        </nav>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="main-content">
             <header>
@@ -567,14 +570,11 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                if (!data.values) {
-                    throw new Error(data.error ? data.error.message : 'No data returned');
-                }
+                if (!data.values) throw new Error(data.error ? data.error.message : 'No data returned');
                 const [headers, ...rows] = data.values;
                 allProducts = rows.map(row => {
                     const p = {};
-                    headers.forEach((h, i) => p[h] = row[i] || "";
-                    // Map subcat names for nav and carousel
+                    headers.forEach((h, i) => p[h] = row[i] || "");
                     let [main, sub] = (p.category || '').split('>').map(x => x.trim());
                     if (sub && subcatTitles[sub]) sub = subcatTitles[sub];
                     p.mainCat = main || '';
@@ -586,6 +586,8 @@
                 buildHeroCarousel();
                 renderProducts();
             } catch (err) {
+                buildSidebar(true);
+                buildHeroCarousel(true);
                 document.getElementById('productsGrid').innerHTML =
                     `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
                 console.error(err);
@@ -604,14 +606,14 @@
             }
         }
 
-        function buildSidebar() {
+        function buildSidebar(error) {
             const sidebar = document.getElementById('sidebar');
-            sidebar.innerHTML = `
-                <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
-            `;
-            const menu = document.createElement('ul');
-            menu.className = 'sidebar-menu';
-
+            const menu = sidebar.querySelector('.sidebar-menu');
+            menu.innerHTML = '';
+            if (error) {
+                menu.innerHTML = `<li style="color:#a00;text-align:center;">Navigation unavailable</li>`;
+                return;
+            }
             Object.entries(categoryMap).forEach(([main, subcats]) => {
                 const mainLi = document.createElement('li');
                 const mainBtn = document.createElement('div');
@@ -639,19 +641,17 @@
                 }
                 menu.appendChild(mainLi);
             });
-            sidebar.appendChild(menu);
         }
 
-        // --- HERO CAROUSEL ---
-        function buildHeroCarousel() {
-            const heroId = "heroCarousel";
-            const hero = document.getElementById(heroId);
-            if (!hero) return;
-            // Display up to 5 unique subcategories with images
+        function buildHeroCarousel(error) {
+            const hero = document.getElementById("heroCarousel");
+            if (error) {
+                hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">Unable to load featured products</div>`;
+                return;
+            }
             let slides = [];
             let seenSubCat = {};
             for (const p of allProducts) {
-                // Only use products with images and subcat
                 if (!p.image_url || !p.mainCat || !p.subCat || seenSubCat[p.subCat]) continue;
                 slides.push({
                     image: p.image_url,
@@ -663,7 +663,6 @@
                 seenSubCat[p.subCat] = true;
                 if (slides.length >= 5) break;
             }
-            // If not enough, fill with remaining products with images
             if (slides.length < 3) {
                 for (const p of allProducts) {
                     if (!p.image_url) continue;
@@ -678,10 +677,9 @@
                 }
             }
             if (slides.length === 0) {
-                hero.style.display = "none";
+                hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
                 return;
             }
-            // Build carousel DOM
             hero.innerHTML = "";
             for (let i=0; i<slides.length; ++i) {
                 const s = slides[i];
@@ -697,7 +695,6 @@
                 `;
                 hero.appendChild(slide);
             }
-            // Dots nav
             const nav = document.createElement('div');
             nav.className = "hero-carousel-nav";
             for (let i=0; i<slides.length; ++i) {
@@ -708,7 +705,6 @@
                 nav.appendChild(dot);
             }
             hero.appendChild(nav);
-            // State
             let current = 0;
             let timer = null;
             function setHeroCarouselSlide(idx) {
@@ -742,7 +738,6 @@
                 filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
             }
 
-            // Update sidebar active states
             document.querySelectorAll('.sidebar-sublink').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.sidebar-menu > li').forEach(li => {
                 li.querySelectorAll('.sidebar-parentcat').forEach(btn => btn.classList.remove('active'));
@@ -761,7 +756,6 @@
                 return;
             }
             filtered.forEach(p => {
-                // Make the entire card a hyperlink if amazon_link is present
                 if (p.amazon_link) {
                     const cardLink = document.createElement('a');
                     cardLink.className = "product-card-link";
@@ -781,14 +775,12 @@
                             </div>
                         </div>
                     `;
-                    // Prevent link from following if clicking the More Info button, allow keyboard accessibility
                     cardLink.querySelector('.more-info-btn').addEventListener('click', e => {
                         e.stopPropagation();
                         window.open(p.amazon_link, "_blank");
                     });
                     grid.appendChild(cardLink);
                 } else {
-                    // No link: just render card
                     const card = document.createElement('div');
                     card.className = 'product-card';
                     card.innerHTML = `
