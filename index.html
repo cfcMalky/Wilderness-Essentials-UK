@@ -153,6 +153,28 @@
         @media (max-width: 500px) {
             .product-image-container { height: 120px; }
         }
+        .more-info-btn {
+    margin: auto 1rem 0 1rem;        /* top auto, right 1rem, bottom 0, left 1rem */
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.7rem 1.3rem;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1.01rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.18s;
+    box-shadow: 0 1px 3px rgba(255,153,0,0.07);
+    display: block;
+    width: calc(100% - 2rem);       /* leave space on the sides */
+    box-sizing: border-box;
+}
+.more-info-btn:hover {
+    background: #e47911;
+}
+
     </style>
 </head>
 <body>
