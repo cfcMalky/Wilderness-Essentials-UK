@@ -45,6 +45,18 @@
             opacity: 0.12;
             filter: blur(0.5px) grayscale(0.3) brightness(1.1);
         }
+        .mainpage-logo {
+            display: block;
+            margin: 0 auto 2rem auto;
+            max-width: 330px;
+            width: 100%;
+            height: auto;
+            /* Gold shadow effect */
+            filter: drop-shadow(0 0 0.5rem var(--logo-gold)) drop-shadow(0 0 20px var(--logo-gold));
+            /* Make sure it's on top of bg image */
+            position: relative;
+            z-index: 2;
+        }
         .layout {
             display: flex;
             min-height: 100vh;
@@ -58,7 +70,6 @@
             border-right: 2px solid var(--logo-gold);
             padding: 2rem 1rem 1rem 1rem;
             box-shadow: 2px 0 14px rgba(60,90,54,0.08);
-            /* Make sidebar fixed and full height */
             position: fixed;
             left: 0;
             top: 0;
@@ -67,24 +78,27 @@
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .main-content {
-            flex: 1 1 auto;
-            padding: 0;
-            margin-left: 250px; /* leave space for fixed sidebar */
-            min-width: 0;
-        }
-        .sidebar h2 {
-            font-size: 1.2rem;
-            color: var(--logo-green);
-            margin-top: 0;
-            margin-bottom: 1rem;
+        .sidebar-logo {
+            display: block;
+            margin: 0 0 2rem 0;
+            max-width: 120px;
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            background: #fff;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(60,90,54,0.07);
         }
         .sidebar-menu,
         .sidebar-submenu {
             list-style: none;
             padding: 0;
             margin: 0;
+            width: 100%;
         }
         .sidebar-menu > li {
             margin-bottom: 0.6em;
@@ -98,7 +112,7 @@
             font-size: 1.08rem;
             text-align: left;
             padding: 0.5em 0.7em;
-            border-radius: 8px;
+            border-radius: 8px !important;
             margin-bottom: 0.12em;
             border: none;
             cursor: default;
@@ -109,8 +123,6 @@
             opacity: 1;
             white-space: normal;
             overflow: visible;
-            /* Fix: both sides rounded */
-            border-radius: 8px !important;
         }
         .sidebar-link, .sidebar-sublink {
             display: block;
@@ -192,6 +204,12 @@
                 margin-left: 0;
             }
         }
+        .main-content {
+            flex: 1 1 auto;
+            padding: 0;
+            margin-left: 250px; /* leave space for fixed sidebar */
+            min-width: 0;
+        }
         /* Overlay for mobile menu */
         .sidebar-overlay {
             display: none;
@@ -229,25 +247,9 @@
             padding: 1.1rem 1.5rem 1.1rem 1.5rem;
             box-shadow: 0 1px 7px rgba(201,161,74,0.06);
         }
+        /* Remove site logo in header */
         .site-logo {
-            display: block;
-            margin: 0 auto 1.1rem auto;
-            max-width: 120px;
-            width: 100%;
-            height: auto;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(60,90,54,0.07);
-            background: #fff;
-            padding: 10px;
-        }
-        @media (max-width: 600px) {
-            .site-logo {
-                max-width: 90px;
-            }
-            .site-tagline {
-                font-size: 0.99rem;
-                padding: 0.8rem 0.7rem;
-            }
+            display: none !important;
         }
         .container {
             max-width: 1400px;
@@ -255,6 +257,17 @@
             padding: 2rem 1rem;
             position: relative;
             z-index: 1;
+        }
+        /* Main logo image (replaces old header logo) */
+        .mainpage-logo {
+            display: block;
+            margin: 2.4rem auto 2rem auto;
+            max-width: 340px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 0.5rem var(--logo-gold)) drop-shadow(0 0 20px var(--logo-gold));
+            position: relative;
+            z-index: 2;
         }
         .products-grid {
             display: grid;
@@ -385,7 +398,10 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="main-content">
             <header>
-                <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
+                <!-- Main logo in body replaced by full-width river image -->
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
+                     alt="Wilderness river" class="mainpage-logo"
+                     style="box-shadow: 0 0 0 6px var(--logo-gold), 0 0 32px var(--logo-gold); border-radius: 18px; background: #fff;" />
                 <h1>Wilderness Essentials UK</h1>
                 <div class="site-tagline">
                     Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
@@ -477,7 +493,9 @@
 
         function buildSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.innerHTML = `<h2>Categories</h2>`;
+            sidebar.innerHTML = `
+                <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
+            `;
             const menu = document.createElement('ul');
             menu.className = 'sidebar-menu';
 
