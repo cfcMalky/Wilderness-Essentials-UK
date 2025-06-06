@@ -43,10 +43,16 @@
             font-weight: 700;
             letter-spacing: 0.02em;
         }
-        header p {
+        .site-tagline {
             color: var(--secondary);
-            font-size: 1.08rem;
-            margin: 0.2rem 0 0 0;
+            font-size: 1.07rem;
+            margin: 0.6rem auto 0 auto;
+            max-width: 670px;
+            line-height: 1.7;
+            background: #fff8ee;
+            border-radius: 13px;
+            padding: 1.1rem 1.5rem 1.1rem 1.5rem;
+            box-shadow: 0 1px 7px rgba(201,161,74,0.06);
         }
         .site-logo {
             display: block;
@@ -62,6 +68,10 @@
         @media (max-width: 600px) {
             .site-logo {
                 max-width: 90px;
+            }
+            .site-tagline {
+                font-size: 0.99rem;
+                padding: 0.8rem 0.7rem;
             }
         }
         .container {
@@ -223,7 +233,10 @@
     <header>
         <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
         <h1>Wilderness Essentials UK</h1>
-        <p>Your guide to the best camping and outdoor gear in the UK. Explore tents, sleeping bags, cookware, and more!</p>
+        <div class="site-tagline">
+            Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
+            From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
+        </div>
     </header>
     <main class="container">
         <div class="products-grid" id="productsGrid"></div>
@@ -382,6 +395,6 @@
         fetchProducts();
         setupDropdownNav();
     </script>
-    <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">© 2025 Wilderness Essentials UK. All Rights Reserved.</p>
+    <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">Right-click the category dropdown to switch main categories.</p>
 </body>
 </html>
