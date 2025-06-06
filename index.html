@@ -6,14 +6,17 @@
     <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #27ae60;
-            --accent: #e67e22;
+            --primary: #232f3e;
+            --secondary: #ffd814;
+            --secondary-hover: #f7ca00;
+            --card-border: #ddd;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            --card-shadow-hover: 0 6px 24px rgba(0,0,0,0.11);
+            --accent: #ff9900;
             --bg: #f5f6fa;
-            --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, 'Amazon Ember', Verdana, sans-serif;
             background: var(--bg);
             color: #222;
             margin: 0;
@@ -35,102 +38,123 @@
         }
         header h1 {
             margin: 0 0 0.5rem 0;
-            font-size: 2.5rem;
-        }
-        header p {
-            margin: 0;
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 2.2rem;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem 1.2rem;
+            align-items: stretch;
         }
         .product-card {
             background: #fff;
-            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
             box-shadow: var(--card-shadow);
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 1px solid #e0e0e0;
-            transition: transform 0.18s, box-shadow 0.18s;
+            height: 100%;
+            transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s;
+            overflow: hidden;
+            min-width: 0;
         }
         .product-card:hover {
-            transform: translateY(-4px) scale(1.015);
-            box-shadow: 0 6px 18px rgba(44,62,80,0.11);
-            border-color: var(--secondary);
+            box-shadow: var(--card-shadow-hover);
+            border-color: #bbb;
+            transform: translateY(-3px) scale(1.012);
         }
         .product-image-container {
             width: 100%;
-            aspect-ratio: 3/2; /* maintains 3:2 ratio (e.g. 360x240) */
-            background: #f3f3f3;
-            overflow: hidden;
+            height: 220px;
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 16px 10px 12px 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #eee;
         }
         .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+            object-fit: contain;
             display: block;
-            transition: filter 0.18s;
-        }
-        .product-card:hover .product-image {
-            filter: brightness(0.96) saturate(1.08);
+            background: #fff;
         }
         .product-info {
-            padding: 1.1rem 1.2rem 1.3rem 1.2rem;
             flex: 1 1 auto;
+            padding: 1rem 1rem 1.2rem 1rem;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
+            min-height: 160px;
         }
         .product-title {
-            font-size: 1.09rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.47rem;
-            min-height: 2em;
+            font-size: 1.03rem;
+            font-weight: bold;
+            color: #111;
+            margin-bottom: 0.5rem;
+            min-height: 2.2em;
             line-height: 1.3;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
         .product-desc {
-            font-size: 1rem;
-            color: #444;
+            font-size: 0.97rem;
+            color: #333;
             margin-bottom: 0.7rem;
-            min-height: 3em;
+            flex: 1 1 auto;
+            line-height: 1.4;
+            min-height: 2.5em;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
         }
         .more-info-btn {
-            margin-top: auto;
-            display: inline-block;
+            margin-top: 0.8rem;
             background: var(--accent);
             color: #fff;
             text-decoration: none;
-            padding: 0.7rem 1.3rem;
+            padding: 0.6rem 1.3rem;
+            border: none;
             border-radius: 5px;
             font-weight: 600;
             font-size: 1rem;
-            letter-spacing: 0.01em;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(230,126,34,0.07);
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.18s;
+            box-shadow: 0 1px 3px rgba(255,153,0,0.07);
+            display: block;
+            width: 100%;
         }
         .more-info-btn:hover {
-            background: #d35400;
-            box-shadow: 0 4px 16px rgba(230,126,34,0.13);
+            background: #e47911;
+        }
+        @media (min-width: 1200px) {
+            .products-grid { grid-template-columns: repeat(5, 1fr); }
         }
         @media (max-width: 900px) {
-            .products-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+            .products-grid { grid-template-columns: repeat(3, 1fr); }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
+            .products-grid { grid-template-columns: 1fr 1fr; }
+            .product-image-container { height: 160px; }
+        }
+        @media (max-width: 500px) {
             .products-grid { grid-template-columns: 1fr; }
-            .product-image-container { aspect-ratio: 3/2; }
-            .category-nav { position: static; }
+            .product-image-container { height: 120px; }
         }
     </style>
 </head>
@@ -160,7 +184,6 @@
         const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
         const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
         const RANGE = "Sheet1";
-        // ==========================================
 
         let allProducts = [];
         let categoryMap = {};
@@ -180,7 +203,7 @@
                 const [headers, ...rows] = data.values;
                 allProducts = rows.map(row => {
                     const p = {};
-                    headers.forEach((h, i) => p[h] = row[i] || "");
+                    headers.forEach((h, i) => p[h] = row[i] || "";
                     let [main, sub] = (p.category || '').split('>').map(x => x.trim());
                     p.mainCat = main || '';
                     p.subCat = sub || '';
@@ -202,7 +225,6 @@
                 if (!categoryMap[p.mainCat]) categoryMap[p.mainCat] = new Set();
                 if (p.subCat) categoryMap[p.mainCat].add(p.subCat);
             });
-            // Convert sets to arrays
             for (let main in categoryMap) {
                 categoryMap[main] = Array.from(categoryMap[main]);
             }
@@ -211,7 +233,6 @@
         function populateMainCatDropdown() {
             const mainCatBtn = document.getElementById('mainCatBtn');
             const mainCatDropdown = document.getElementById('mainCatDropdown');
-            // Main button shows current or first
             const mainCategories = Object.keys(categoryMap);
             if (mainCategories.length === 0) {
                 mainCatBtn.textContent = "No categories";
@@ -220,7 +241,6 @@
             }
             currentMainCat = currentMainCat || mainCategories[0];
             mainCatBtn.textContent = currentMainCat + ' ▼';
-            // Build subcategory buttons
             mainCatDropdown.innerHTML = '';
             (categoryMap[currentMainCat] || []).forEach(sub => {
                 const btn = document.createElement('button');
@@ -233,7 +253,6 @@
                 };
                 mainCatDropdown.appendChild(btn);
             });
-            // Set first subcat if not set
             if (!currentSubCat || !categoryMap[currentMainCat].includes(currentSubCat)) {
                 currentSubCat = categoryMap[currentMainCat][0];
             }
@@ -250,7 +269,6 @@
                     mainCatDropdown.style.display = 'none';
                 }
             });
-            // Main category switcher (right click; or you can change this logic to a dedicated dropdown if you prefer)
             mainCatBtn.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
                 showMainCategoriesMenu(mainCatBtn);
@@ -258,12 +276,11 @@
         }
 
         function showMainCategoriesMenu(anchorBtn) {
-            // Remove any existing menu
             const oldMenu = document.getElementById('mainCatMenu');
             if (oldMenu) oldMenu.remove();
 
             const mainCategories = Object.keys(categoryMap);
-            if (mainCategories.length <= 1) return; // No need for menu
+            if (mainCategories.length <= 1) return;
 
             const menu = document.createElement('div');
             menu.id = 'mainCatMenu';
@@ -294,7 +311,6 @@
                 menu.appendChild(btn);
             });
             anchorBtn.parentNode.appendChild(menu);
-            // Remove menu on outside click
             setTimeout(() => {
                 document.addEventListener('click', () => menu.remove(), { once: true });
             }, 50);
@@ -315,7 +331,7 @@
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div class="product-image-container">
-                        <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/360x240?text=No+Image'}" alt="${p.name}">
+                        <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
                     </div>
                     <div class="product-info">
                         <div class="product-title">${p.name}</div>
@@ -327,7 +343,6 @@
             });
         }
 
-        // Run on load
         fetchProducts();
         setupDropdownNav();
     </script>
