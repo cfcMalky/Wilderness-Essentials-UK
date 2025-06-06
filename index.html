@@ -1,171 +1,474 @@
-<!-- Only the script part, replace your entire <script>...</script> with this: -->
-<script>
-const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
-const RANGE = "Sheet1";
-let allProducts = [];
-let categoryMap = {};
-let currentMainCat = '';
-let currentSubCat = '';
-
-async function fetchProducts() {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        if (!data.values) {
-            throw new Error(data.error ? data.error.message : 'No data returned');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
+    <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
+    <style>
+        :root {
+            --logo-green: #3c5a36;
+            --logo-brown: #6b4a2b;
+            --logo-gold: #c9a14a;
+            --primary: #3c5a36;
+            --secondary: #6b4a2b;
+            --accent: #c9a14a;
+            --bg-pastel: #f6f7f2;
+            --header-text: #3c5a36;
+            --card-shadow: 0 8px 32px rgba(60,90,54,0.09), 0 1.5px 6px rgba(105,74,43,0.08);
+            --card-shadow-hover: 0 12px 36px rgba(60,90,54,0.13), 0 4px 16px rgba(105,74,43,0.12);
+            --border-radius: 18px;
         }
-        const [headers, ...rows] = data.values;
-        allProducts = rows.map(row => {
-            const p = {};
-            headers.forEach((h, i) => p[h] = row[i] || "");
-            let [main, sub] = (p.category || '').split('>').map(x => x.trim());
-            p.mainCat = main || '';
-            p.subCat = sub || '';
-            return p;
-        });
-        buildCategoryMap();
-        buildNavbar();
-        // Set default selection to first main/sub cat
-        if (!currentMainCat) currentMainCat = Object.keys(categoryMap)[0];
-        if (!currentSubCat) currentSubCat = (categoryMap[currentMainCat] && categoryMap[currentMainCat][0]) || '';
-        renderProducts();
-    } catch (err) {
-        document.getElementById('productsGrid').innerHTML = `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
-        console.error(err);
-    }
-}
+        html, body {
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, 'Amazon Ember', Verdana, sans-serif;
+            background: var(--bg-pastel);
+            color: var(--logo-brown);
+            margin: 0;
+        }
+        /* NAVBAR STYLES */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(60,90,54,0.07);
+            border-bottom: 2px solid var(--logo-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.4rem 1rem;
+            position: relative;
+            z-index: 100;
+        }
+        .nav-list {
+            display: flex;
+            gap: 1.2rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: var(--logo-green);
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-size: 1.06em;
+            padding: 0.45em 1.25em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            outline: none;
+            letter-spacing: 0.01em;
+            box-shadow: none;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: var(--logo-gold);
+            color: #fff;
+        }
+        .dropdown-arrow {
+            margin-left: 0.32em;
+            font-size: 0.85em;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 115%;
+            left: 0;
+            background: #fff;
+            border: 1.5px solid var(--logo-gold);
+            box-shadow: 0 7px 24px rgba(60,90,54,0.13);
+            border-radius: 12px;
+            min-width: 180px;
+            padding: 0.6em 0.4em 0.6em 0.4em;
+            z-index: 21;
+            flex-direction: column;
+            gap: 0.23em;
+        }
+        .nav-item:hover > .dropdown-menu,
+        .nav-item:focus-within > .dropdown-menu,
+        .dropdown-menu.show {
+            display: flex;
+        }
+        .dropdown-link {
+            color: var(--logo-brown);
+            background: none;
+            border: none;
+            font-size: 1em;
+            text-align: left;
+            padding: 0.46em 1.08em;
+            border-radius: 7px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .dropdown-link:hover, .dropdown-link.active {
+            background: var(--logo-green);
+            color: #fff;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 1000px) {
+            .nav-list { gap: 0.55rem; }
+            .navbar { padding-left: 0.2em; padding-right: 0.2em;}
+        }
+        @media (max-width: 650px) {
+            .nav-list {
+                flex-wrap: wrap;
+                gap: 0.1rem;
+                justify-content: center;
+            }
+            .navbar { padding-top: 0.19em; padding-bottom: 0.19em; }
+        }
+        header {
+            background: transparent;
+            color: var(--header-text);
+            padding: 0 0 1.5rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0 0 0.3rem 0;
+            font-size: 2.1rem;
+            color: var(--logo-green);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .site-tagline {
+            color: var(--secondary);
+            font-size: 1.07rem;
+            margin: 0.6rem auto 0 auto;
+            max-width: 670px;
+            line-height: 1.7;
+            background: #fff8ee;
+            border-radius: 13px;
+            padding: 1.1rem 1.5rem 1.1rem 1.5rem;
+            box-shadow: 0 1px 7px rgba(201,161,74,0.06);
+        }
+        .site-logo {
+            display: block;
+            margin: 0 auto 1.1rem auto;
+            max-width: 120px;
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(60,90,54,0.07);
+            background: #fff;
+            padding: 10px;
+        }
+        @media (max-width: 600px) {
+            .site-logo {
+                max-width: 90px;
+            }
+            .site-tagline {
+                font-size: 0.99rem;
+                padding: 0.8rem 0.7rem;
+            }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem 2rem;
+            align-items: stretch;
+            justify-items: center;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 420px;
+            min-width: 0;
+            min-height: 430px;
+            transition: box-shadow 0.24s, transform 0.18s;
+            overflow: hidden;
+            border: 1.5px solid #ece7e1;
+        }
+        .product-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--logo-gold);
+            transform: translateY(-5px) scale(1.012);
+        }
+        .product-image-container {
+            width: 100%;
+            height: 220px;
+            background: #faf8f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 10px 18px 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #f2ecdf;
+        }
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: #fff;
+            border-radius: 11px;
+            box-shadow: 0 1px 5px rgba(60,90,54,0.06);
+        }
+        .product-info {
+            flex: 1 1 auto;
+            padding: 1.2rem 1.2rem 1.6rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 180px;
+        }
+        .product-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--logo-green);
+            margin-bottom: 0.7rem;
+            min-height: 2.2em;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            letter-spacing: 0.01em;
+        }
+        .product-desc {
+            font-size: 1.03rem;
+            color: var(--logo-brown);
+            margin-bottom: 1.1rem;
+            flex: 1 1 auto;
+            line-height: 1.51;
+            min-height: 5em;
+            white-space: pre-line;
+        }
+        .more-info-btn {
+            margin: auto 1rem 0 1rem;
+            background: var(--logo-green);
+            color: #fff;
+            text-decoration: none;
+            padding: 0.72rem 1.3rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s;
+            box-shadow: 0 1px 5px rgba(60,90,54,0.08);
+            display: block;
+            width: calc(100% - 2rem);
+            box-sizing: border-box;
+            letter-spacing: 0.01em;
+        }
+        .more-info-btn:hover {
+            background: var(--accent);
+            color: var(--logo-brown);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar"></nav>
+    <header>
+        <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
+        <h1>Wilderness Essentials UK</h1>
+        <div class="site-tagline">
+            Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
+            From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
+        </div>
+    </header>
+    <main class="container">
+        <div class="products-grid" id="productsGrid"></div>
+    </main>
+    <script>
+        const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
+        const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
+        const RANGE = "Sheet1";
+        let allProducts = [];
+        let categoryMap = {};
+        let currentMainCat = '';
+        let currentSubCat = '';
 
-function buildCategoryMap() {
-    categoryMap = {};
-    allProducts.forEach(p => {
-        if (!p.mainCat) return;
-        if (!categoryMap[p.mainCat]) categoryMap[p.mainCat] = new Set();
-        if (p.subCat) categoryMap[p.mainCat].add(p.subCat);
-    });
-    for (let main in categoryMap) {
-        categoryMap[main] = Array.from(categoryMap[main]);
-    }
-}
-
-function buildNavbar() {
-    const navbar = document.getElementById('navbar');
-    navbar.innerHTML = '';
-    const navList = document.createElement('ul');
-    navList.className = 'nav-list';
-
-    Object.entries(categoryMap).forEach(([main, subcats]) => {
-        const navItem = document.createElement('li');
-        navItem.className = 'nav-item';
-
-        if (subcats.length > 0) {
-            const navBtn = document.createElement('button');
-            navBtn.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
-            navBtn.innerHTML = `${main} <span class="dropdown-arrow">▼</span>`;
-            navBtn.tabIndex = 0;
-            navBtn.onclick = (e) => {
-                e.preventDefault();
-                if(currentMainCat !== main) {
-                    currentMainCat = main;
-                    currentSubCat = subcats[0];
-                    renderProducts();
+        async function fetchProducts() {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!data.values) {
+                    throw new Error(data.error ? data.error.message : 'No data returned');
                 }
-                closeAllDropdowns();
-                navItem.querySelector('.dropdown-menu').classList.toggle('show');
-            };
-
-            const dropdownMenu = document.createElement('div');
-            dropdownMenu.className = 'dropdown-menu';
-            subcats.forEach(sub => {
-                const subBtn = document.createElement('button');
-                subBtn.className = 'dropdown-link' + (currentMainCat === main && currentSubCat === sub ? ' active' : '');
-                subBtn.textContent = sub;
-                subBtn.onclick = (ev) => {
-                    ev.preventDefault();
-                    currentMainCat = main;
-                    currentSubCat = sub;
-                    renderProducts();
-                    closeAllDropdowns();
-                };
-                dropdownMenu.appendChild(subBtn);
-            });
-
-            navItem.appendChild(navBtn);
-            navItem.appendChild(dropdownMenu);
-
-            navBtn.addEventListener('keydown', e => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    dropdownMenu.classList.toggle('show');
-                }
-            });
-        } else {
-            const navLink = document.createElement('button');
-            navLink.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
-            navLink.textContent = main;
-            navLink.onclick = (e) => {
-                e.preventDefault();
-                currentMainCat = main;
-                currentSubCat = '';
+                const [headers, ...rows] = data.values;
+                allProducts = rows.map(row => {
+                    const p = {};
+                    headers.forEach((h, i) => p[h] = row[i] || "");
+                    let [main, sub] = (p.category || '').split('>').map(x => x.trim());
+                    p.mainCat = main || '';
+                    p.subCat = sub || '';
+                    return p;
+                });
+                buildCategoryMap();
+                buildNavbar();
+                // Set default selection to first main/sub cat
+                if (!currentMainCat) currentMainCat = Object.keys(categoryMap)[0];
+                if (!currentSubCat) currentSubCat = (categoryMap[currentMainCat] && categoryMap[currentMainCat][0]) || '';
                 renderProducts();
-                closeAllDropdowns();
-            };
-            navItem.appendChild(navLink);
+            } catch (err) {
+                const grid = document.getElementById('productsGrid');
+                if (grid) {
+                    grid.innerHTML = `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
+                }
+                console.error(err);
+            }
         }
-        navList.appendChild(navItem);
-    });
-    navbar.appendChild(navList);
 
-    document.addEventListener('click', closeAllDropdowns);
-    navbar.addEventListener('click', e => e.stopPropagation());
-}
-
-function closeAllDropdowns() {
-    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-}
-
-function renderProducts() {
-    const grid = document.getElementById('productsGrid');
-    grid.innerHTML = '';
-    let filtered = allProducts.filter(p => {
-        if (currentMainCat && currentSubCat) {
-            return p.mainCat === currentMainCat && p.subCat === currentSubCat;
-        } else if (currentMainCat) {
-            return p.mainCat === currentMainCat;
+        function buildCategoryMap() {
+            categoryMap = {};
+            allProducts.forEach(p => {
+                if (!p.mainCat) return;
+                if (!categoryMap[p.mainCat]) categoryMap[p.mainCat] = new Set();
+                if (p.subCat) categoryMap[p.mainCat].add(p.subCat);
+            });
+            for (let main in categoryMap) {
+                categoryMap[main] = Array.from(categoryMap[main]);
+            }
         }
-        return true;
-    });
-    if (filtered.length === 0) {
-        grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
-        return;
-    }
-    filtered.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-            <div class="product-image-container">
-                <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
-            </div>
-            <div class="product-info">
-                <div class="product-title">${p.name}</div>
-                <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-                ${p.amazon_link ? `<a class="more-info-btn" href="${p.amazon_link}" target="_blank" rel="noopener">More Info</a>` : ''}
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-    document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.dropdown-link').forEach(btn => btn.classList.remove('active'));
-    let navMainBtns = Array.from(document.querySelectorAll('.nav-link'));
-    let navSubBtns = Array.from(document.querySelectorAll('.dropdown-link'));
-    navMainBtns.forEach(btn => {
-        if (btn.textContent.trim().replace('▼','').trim() === currentMainCat) btn.classList.add('active');
-    });
-    navSubBtns.forEach(btn => {
-        if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
-    });
-}
 
-fetchProducts();
-</script>
+        function buildNavbar() {
+            const navbar = document.getElementById('navbar');
+            navbar.innerHTML = '';
+            const navList = document.createElement('ul');
+            navList.className = 'nav-list';
+
+            Object.entries(categoryMap).forEach(([main, subcats]) => {
+                const navItem = document.createElement('li');
+                navItem.className = 'nav-item';
+
+                // If there are subcategories, make dropdown
+                if (subcats.length > 0) {
+                    const navBtn = document.createElement('button');
+                    navBtn.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
+                    navBtn.innerHTML = `${main} <span class="dropdown-arrow">▼</span>`;
+                    navBtn.tabIndex = 0;
+                    navBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if(currentMainCat !== main) {
+                            currentMainCat = main;
+                            currentSubCat = subcats[0];
+                            renderProducts();
+                        }
+                        // Show dropdown on click for mobile
+                        closeAllDropdowns();
+                        navItem.querySelector('.dropdown-menu').classList.toggle('show');
+                    };
+
+                    // Dropdown menu
+                    const dropdownMenu = document.createElement('div');
+                    dropdownMenu.className = 'dropdown-menu';
+                    subcats.forEach(sub => {
+                        const subBtn = document.createElement('button');
+                        subBtn.className = 'dropdown-link' + (currentMainCat === main && currentSubCat === sub ? ' active' : '');
+                        subBtn.textContent = sub;
+                        subBtn.onclick = (ev) => {
+                            ev.preventDefault();
+                            currentMainCat = main;
+                            currentSubCat = sub;
+                            renderProducts();
+                            closeAllDropdowns();
+                        };
+                        dropdownMenu.appendChild(subBtn);
+                    });
+
+                    navItem.appendChild(navBtn);
+                    navItem.appendChild(dropdownMenu);
+
+                    // Keyboard accessibility
+                    navBtn.addEventListener('keydown', e => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            dropdownMenu.classList.toggle('show');
+                        }
+                    });
+                } else {
+                    // No subcats: direct link
+                    const navLink = document.createElement('button');
+                    navLink.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
+                    navLink.textContent = main;
+                    navLink.onclick = (e) => {
+                        e.preventDefault();
+                        currentMainCat = main;
+                        currentSubCat = '';
+                        renderProducts();
+                        closeAllDropdowns();
+                    };
+                    navItem.appendChild(navLink);
+                }
+                navList.appendChild(navItem);
+            });
+            navbar.appendChild(navList);
+
+            // Close dropdowns if click outside
+            document.addEventListener('click', closeAllDropdowns);
+            navbar.addEventListener('click', e => e.stopPropagation()); // Don't close when clicking inside navbar
+        }
+
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            let filtered = allProducts.filter(p => {
+                if (currentMainCat && currentSubCat) {
+                    return p.mainCat === currentMainCat && p.subCat === currentSubCat;
+                } else if (currentMainCat) {
+                    return p.mainCat === currentMainCat;
+                }
+                return true;
+            });
+            if (filtered.length === 0) {
+                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
+                return;
+            }
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-image-container">
+                        <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                        ${p.amazon_link ? `<a class="more-info-btn" href="${p.amazon_link}" target="_blank" rel="noopener">More Info</a>` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            // Update nav active states
+            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.dropdown-link').forEach(btn => btn.classList.remove('active'));
+            let navMainBtns = Array.from(document.querySelectorAll('.nav-link'));
+            let navSubBtns = Array.from(document.querySelectorAll('.dropdown-link'));
+            navMainBtns.forEach(btn => {
+                if (btn.textContent.trim().replace('▼','').trim() === currentMainCat) btn.classList.add('active');
+            });
+            navSubBtns.forEach(btn => {
+                if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
+            });
+        }
+
+        fetchProducts();
+    </script>
+    <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">2025 Wilderness Essentials UK © All Rights Reserved.</p>
+</body>
+</html>
