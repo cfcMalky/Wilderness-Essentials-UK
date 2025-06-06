@@ -8,22 +8,30 @@ let currentSubCat = '';
 
 async function fetchProducts() {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const [headers, ...rows] = data.values;
-    allProducts = rows.map(row => {
-        const p = {};
-        headers.forEach((h, i) => p[h] = row[i] || "");
-        // Parse main and subcategory
-        let [main, sub] = (p.category || '').split('>').map(x => x.trim());
-        p.mainCat = main || '';
-        p.subCat = sub || '';
-        return p;
-    });
-    buildCategoryMap();
-    populateMainCatDropdown();
-    renderProducts();
-}
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data.values) {
+            throw new Error(data.error ? data.error.message : 'No data returned');
+        }
+
+        const [headers, ...rows] = data.values;
+        allProducts = rows.map(row => {
+            const p = {};
+            headers.forEach((h, i) => p[h] = row[i] || "");
+            let [main, sub] = (p.category || '').split('>').map(x => x.trim());
+            p.mainCat = main || '';
+            p.subCat = sub || '';
+            return p;
+        });
+        buildCategoryMap();
+        populateMainCatDropdown();
+        renderProducts();
+    } catch (err) {
+        document.getElementById('productsGrid').innerHTML = `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
+        console.error(err);
+    }
 
 function buildCategoryMap() {
     categoryMap = {};
