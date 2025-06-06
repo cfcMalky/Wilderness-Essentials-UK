@@ -1,5 +1,0 @@
-product card images have been stretched to the width of the card but not stretched vertically so are out of ratio and part of the image is missing
-
-some images are missing,   use the main image from each html product page (the ones for these are in tents-dome folder)
-
-some of the links don't work,   use the ASINs from the product html files I added to create a clean amazon uk page link and add my affiliate tag 'mmc1983-21'
