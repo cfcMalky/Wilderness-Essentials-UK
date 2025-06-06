@@ -84,6 +84,11 @@
       padding: 10px;
       box-shadow: 0 2px 8px rgba(60,90,54,0.07);
       object-fit: contain;
+      transition: box-shadow 0.2s;
+    }
+    .sidebar-logo:hover {
+      box-shadow: 0 4px 16px rgba(60,90,54,0.13);
+      background: #f6f7f2;
     }
     .sidebar-menu,
     .sidebar-submenu {
@@ -390,7 +395,6 @@
         min-width: 0;
       }
     }
-
     .site-tagline {
       color: #6b4a2b;
       font-size: 1.12rem;
@@ -549,7 +553,9 @@
   <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open menu">☰ Menu</button>
   <div class="layout">
     <nav class="sidebar" id="sidebar" aria-label="Categories">
-      <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
+      <a href="#" id="logoHomeLink">
+        <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
+      </a>
       <ul class="sidebar-menu"></ul>
     </nav>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -872,6 +878,20 @@
 
     setupSidebarToggle();
     fetchProducts();
+
+    // Make logo a home link
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoHomeLink = document.getElementById('logoHomeLink');
+      if(logoHomeLink){
+        logoHomeLink.addEventListener('click', function(e){
+          e.preventDefault();
+          currentMainCat = '';
+          currentSubCat = '';
+          renderProducts();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
   </script>
 </body>
 </html>
