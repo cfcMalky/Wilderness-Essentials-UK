@@ -1,5 +1,5 @@
 const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-const API_KEY = "YOUR_API_KEY_HERE";
+const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
 const RANGE = "Sheet1";
 let allProducts = [];
 let categoryMap = {};
