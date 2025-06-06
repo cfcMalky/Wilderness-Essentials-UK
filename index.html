@@ -51,9 +51,7 @@
             max-width: 330px;
             width: 100%;
             height: auto;
-            /* Gold shadow effect */
             filter: drop-shadow(0 0 0.5rem var(--logo-gold)) drop-shadow(0 0 20px var(--logo-gold));
-            /* Make sure it's on top of bg image */
             position: relative;
             z-index: 2;
         }
@@ -207,7 +205,7 @@
         .main-content {
             flex: 1 1 auto;
             padding: 0;
-            margin-left: 250px; /* leave space for fixed sidebar */
+            margin-left: 250px;
             min-width: 0;
         }
         /* Overlay for mobile menu */
@@ -222,6 +220,129 @@
         }
         .sidebar.open ~ .sidebar-overlay {
             display: block;
+        }
+
+        /* --- HERO CAROUSEL --- */
+        .hero-carousel-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem auto 2.5rem auto;
+            position: relative;
+            z-index: 3;
+            min-height: 320px;
+        }
+        .hero-carousel-slide {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 340px;
+            left: 0; top: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #eee;
+            box-shadow: 0 2px 24px rgba(60,90,54,0.12);
+            transition: opacity 0.7s;
+        }
+        .hero-carousel-slide.active {
+            display: flex;
+            opacity: 1;
+            z-index: 2;
+            animation: fadeInScale 1s;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.98);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        .hero-carousel-image {
+            height: 100%;
+            width: 50%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 20px 0 0 20px;
+            background: #fafaf7;
+        }
+        .hero-carousel-content {
+            width: 50%;
+            padding: 2.1rem 2.6rem 2.1rem 2.4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255,255,255,0.83);
+            border-radius: 0 20px 20px 0;
+            font-size: 1.1rem;
+        }
+        .hero-carousel-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--logo-green);
+            margin-bottom: 0.6rem;
+            text-shadow: 0 2px 12px rgba(60,90,54,0.08);
+        }
+        .hero-carousel-desc {
+            color: var(--logo-brown);
+            margin-bottom: 1.2rem;
+            font-size: 1.13rem;
+            line-height: 1.45;
+        }
+        .hero-carousel-cta {
+            align-self: flex-start;
+            background: var(--logo-gold);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.8rem;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 1px 8px rgba(201,161,74,0.08);
+            transition: background 0.17s, color 0.17s;
+            letter-spacing: 0.01em;
+        }
+        .hero-carousel-cta:hover {
+            background: var(--logo-green);
+            color: #fff;
+        }
+        .hero-carousel-nav {
+            position: absolute;
+            left: 12px;
+            bottom: 14px;
+            display: flex;
+            gap: 0.7rem;
+            z-index: 10;
+        }
+        .hero-carousel-dot {
+            width: 14px;
+            height: 14px;
+            background: var(--logo-gold);
+            opacity: 0.55;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: background 0.18s, opacity 0.18s;
+        }
+        .hero-carousel-dot.active {
+            background: var(--logo-green);
+            opacity: 1;
+        }
+        @media (max-width: 800px) {
+            .hero-carousel-container {
+                min-height: 220px;
+            }
+            .hero-carousel-slide,
+            .hero-carousel-slide.active {
+                flex-direction: column;
+                height: 350px;
+            }
+            .hero-carousel-image,
+            .hero-carousel-content {
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+            }
+            .hero-carousel-content {
+                border-radius: 0 0 20px 20px;
+                padding: 1.2rem 1.1rem;
+            }
         }
         header {
             background: transparent;
@@ -258,7 +379,6 @@
             position: relative;
             z-index: 1;
         }
-        /* Main logo image (replaces old header logo) */
         .mainpage-logo {
             display: block;
             margin: 2.4rem auto 2rem auto;
@@ -398,10 +518,10 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="main-content">
             <header>
-                <!-- Main logo in body replaced by full-width river image -->
                 <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
                      alt="Wilderness river" class="mainpage-logo"
                      style="box-shadow: 0 0 0 6px var(--logo-gold), 0 0 32px var(--logo-gold); border-radius: 18px; background: #fff;" />
+                <div id="heroCarousel" class="hero-carousel-container"></div>
                 <h1>Wilderness Essentials UK</h1>
                 <div class="site-tagline">
                     Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
@@ -423,7 +543,6 @@
         let currentMainCat = '';
         let currentSubCat = '';
 
-        // Sidebar toggle for mobile
         function setupSidebarToggle() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -469,12 +588,11 @@
                 });
                 buildCategoryMap();
                 buildSidebar();
-                renderProducts(); // Show prompt to select
+                buildHeroCarousel();
+                renderProducts();
             } catch (err) {
-                const grid = document.getElementById('productsGrid');
-                if (grid) {
-                    grid.innerHTML = `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
-                }
+                document.getElementById('productsGrid').innerHTML =
+                    `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
                 console.error(err);
             }
         }
@@ -501,13 +619,10 @@
 
             Object.entries(categoryMap).forEach(([main, subcats]) => {
                 const mainLi = document.createElement('li');
-                // Parent cat is always non-selectable (styled as heading)
                 const mainBtn = document.createElement('div');
                 mainBtn.className = 'sidebar-parentcat';
                 mainBtn.textContent = main;
                 mainLi.appendChild(mainBtn);
-
-                // Subcats (expand all)
                 if (subcats.length > 0) {
                     const subList = document.createElement('ul');
                     subList.className = 'sidebar-submenu';
@@ -530,6 +645,99 @@
                 menu.appendChild(mainLi);
             });
             sidebar.appendChild(menu);
+        }
+
+        // --- HERO CAROUSEL ---
+        function buildHeroCarousel() {
+            const heroId = "heroCarousel";
+            const hero = document.getElementById(heroId);
+            if (!hero) return;
+            // Pick up to 5 unique products with images and categories
+            let slides = [];
+            let seenCat = {};
+            for (const p of allProducts) {
+                // Only use products with images and categories
+                if (!p.image_url || !p.mainCat || seenCat[p.mainCat]) continue;
+                slides.push({
+                    image: p.image_url,
+                    headline: p.mainCat + (p.subCat ? ' - ' + p.subCat : ''),
+                    desc: p.description ? p.description.split('.').slice(0,2).join('.') : '',
+                    cta: (p.mainCat && p.subCat)
+                        ? `Shop ${p.subCat}`
+                        : `Shop ${p.mainCat}`,
+                    ctaTarget: p.amazon_link || "#productsGrid"
+                });
+                seenCat[p.mainCat] = true;
+                if (slides.length >= 5) break;
+            }
+            // If not enough, fill with remaining products with images
+            if (slides.length < 3) {
+                for (const p of allProducts) {
+                    if (!p.image_url) continue;
+                    slides.push({
+                        image: p.image_url,
+                        headline: p.name,
+                        desc: p.description ? p.description.split('.').slice(0,2).join('.') : '',
+                        cta: "View Product",
+                        ctaTarget: p.amazon_link || "#productsGrid"
+                    });
+                    if (slides.length >= 5) break;
+                }
+            }
+            if (slides.length === 0) {
+                hero.style.display = "none";
+                return;
+            }
+            // Build carousel DOM
+            hero.innerHTML = "";
+            for (let i=0; i<slides.length; ++i) {
+                const s = slides[i];
+                const slide = document.createElement('div');
+                slide.className = "hero-carousel-slide" + (i===0 ? " active" : "");
+                slide.innerHTML = `
+                    <img class="hero-carousel-image" src="${s.image}" alt="">
+                    <div class="hero-carousel-content">
+                        <div class="hero-carousel-title">${s.headline}</div>
+                        <div class="hero-carousel-desc">${s.desc}</div>
+                        <a class="hero-carousel-cta" href="${s.ctaTarget}" target="_blank">${s.cta}</a>
+                    </div>
+                `;
+                hero.appendChild(slide);
+            }
+            // Dots nav
+            const nav = document.createElement('div');
+            nav.className = "hero-carousel-nav";
+            for (let i=0; i<slides.length; ++i) {
+                const dot = document.createElement('button');
+                dot.className = "hero-carousel-dot" + (i===0 ? " active" : "");
+                dot.setAttribute("aria-label", `Show slide ${i+1}`);
+                dot.onclick = () => setHeroCarouselSlide(i);
+                nav.appendChild(dot);
+            }
+            hero.appendChild(nav);
+            // State
+            let current = 0;
+            let timer = null;
+            function setHeroCarouselSlide(idx) {
+                const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
+                const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
+                slidesEls.forEach((el, i) => {
+                    el.classList.toggle('active', i === idx);
+                });
+                dotsEls.forEach((el, i) => {
+                    el.classList.toggle('active', i === idx);
+                });
+                current = idx;
+                resetTimer();
+            }
+            function nextSlide() {
+                setHeroCarouselSlide((current+1)%slides.length);
+            }
+            function resetTimer() {
+                if (timer) clearInterval(timer);
+                timer = setInterval(nextSlide, 5500);
+            }
+            resetTimer();
         }
 
         function renderProducts() {
