@@ -18,34 +18,15 @@
             color: #222;
             margin: 0;
         }
-        header {
-            background: var(--primary);
-            color: #fff;
-            padding: 2rem 0 1rem 0;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0 0 0.5rem 0;
-            font-size: 2.5rem;
-        }
-        header p {
-            margin: 0;
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
+        /* Make nav more prominent and sticky */
         .category-nav {
             background: #fff;
             box-shadow: var(--card-shadow);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid #e0e0e0;
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 1000;
         }
         .category-buttons {
             display: flex;
@@ -66,6 +47,26 @@
         .category-btn.active, .category-btn:hover {
             background: var(--secondary);
             color: #fff;
+        }
+        header {
+            background: var(--primary);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+        }
+        header p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
         }
         .products-grid {
             display: grid;
@@ -159,14 +160,12 @@
         @media (max-width: 600px) {
             .products-grid { grid-template-columns: 1fr; }
             .product-image { height: 160px; }
+            .category-nav { position: static; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Wilderness Essentials UK</h1>
-        <p>Your guide to the best camping and outdoor gear in the UK. Explore tents, sleeping bags, cookware, and more!</p>
-    </header>
+    <!-- DROPDOWN NAVIGATION MOVED TO TOP -->
     <nav class="category-nav">
         <div class="container">
             <div style="display:flex;justify-content:center;align-items:center;gap:1rem;">
@@ -181,6 +180,10 @@
             </div>
         </div>
     </nav>
+    <header>
+        <h1>Wilderness Essentials UK</h1>
+        <p>Your guide to the best camping and outdoor gear in the UK. Explore tents, sleeping bags, cookware, and more!</p>
+    </header>
     <main class="container">
         <div class="products-grid" id="productsGrid"></div>
     </main>
@@ -267,4 +270,4 @@
         setupDropdownNav();
     </script>
 </body>
-</html> 
+</html>
