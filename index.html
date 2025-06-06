@@ -6,23 +6,43 @@
     <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
     <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
     <style>
-        /* ...keep all your previous styles above, then add/replace with: */
-
+        :root {
+            --logo-green: #3c5a36;
+            --logo-brown: #6b4a2b;
+            --logo-gold: #c9a14a;
+            --primary: #3c5a36;
+            --secondary: #6b4a2b;
+            --accent: #c9a14a;
+            --bg-pastel: #f6f7f2;
+            --header-text: #3c5a36;
+            --card-shadow: 0 8px 32px rgba(60,90,54,0.09), 0 1.5px 6px rgba(105,74,43,0.08);
+            --card-shadow-hover: 0 12px 36px rgba(60,90,54,0.13), 0 4px 16px rgba(105,74,43,0.12);
+            --border-radius: 18px;
+        }
+        html, body {
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, 'Amazon Ember', Verdana, sans-serif;
+            background: var(--bg-pastel);
+            color: var(--logo-brown);
+            margin: 0;
+        }
         /* NAVBAR STYLES */
         .navbar {
             background: #fff;
             box-shadow: 0 2px 10px rgba(60,90,54,0.07);
-            border-bottom: 1.5px solid #ece7e1;
+            border-bottom: 2px solid var(--logo-gold);
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 0.6rem 1rem 0.6rem 1rem;
+            padding: 0.4rem 1rem;
             position: relative;
             z-index: 100;
         }
         .nav-list {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.2rem;
             margin: 0;
             padding: 0;
             list-style: none;
@@ -36,35 +56,37 @@
             text-decoration: none;
             background: none;
             border: none;
-            font-size: 1.08em;
-            padding: 0.48em 1.1em;
-            border-radius: 7px;
+            font-size: 1.06em;
+            padding: 0.45em 1.25em;
+            border-radius: 8px;
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
             outline: none;
+            letter-spacing: 0.01em;
+            box-shadow: none;
         }
         .nav-link:hover, .nav-link.active {
-            background: var(--accent);
+            background: var(--logo-gold);
             color: #fff;
         }
         .dropdown-arrow {
-            margin-left: 0.35em;
-            font-size: 0.83em;
+            margin-left: 0.32em;
+            font-size: 0.85em;
         }
         .dropdown-menu {
             display: none;
             position: absolute;
-            top: 110%;
+            top: 115%;
             left: 0;
             background: #fff;
-            border: 1.5px solid #e9e4d9;
-            box-shadow: 0 6px 24px rgba(60,90,54,0.13);
-            border-radius: 10px;
-            min-width: 185px;
-            padding: 0.7em 0.45em 0.7em 0.45em;
+            border: 1.5px solid var(--logo-gold);
+            box-shadow: 0 7px 24px rgba(60,90,54,0.13);
+            border-radius: 12px;
+            min-width: 180px;
+            padding: 0.6em 0.4em 0.6em 0.4em;
             z-index: 21;
             flex-direction: column;
-            gap: 0.28em;
+            gap: 0.23em;
         }
         .nav-item:hover > .dropdown-menu,
         .nav-item:focus-within > .dropdown-menu,
@@ -77,7 +99,7 @@
             border: none;
             font-size: 1em;
             text-align: left;
-            padding: 0.48em 1em;
+            padding: 0.46em 1.08em;
             border-radius: 7px;
             font-weight: 500;
             text-decoration: none;
@@ -85,20 +107,172 @@
             transition: background 0.18s, color 0.18s;
         }
         .dropdown-link:hover, .dropdown-link.active {
-            background: var(--accent);
+            background: var(--logo-green);
             color: #fff;
         }
+        /* Responsive adjustments */
         @media (max-width: 1000px) {
-            .nav-list { gap: 0.65rem; }
-            .navbar { padding-left: 0.3em; padding-right: 0.3em;}
+            .nav-list { gap: 0.55rem; }
+            .navbar { padding-left: 0.2em; padding-right: 0.2em;}
         }
         @media (max-width: 650px) {
             .nav-list {
                 flex-wrap: wrap;
-                gap: 0.2rem;
+                gap: 0.1rem;
                 justify-content: center;
             }
-            .navbar { padding-top: 0.32em; padding-bottom: 0.32em; }
+            .navbar { padding-top: 0.19em; padding-bottom: 0.19em; }
+        }
+        header {
+            background: transparent;
+            color: var(--header-text);
+            padding: 0 0 1.5rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0 0 0.3rem 0;
+            font-size: 2.1rem;
+            color: var(--logo-green);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .site-tagline {
+            color: var(--secondary);
+            font-size: 1.07rem;
+            margin: 0.6rem auto 0 auto;
+            max-width: 670px;
+            line-height: 1.7;
+            background: #fff8ee;
+            border-radius: 13px;
+            padding: 1.1rem 1.5rem 1.1rem 1.5rem;
+            box-shadow: 0 1px 7px rgba(201,161,74,0.06);
+        }
+        .site-logo {
+            display: block;
+            margin: 0 auto 1.1rem auto;
+            max-width: 120px;
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(60,90,54,0.07);
+            background: #fff;
+            padding: 10px;
+        }
+        @media (max-width: 600px) {
+            .site-logo {
+                max-width: 90px;
+            }
+            .site-tagline {
+                font-size: 0.99rem;
+                padding: 0.8rem 0.7rem;
+            }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem 2rem;
+            align-items: stretch;
+            justify-items: center;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 420px;
+            min-width: 0;
+            min-height: 430px;
+            transition: box-shadow 0.24s, transform 0.18s;
+            overflow: hidden;
+            border: 1.5px solid #ece7e1;
+        }
+        .product-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--logo-gold);
+            transform: translateY(-5px) scale(1.012);
+        }
+        .product-image-container {
+            width: 100%;
+            height: 220px;
+            background: #faf8f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 10px 18px 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #f2ecdf;
+        }
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: #fff;
+            border-radius: 11px;
+            box-shadow: 0 1px 5px rgba(60,90,54,0.06);
+        }
+        .product-info {
+            flex: 1 1 auto;
+            padding: 1.2rem 1.2rem 1.6rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 180px;
+        }
+        .product-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: var(--logo-green);
+            margin-bottom: 0.7rem;
+            min-height: 2.2em;
+            line-height: 1.3;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            letter-spacing: 0.01em;
+        }
+        .product-desc {
+            font-size: 1.03rem;
+            color: var(--logo-brown);
+            margin-bottom: 1.1rem;
+            flex: 1 1 auto;
+            line-height: 1.51;
+            min-height: 5em;
+            white-space: pre-line;
+        }
+        .more-info-btn {
+            margin: auto 1rem 0 1rem;
+            background: var(--logo-green);
+            color: #fff;
+            text-decoration: none;
+            padding: 0.72rem 1.3rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s;
+            box-shadow: 0 1px 5px rgba(60,90,54,0.08);
+            display: block;
+            width: calc(100% - 2rem);
+            box-sizing: border-box;
+            letter-spacing: 0.01em;
+        }
+        .more-info-btn:hover {
+            background: var(--accent);
+            color: var(--logo-brown);
         }
     </style>
 </head>
@@ -106,7 +280,6 @@
     <nav class="navbar" id="navbar">
         <!-- Navbar will be dynamically populated here -->
     </nav>
-    <!-- ...keep your header, main, etc. -->
     <header>
         <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
         <h1>Wilderness Essentials UK</h1>
@@ -138,7 +311,7 @@
                 const [headers, ...rows] = data.values;
                 allProducts = rows.map(row => {
                     const p = {};
-                    headers.forEach((h, i) => p[h] = row[i] || "");
+                    headers.forEach((h, i) => p[h] = row[i] || "";
                     let [main, sub] = (p.category || '').split('>').map(x => x.trim());
                     p.mainCat = main || '';
                     p.subCat = sub || '';
@@ -186,9 +359,11 @@
                     navBtn.tabIndex = 0;
                     navBtn.onclick = (e) => {
                         e.preventDefault();
-                        currentMainCat = main;
-                        currentSubCat = subcats[0];
-                        renderProducts();
+                        if(currentMainCat !== main) {
+                            currentMainCat = main;
+                            currentSubCat = subcats[0];
+                            renderProducts();
+                        }
                         // Show dropdown on click for mobile
                         closeAllDropdowns();
                         navItem.querySelector('.dropdown-menu').classList.toggle('show');
@@ -284,7 +459,7 @@
             let navMainBtns = Array.from(document.querySelectorAll('.nav-link'));
             let navSubBtns = Array.from(document.querySelectorAll('.dropdown-link'));
             navMainBtns.forEach(btn => {
-                if (btn.textContent.trim() === currentMainCat) btn.classList.add('active');
+                if (btn.textContent.trim().replace('▼','').trim() === currentMainCat) btn.classList.add('active');
             });
             navSubBtns.forEach(btn => {
                 if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
