@@ -168,7 +168,7 @@
     <script>
         // ====== Using your provided API key =======
         const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-        const API_KEY = "AIzaSyGDwKbK2vucSySTYm1kRZ2RBlbyAcU5OU"; // <-- Your Google API key!
+        const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY"; // <-- Your new Google API key!
         const RANGE = "Sheet1";
         // ==========================================
 
@@ -179,21 +179,30 @@
 
         async function fetchProducts() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const [headers, ...rows] = data.values;
-            allProducts = rows.map(row => {
-                const p = {};
-                headers.forEach((h, i) => p[h] = row[i] || "");
-                // Parse main and subcategory from your format: "Tents > Dome"
-                let [main, sub] = (p.category || '').split('>').map(x => x.trim());
-                p.mainCat = main || '';
-                p.subCat = sub || '';
-                return p;
-            });
-            buildCategoryMap();
-            populateMainCatDropdown();
-            renderProducts();
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!data.values) {
+                    throw new Error(data.error ? data.error.message : 'No data returned');
+                }
+
+                const [headers, ...rows] = data.values;
+                allProducts = rows.map(row => {
+                    const p = {};
+                    headers.forEach((h, i) => p[h] = row[i] || "");
+                    let [main, sub] = (p.category || '').split('>').map(x => x.trim());
+                    p.mainCat = main || '';
+                    p.subCat = sub || '';
+                    return p;
+                });
+                buildCategoryMap();
+                populateMainCatDropdown();
+                renderProducts();
+            } catch (err) {
+                document.getElementById('productsGrid').innerHTML = `<div style="color:red;text-align:center;">Failed to load products: ${err.message}</div>`;
+                console.error(err);
+            }
         }
 
         function buildCategoryMap() {
@@ -214,6 +223,11 @@
             const mainCatDropdown = document.getElementById('mainCatDropdown');
             // Main button shows current or first
             const mainCategories = Object.keys(categoryMap);
+            if (mainCategories.length === 0) {
+                mainCatBtn.textContent = "No categories";
+                mainCatDropdown.innerHTML = "<span style='padding:1em;display:block;'>No categories found.</span>";
+                return;
+            }
             currentMainCat = currentMainCat || mainCategories[0];
             mainCatBtn.textContent = currentMainCat + ' ▼';
             // Build subcategory buttons
