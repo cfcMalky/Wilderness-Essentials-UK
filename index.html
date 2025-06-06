@@ -184,22 +184,18 @@
         const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
         const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
         const RANGE = "Sheet1";
-
         let allProducts = [];
         let categoryMap = {};
         let currentMainCat = '';
         let currentSubCat = '';
-
         async function fetchProducts() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-
                 if (!data.values) {
                     throw new Error(data.error ? data.error.message : 'No data returned');
                 }
-
                 const [headers, ...rows] = data.values;
                 allProducts = rows.map(row => {
                     const p = {};
@@ -217,7 +213,6 @@
                 console.error(err);
             }
         }
-
         function buildCategoryMap() {
             categoryMap = {};
             allProducts.forEach(p => {
@@ -229,7 +224,6 @@
                 categoryMap[main] = Array.from(categoryMap[main]);
             }
         }
-
         function populateMainCatDropdown() {
             const mainCatBtn = document.getElementById('mainCatBtn');
             const mainCatDropdown = document.getElementById('mainCatDropdown');
@@ -257,7 +251,6 @@
                 currentSubCat = categoryMap[currentMainCat][0];
             }
         }
-
         function setupDropdownNav() {
             const mainCatBtn = document.getElementById('mainCatBtn');
             const mainCatDropdown = document.getElementById('mainCatDropdown');
@@ -274,14 +267,11 @@
                 showMainCategoriesMenu(mainCatBtn);
             });
         }
-
         function showMainCategoriesMenu(anchorBtn) {
             const oldMenu = document.getElementById('mainCatMenu');
             if (oldMenu) oldMenu.remove();
-
             const mainCategories = Object.keys(categoryMap);
             if (mainCategories.length <= 1) return;
-
             const menu = document.createElement('div');
             menu.id = 'mainCatMenu';
             menu.style.position = 'absolute';
@@ -293,7 +283,6 @@
             menu.style.zIndex = 21;
             menu.style.minWidth = '140px';
             menu.style.padding = '0.5em 0';
-
             mainCategories.forEach(main => {
                 const btn = document.createElement('button');
                 btn.className = 'category-btn';
@@ -315,7 +304,6 @@
                 document.addEventListener('click', () => menu.remove(), { once: true });
             }, 50);
         }
-
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -342,7 +330,6 @@
                 grid.appendChild(card);
             });
         }
-
         fetchProducts();
         setupDropdownNav();
     </script>
