@@ -28,98 +28,112 @@
             color: var(--logo-brown);
             margin: 0;
         }
-        .navbar {
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
             background: #fff;
-            box-shadow: 0 2px 10px rgba(60,90,54,0.07);
-            border-bottom: 2px solid var(--logo-gold);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0.4rem 1rem;
-            position: relative;
-            z-index: 100;
+            border-right: 2px solid var(--logo-gold);
+            padding: 2rem 1rem 1rem 1rem;
+            box-shadow: 2px 0 14px rgba(60,90,54,0.08);
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
+            z-index: 200;
+            transition: left 0.3s;
         }
-        .nav-list {
-            display: flex;
-            gap: 1.2rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        .nav-item {
-            position: relative;
-        }
-        .nav-link {
-            font-weight: 600;
+        .sidebar h2 {
+            font-size: 1.2rem;
             color: var(--logo-green);
-            text-decoration: none;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .sidebar-menu,
+        .sidebar-submenu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu > li {
+            margin-bottom: 0.6em;
+        }
+        .sidebar-link, .sidebar-sublink {
+            display: block;
+            width: 100%;
             background: none;
             border: none;
-            font-size: 1.06em;
-            padding: 0.45em 1.25em;
-            border-radius: 8px;
+            color: var(--logo-green);
+            font-weight: 600;
+            font-size: 1.04rem;
+            text-align: left;
+            padding: 0.4em 0.7em;
+            border-radius: 6px;
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
-            outline: none;
-            letter-spacing: 0.01em;
-            box-shadow: none;
+            text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active {
+        .sidebar-link.active,
+        .sidebar-link:hover {
             background: var(--logo-gold);
             color: #fff;
         }
-        .dropdown-arrow {
-            margin-left: 0.32em;
-            font-size: 0.85em;
+        .sidebar-submenu {
+            margin-left: 0.6em;
+            margin-top: 0.2em;
         }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 115%;
-            left: 0;
-            background: #fff;
-            border: 1.5px solid var(--logo-gold);
-            box-shadow: 0 7px 24px rgba(60,90,54,0.13);
-            border-radius: 12px;
-            min-width: 180px;
-            padding: 0.6em 0.4em 0.6em 0.4em;
-            z-index: 21;
-            flex-direction: column;
-            gap: 0.23em;
-        }
-        /* Hover activates dropdown on desktop and allows mouseover on submenu */
-        .nav-item:hover > .dropdown-menu,
-        .nav-item:focus-within > .dropdown-menu {
-            display: flex;
-        }
-        .dropdown-link {
+        .sidebar-sublink {
             color: var(--logo-brown);
-            background: none;
-            border: none;
-            font-size: 1em;
-            text-align: left;
-            padding: 0.46em 1.08em;
-            border-radius: 7px;
             font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.18s, color 0.18s;
+            font-size: 0.98rem;
+            border-radius: 5px;
+            padding: 0.34em 0.7em;
         }
-        .dropdown-link:hover, .dropdown-link.active {
+        .sidebar-sublink.active,
+        .sidebar-sublink:hover {
             background: var(--logo-green);
             color: #fff;
         }
-        @media (max-width: 1000px) {
-            .nav-list { gap: 0.55rem; }
-            .navbar { padding-left: 0.2em; padding-right: 0.2em;}
+        .sidebar-toggle-btn {
+            display: none;
+            position: fixed;
+            left: 15px;
+            top: 15px;
+            z-index: 300;
+            background: var(--logo-gold);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6em 1em;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(60,90,54,0.10);
         }
-        @media (max-width: 650px) {
-            .nav-list {
-                flex-wrap: wrap;
-                gap: 0.1rem;
-                justify-content: center;
+        @media (max-width: 950px) {
+            .sidebar {
+                position: fixed;
+                left: -265px;
+                top: 0;
+                height: 100vh;
+                min-height: 100vh;
+                z-index: 2000;
+                transition: left 0.28s;
             }
-            .navbar { padding-top: 0.19em; padding-bottom: 0.19em; }
+            .sidebar.open {
+                left: 0;
+                box-shadow: 2px 0 15px rgba(60,90,54,0.14);
+            }
+            .sidebar-toggle-btn {
+                display: block;
+            }
+            .layout {
+                flex-direction: column;
+            }
+        }
+        .main-content {
+            flex: 1 1 auto;
+            padding: 0;
         }
         header {
             background: transparent;
@@ -272,27 +286,47 @@
             background: var(--accent);
             color: var(--logo-brown);
         }
-        @media (hover: none) and (pointer: coarse) {
-            .nav-item:hover > .dropdown-menu,
-            .nav-item:focus-within > .dropdown-menu {
-                display: none !important;
+        /* Hide sidebar by default on mobile */
+        @media (max-width: 950px) {
+            .main-content {
+                padding: 0;
             }
+        }
+        /* Overlay for mobile menu */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            left: 0; top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(60,90,54,0.22);
+            z-index: 1000;
+        }
+        .sidebar.open ~ .sidebar-overlay {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar" id="navbar"></nav>
-    <header>
-        <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
-        <h1>Wilderness Essentials UK</h1>
-        <div class="site-tagline">
-            Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
-            From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
+    <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open menu">☰ Menu</button>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar" aria-label="Categories"></nav>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <div class="main-content">
+            <header>
+                <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="site-logo" />
+                <h1>Wilderness Essentials UK</h1>
+                <div class="site-tagline">
+                    Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
+                    From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
+                </div>
+            </header>
+            <main class="container">
+                <div class="products-grid" id="productsGrid"></div>
+            </main>
+            <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">2025 Wilderness Essentials UK © All Rights Reserved.</p>
         </div>
-    </header>
-    <main class="container">
-        <div class="products-grid" id="productsGrid"></div>
-    </main>
+    </div>
     <script>
         const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
         const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
@@ -302,12 +336,34 @@
         let currentMainCat = '';
         let currentSubCat = '';
 
-        // --- NAV BEHAVIOUR ---
-        // No category is selected by default
-        // Clicking a main category with subs opens dropdown (on touch)
-        // Hovering a main category with subs opens dropdown (on desktop)
-        // Clicking a main category with no subs shows products
-        // Only when a subcategory is picked, products are shown for that subcategory
+        // Sidebar toggle for mobile
+        function setupSidebarToggle() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const toggle = document.getElementById('sidebarToggle');
+            function openSidebar() {
+                sidebar.classList.add('open');
+                overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            toggle.onclick = openSidebar;
+            overlay.onclick = closeSidebar;
+            // Also close sidebar on menu click (mobile)
+            sidebar.onclick = function(e) {
+                if(window.innerWidth <= 950 && e.target.classList.contains('sidebar-link') || e.target.classList.contains('sidebar-sublink')) {
+                    closeSidebar();
+                }
+            };
+            // Close on resize (helpful if rotating device)
+            window.addEventListener('resize', () => {
+                if(window.innerWidth > 950) closeSidebar();
+            });
+        }
 
         async function fetchProducts() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -327,8 +383,8 @@
                     return p;
                 });
                 buildCategoryMap();
-                buildNavbar();
-                renderProducts(); // Show all or none by default
+                buildSidebar();
+                renderProducts(); // Show prompt to select
             } catch (err) {
                 const grid = document.getElementById('productsGrid');
                 if (grid) {
@@ -350,104 +406,49 @@
             }
         }
 
-        function buildNavbar() {
-            const navbar = document.getElementById('navbar');
-            navbar.innerHTML = '';
-            const navList = document.createElement('ul');
-            navList.className = 'nav-list';
+        function buildSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.innerHTML = `<h2>Categories</h2>`;
+            const menu = document.createElement('ul');
+            menu.className = 'sidebar-menu';
 
             Object.entries(categoryMap).forEach(([main, subcats]) => {
-                const navItem = document.createElement('li');
-                navItem.className = 'nav-item';
+                const mainLi = document.createElement('li');
+                // Main cat button
+                const mainBtn = document.createElement('button');
+                mainBtn.className = 'sidebar-link' + (currentMainCat === main && !currentSubCat ? ' active' : '');
+                mainBtn.textContent = main;
+                mainBtn.onclick = function(e) {
+                    e.preventDefault();
+                    currentMainCat = main;
+                    currentSubCat = '';
+                    renderProducts();
+                };
+                mainLi.appendChild(mainBtn);
 
+                // Subcats (expand all)
                 if (subcats.length > 0) {
-                    const navBtn = document.createElement('button');
-                    navBtn.className = 'nav-link';
-                    navBtn.innerHTML = `${main} <span class="dropdown-arrow">▼</span>`;
-                    navBtn.tabIndex = 0;
-
-                    // --- Touch device: open on click ---
-                    navBtn.addEventListener('click', function(e) {
-                        // Only on touch/click (not desktop hover)
-                        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
-                            e.preventDefault();
-                            // Remove show-dropdown from all nav-items
-                            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => item.classList.remove('show-dropdown'));
-                            navItem.classList.add('show-dropdown');
-                        }
-                    });
-
-                    // Dropdown menu
-                    const dropdownMenu = document.createElement('div');
-                    dropdownMenu.className = 'dropdown-menu';
-                    dropdownMenu.addEventListener('mouseover', () => {
-                        // On hover, keep dropdown open
-                        navItem.classList.add('keep-open');
-                    });
-                    dropdownMenu.addEventListener('mouseleave', () => {
-                        navItem.classList.remove('keep-open');
-                    });
-
+                    const subList = document.createElement('ul');
+                    subList.className = 'sidebar-submenu';
                     subcats.forEach(sub => {
+                        const subBtnLi = document.createElement('li');
                         const subBtn = document.createElement('button');
-                        subBtn.className = 'dropdown-link' + (currentMainCat === main && currentSubCat === sub ? ' active' : '');
+                        subBtn.className = 'sidebar-sublink' + (currentMainCat === main && currentSubCat === sub ? ' active' : '');
                         subBtn.textContent = sub;
-                        subBtn.onclick = (ev) => {
-                            ev.preventDefault();
+                        subBtn.onclick = function(e) {
+                            e.preventDefault();
                             currentMainCat = main;
                             currentSubCat = sub;
                             renderProducts();
-                            closeAllDropdowns();
                         };
-                        dropdownMenu.appendChild(subBtn);
+                        subBtnLi.appendChild(subBtn);
+                        subList.appendChild(subBtnLi);
                     });
-
-                    navItem.appendChild(navBtn);
-                    navItem.appendChild(dropdownMenu);
-
-                    // Remove show-dropdown when mouse leaves nav-item (for touch/click mode)
-                    navItem.addEventListener('mouseleave', () => {
-                        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
-                            setTimeout(() => {
-                                if (!navItem.classList.contains('keep-open')) {
-                                    navItem.classList.remove('show-dropdown');
-                                }
-                            }, 200);
-                        }
-                    });
-                    // On hover, always remove show-dropdown from other nav-items to avoid stuck open
-                    navItem.addEventListener('mouseenter', () => {
-                        if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
-                            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => {
-                                if (item !== navItem) item.classList.remove('show-dropdown');
-                            });
-                        }
-                    });
-                } else {
-                    // No subcategories: go directly to products
-                    const navLink = document.createElement('button');
-                    navLink.className = 'nav-link';
-                    navLink.textContent = main;
-                    navLink.onclick = (e) => {
-                        e.preventDefault();
-                        currentMainCat = main;
-                        currentSubCat = '';
-                        renderProducts();
-                        closeAllDropdowns();
-                    };
-                    navItem.appendChild(navLink);
+                    mainLi.appendChild(subList);
                 }
-                navList.appendChild(navItem);
+                menu.appendChild(mainLi);
             });
-            navbar.appendChild(navList);
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', closeAllDropdowns);
-            navbar.addEventListener('click', e => e.stopPropagation());
-        }
-
-        function closeAllDropdowns() {
-            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => item.classList.remove('show-dropdown'));
+            sidebar.appendChild(menu);
         }
 
         function renderProducts() {
@@ -461,9 +462,19 @@
                 filtered = allProducts.filter(p => p.mainCat === currentMainCat && !p.subCat);
             }
 
+            // Update sidebar active states
+            document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.sidebar-sublink').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu > li').forEach(li => {
+                const btn = li.querySelector('.sidebar-link');
+                if(btn && btn.textContent === currentMainCat && !currentSubCat) btn.classList.add('active');
+            });
+            document.querySelectorAll('.sidebar-submenu > li > .sidebar-sublink').forEach(btn => {
+                if(btn.parentElement.parentElement.previousSibling && btn.parentElement.parentElement.previousSibling.textContent === currentMainCat && btn.textContent === currentSubCat) btn.classList.add('active');
+            });
+
             if (!currentMainCat && !currentSubCat) {
-                // No selection: show nothing
-                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category above.</div>";
+                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category on the left.</div>";
                 return;
             }
 
@@ -486,22 +497,10 @@
                 `;
                 grid.appendChild(card);
             });
-
-            // Update nav active states
-            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.dropdown-link').forEach(btn => btn.classList.remove('active'));
-            let navMainBtns = Array.from(document.querySelectorAll('.nav-link'));
-            let navSubBtns = Array.from(document.querySelectorAll('.dropdown-link'));
-            navMainBtns.forEach(btn => {
-                if (btn.textContent.trim().replace('▼','').trim() === currentMainCat && !currentSubCat) btn.classList.add('active');
-            });
-            navSubBtns.forEach(btn => {
-                if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
-            });
         }
 
+        setupSidebarToggle();
         fetchProducts();
     </script>
-    <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">2025 Wilderness Essentials UK © All Rights Reserved.</p>
 </body>
 </html>
