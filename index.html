@@ -87,7 +87,7 @@
             flex-direction: column;
             gap: 0.23em;
         }
-        /* Hover activates dropdown on desktop */
+        /* Hover activates dropdown on desktop and allows mouseover on submenu */
         .nav-item:hover > .dropdown-menu,
         .nav-item:focus-within > .dropdown-menu {
             display: flex;
@@ -272,7 +272,6 @@
             background: var(--accent);
             color: var(--logo-brown);
         }
-        /* Touch devices: force dropdown on click, not hover */
         @media (hover: none) and (pointer: coarse) {
             .nav-item:hover > .dropdown-menu,
             .nav-item:focus-within > .dropdown-menu {
@@ -372,15 +371,23 @@
                         // Only on touch/click (not desktop hover)
                         if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
                             e.preventDefault();
-                            const currentlyOpen = navItem.classList.contains('show-dropdown');
+                            // Remove show-dropdown from all nav-items
                             document.querySelectorAll('.nav-item.show-dropdown').forEach(item => item.classList.remove('show-dropdown'));
-                            if (!currentlyOpen) navItem.classList.add('show-dropdown');
+                            navItem.classList.add('show-dropdown');
                         }
                     });
 
                     // Dropdown menu
                     const dropdownMenu = document.createElement('div');
                     dropdownMenu.className = 'dropdown-menu';
+                    dropdownMenu.addEventListener('mouseover', () => {
+                        // On hover, keep dropdown open
+                        navItem.classList.add('keep-open');
+                    });
+                    dropdownMenu.addEventListener('mouseleave', () => {
+                        navItem.classList.remove('keep-open');
+                    });
+
                     subcats.forEach(sub => {
                         const subBtn = document.createElement('button');
                         subBtn.className = 'dropdown-link' + (currentMainCat === main && currentSubCat === sub ? ' active' : '');
@@ -397,6 +404,25 @@
 
                     navItem.appendChild(navBtn);
                     navItem.appendChild(dropdownMenu);
+
+                    // Remove show-dropdown when mouse leaves nav-item (for touch/click mode)
+                    navItem.addEventListener('mouseleave', () => {
+                        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+                            setTimeout(() => {
+                                if (!navItem.classList.contains('keep-open')) {
+                                    navItem.classList.remove('show-dropdown');
+                                }
+                            }, 200);
+                        }
+                    });
+                    // On hover, always remove show-dropdown from other nav-items to avoid stuck open
+                    navItem.addEventListener('mouseenter', () => {
+                        if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+                            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => {
+                                if (item !== navItem) item.classList.remove('show-dropdown');
+                            });
+                        }
+                    });
                 } else {
                     // No subcategories: go directly to products
                     const navLink = document.createElement('button');
