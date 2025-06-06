@@ -18,7 +18,6 @@
             color: #222;
             margin: 0;
         }
-        /* Make nav more prominent and sticky */
         .category-nav {
             background: #fff;
             box-shadow: var(--card-shadow);
@@ -120,25 +119,6 @@
             margin-bottom: 0.7rem;
             min-height: 3.5em;
         }
-        .product-capacity {
-            font-size: 1rem;
-            color: var(--secondary);
-            margin-bottom: 0.7rem;
-            font-weight: 500;
-        }
-        .product-info b {
-            color: var(--primary);
-            font-weight: 500;
-        }
-        .product-info ul {
-            margin: 0.5em 0 0.7em 1.2em;
-            padding: 0;
-            font-size: 0.99em;
-            color: #444;
-        }
-        .product-info ul li {
-            margin-bottom: 0.2em;
-        }
         .more-info-btn {
             margin-top: auto;
             display: inline-block;
@@ -165,18 +145,16 @@
     </style>
 </head>
 <body>
-    <!-- DROPDOWN NAVIGATION MOVED TO TOP -->
+    <!-- Category selector at the very top -->
     <nav class="category-nav">
         <div class="container">
             <div style="display:flex;justify-content:center;align-items:center;gap:1rem;">
                 <div class="dropdown" style="position:relative;">
-                    <button class="category-btn" id="mainCatBtn">Tents ▼</button>
+                    <button class="category-btn" id="mainCatBtn">Category ▼</button>
                     <div id="mainCatDropdown" style="display:none;position:absolute;left:0;top:110%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-radius:8px;min-width:140px;z-index:20;">
-                        <button class="category-btn subcat-btn" data-maincat="tents" data-subcat="dome">Dome</button>
-                        <!-- Future: add more subcategories here -->
+                        <!-- Subcategories will be injected here -->
                     </div>
                 </div>
-                <!-- Future: add more main categories here -->
             </div>
         </div>
     </nav>
@@ -188,61 +166,73 @@
         <div class="products-grid" id="productsGrid"></div>
     </main>
     <script>
-        const affiliateTag = 'mmc1983-21';
+        // ====== Using your provided API key =======
+        const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
+        const API_KEY = "AIzaSyGDwKbK2vucSySTYm1kRZ2RBlbyAcU5OU"; // <-- Your Google API key!
+        const RANGE = "Sheet1";
+        // ==========================================
+
         let allProducts = [];
-        let currentMainCat = 'tents';
-        let currentSubCat = 'dome';
+        let categoryMap = {};
+        let currentMainCat = '';
+        let currentSubCat = '';
 
         async function fetchProducts() {
-            try {
-                const res = await fetch('products.json');
-                if (!res.ok) throw new Error('Failed to load products.json');
-                allProducts = await res.json();
-                renderProducts();
-            } catch (e) {
-                document.getElementById('productsGrid').innerHTML = '<div style="color:red">Could not load products.</div>';
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const [headers, ...rows] = data.values;
+            allProducts = rows.map(row => {
+                const p = {};
+                headers.forEach((h, i) => p[h] = row[i] || "");
+                // Parse main and subcategory from your format: "Tents > Dome"
+                let [main, sub] = (p.category || '').split('>').map(x => x.trim());
+                p.mainCat = main || '';
+                p.subCat = sub || '';
+                return p;
+            });
+            buildCategoryMap();
+            populateMainCatDropdown();
+            renderProducts();
+        }
+
+        function buildCategoryMap() {
+            categoryMap = {};
+            allProducts.forEach(p => {
+                if (!p.mainCat) return;
+                if (!categoryMap[p.mainCat]) categoryMap[p.mainCat] = new Set();
+                if (p.subCat) categoryMap[p.mainCat].add(p.subCat);
+            });
+            // Convert sets to arrays
+            for (let main in categoryMap) {
+                categoryMap[main] = Array.from(categoryMap[main]);
             }
         }
 
-        function getCapacityLabel(occupancy) {
-            if (occupancy >= 4) return '4+ Person';
-            if (occupancy === 3) return '3-Person';
-            if (occupancy === 2) return '2-Person';
-            if (occupancy === 1) return '1-Person';
-            return '';
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            let filtered = allProducts.filter(p =>
-                p.parent_category === currentMainCat && p.category === currentSubCat
-            );
-            filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/300x220?text=No+Image'}" alt="${p.name}">
-                    <div class="product-info">
-                        <div class="product-title">${p.name}</div>
-                        <div class="product-desc">${p.description || ''}</div>
-                        <div class="product-capacity">${getCapacityLabel(p.occupancy)}</div>
-                        <div style="font-size:0.97rem;color:#888;margin-bottom:0.5em;">
-                            ${p.dimensions ? `<b>Size:</b> ${p.dimensions}<br>` : ''}
-                            ${p.weight ? `<b>Weight:</b> ${p.weight}<br>` : ''}
-                            ${p.seasons ? `<b>Seasons:</b> ${p.seasons}<br>` : ''}
-                            ${p.material ? `<b>Material:</b> ${p.material}<br>` : ''}
-                            ${p.waterproof_rating ? `<b>Waterproof:</b> ${p.waterproof_rating}<br>` : ''}
-                            ${p.rating ? `<b>Rating:</b> ${p.rating} ⭐ (${p.num_ratings || 0})<br>` : ''}
-                            ${p.price_min ? `<b>Price:</b> £${p.price_min}${p.price_max && p.price_max !== p.price_min ? ' - £' + p.price_max : ''}<br>` : ''}
-                            ${p.best_seller_rank ? `<b>Best Seller:</b> ${p.best_seller_rank}<br>` : ''}
-                        </div>
-                        ${p.features && p.features.length ? `<ul style='margin:0 0 0.7em 1em;padding:0;font-size:0.97em;color:#444;'>${p.features.map(f => `<li>${f}</li>`).join('')}</ul>` : ''}
-                        ${p.url ? `<a class="more-info-btn" href="${p.url}${p.url.includes('?') ? '&' : '?'}tag=${affiliateTag}" target="_blank" rel="noopener">More Info</a>` : ''}
-                    </div>
-                `;
-                grid.appendChild(card);
+        function populateMainCatDropdown() {
+            const mainCatBtn = document.getElementById('mainCatBtn');
+            const mainCatDropdown = document.getElementById('mainCatDropdown');
+            // Main button shows current or first
+            const mainCategories = Object.keys(categoryMap);
+            currentMainCat = currentMainCat || mainCategories[0];
+            mainCatBtn.textContent = currentMainCat + ' ▼';
+            // Build subcategory buttons
+            mainCatDropdown.innerHTML = '';
+            (categoryMap[currentMainCat] || []).forEach(sub => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn subcat-btn';
+                btn.textContent = sub;
+                btn.onclick = () => {
+                    currentSubCat = sub;
+                    renderProducts();
+                    mainCatDropdown.style.display = 'none';
+                };
+                mainCatDropdown.appendChild(btn);
             });
+            // Set first subcat if not set
+            if (!currentSubCat || !categoryMap[currentMainCat].includes(currentSubCat)) {
+                currentSubCat = categoryMap[currentMainCat][0];
+            }
         }
 
         function setupDropdownNav() {
@@ -256,18 +246,85 @@
                     mainCatDropdown.style.display = 'none';
                 }
             });
-            document.querySelectorAll('.subcat-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    currentMainCat = btn.dataset.maincat;
-                    currentSubCat = btn.dataset.subcat;
-                    mainCatDropdown.style.display = 'none';
-                    renderProducts();
-                });
+            // Main category switcher (right click; or you can change this logic to a dedicated dropdown if you prefer)
+            mainCatBtn.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                showMainCategoriesMenu(mainCatBtn);
             });
         }
 
+        function showMainCategoriesMenu(anchorBtn) {
+            // Remove any existing menu
+            const oldMenu = document.getElementById('mainCatMenu');
+            if (oldMenu) oldMenu.remove();
+
+            const mainCategories = Object.keys(categoryMap);
+            if (mainCategories.length <= 1) return; // No need for menu
+
+            const menu = document.createElement('div');
+            menu.id = 'mainCatMenu';
+            menu.style.position = 'absolute';
+            menu.style.top = '110%';
+            menu.style.left = '0';
+            menu.style.background = '#fff';
+            menu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+            menu.style.borderRadius = '8px';
+            menu.style.zIndex = 21;
+            menu.style.minWidth = '140px';
+            menu.style.padding = '0.5em 0';
+
+            mainCategories.forEach(main => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.textContent = main;
+                btn.style.display = 'block';
+                btn.style.width = '100%';
+                btn.onclick = (ev) => {
+                    currentMainCat = main;
+                    btn.blur();
+                    menu.remove();
+                    populateMainCatDropdown();
+                    renderProducts();
+                    ev.stopPropagation();
+                };
+                menu.appendChild(btn);
+            });
+            anchorBtn.parentNode.appendChild(menu);
+            // Remove menu on outside click
+            setTimeout(() => {
+                document.addEventListener('click', () => menu.remove(), { once: true });
+            }, 50);
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            let filtered = allProducts.filter(p =>
+                p.mainCat === currentMainCat && p.subCat === currentSubCat
+            );
+            if (filtered.length === 0) {
+                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
+                return;
+            }
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/300x220?text=No+Image'}" alt="${p.name}">
+                    <div class="product-info">
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-desc">${p.description || ''}</div>
+                        ${p.amazon_link ? `<a class="more-info-btn" href="${p.amazon_link}" target="_blank" rel="noopener">More Info</a>` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Run on load
         fetchProducts();
         setupDropdownNav();
     </script>
+    <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">Right-click the category dropdown to switch main categories.</p>
 </body>
 </html>
