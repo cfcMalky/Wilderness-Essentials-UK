@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
     <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
+    <!-- Outdoor Adventure Font: "Quicksand" + fallback -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --logo-green: #3c5a36;
@@ -25,7 +27,7 @@
             min-height: 100%;
         }
         body {
-            font-family: 'Segoe UI', Arial, 'Amazon Ember', Verdana, sans-serif;
+            font-family: 'Quicksand', 'Segoe UI', Arial, Verdana, sans-serif;
             background: var(--bg-pastel);
             color: var(--logo-brown);
             margin: 0;
@@ -73,13 +75,15 @@
         .sidebar-logo {
             display: block;
             margin: 0 0 2rem 0;
-            max-width: 120px;
             width: 100%;
+            max-width: 250px;
+            min-width: 200px;
             height: auto;
             border-radius: 14px;
             background: #fff;
             padding: 10px;
             box-shadow: 0 2px 8px rgba(60,90,54,0.07);
+            object-fit: contain;
         }
         .sidebar-menu,
         .sidebar-submenu {
@@ -356,6 +360,21 @@
             color: var(--logo-green);
             font-weight: 700;
             letter-spacing: 0.02em;
+            /* Underline effect */
+            border-bottom: 4px solid var(--logo-gold);
+            display: inline-block;
+            line-height: 1.2;
+            min-width: 270px;
+            max-width: 670px;
+            width: 100%;
+            text-align: center;
+        }
+        @media (min-width: 600px) {
+            header h1 {
+                min-width: 670px;
+                width: 670px;
+                text-align: center;
+            }
         }
         .site-tagline {
             color: var(--secondary);
@@ -384,6 +403,18 @@
             gap: 2.5rem 2rem;
             align-items: stretch;
             justify-items: center;
+        }
+        .outstanding-content-block {
+            max-width: 670px;
+            margin: 2.5rem auto;
+            background: #f5f7eb;
+            border-radius: 14px;
+            box-shadow: 0 1px 7px rgba(60,90,54,0.09);
+            padding: 2rem 2rem 2rem 2rem;
+            color: #2d3c1e;
+            font-size: 1.14rem;
+            text-align: left;
+            border-left: 7px solid var(--logo-gold);
         }
         .product-card-link {
             text-decoration: none;
@@ -517,6 +548,19 @@
                     From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
                 </div>
             </header>
+            <!-- Outstanding content block for relevant info, tips, inspiration -->
+            <div class="outstanding-content-block">
+                <strong>Adventure Tips & Inspiration</strong><br>
+                <ul style="margin-top:0.7em;">
+                    <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
+                    <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
+                    <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
+                    <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
+                </ul>
+                <div style="margin-top:1.3em; font-size:1.07em; color:#47613a; font-style:italic;">
+                    “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+                </div>
+            </div>
             <main class="container">
                 <div class="products-grid" id="productsGrid"></div>
             </main>
@@ -605,8 +649,7 @@
         }
 
         function buildSidebar(error) {
-            const sidebar = document.getElementById('sidebar');
-            const menu = sidebar.querySelector('.sidebar-menu');
+            const menu = document.querySelector('.sidebar-menu');
             menu.innerHTML = '';
             if (error) {
                 menu.innerHTML = `<li style="color:#a00;text-align:center;">Navigation unavailable</li>`;
@@ -760,8 +803,13 @@
                 if(btn.parentElement.parentElement.previousSibling && btn.parentElement.parentElement.previousSibling.textContent === currentMainCat && btn.textContent === currentSubCat) btn.classList.add('active');
             });
 
+            // REMOVE the prompt about "Please select a category on the left."
+            // if (!currentMainCat && !currentSubCat) {
+            //     grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category on the left.</div>";
+            //     return;
+            // }
+
             if (!currentMainCat && !currentSubCat) {
-                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category on the left.</div>";
                 return;
             }
 
