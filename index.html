@@ -43,6 +43,11 @@
             min-height: 100vh;
             z-index: 200;
             transition: left 0.3s;
+            /* Floating nav */
+            position: -webkit-sticky; /* Safari */
+            position: sticky;
+            height: 100vh;
+            overflow-y: auto;
         }
         .sidebar h2 {
             font-size: 1.2rem;
@@ -59,6 +64,25 @@
         .sidebar-menu > li {
             margin-bottom: 0.6em;
         }
+        .sidebar-parentcat {
+            display: block;
+            width: 100%;
+            background: var(--logo-green);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.08rem;
+            text-align: left;
+            padding: 0.5em 0.7em;
+            border-radius: 8px;
+            margin-bottom: 0.12em;
+            border: none;
+            cursor: default;
+            letter-spacing: 0.01em;
+            outline: none;
+            pointer-events: none;
+            box-shadow: none;
+            opacity: 1;
+        }
         .sidebar-link, .sidebar-sublink {
             display: block;
             width: 100%;
@@ -73,10 +97,11 @@
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
             text-decoration: none;
+            margin-bottom: 0.12em;
         }
         .sidebar-link.active,
         .sidebar-link:hover {
-            background: var(--logo-gold);
+            background: var(--accent);
             color: #fff;
         }
         .sidebar-submenu {
@@ -89,10 +114,11 @@
             font-size: 0.98rem;
             border-radius: 5px;
             padding: 0.34em 0.7em;
+            background: none;
         }
         .sidebar-sublink.active,
         .sidebar-sublink:hover {
-            background: var(--logo-green);
+            background: var(--logo-gold);
             color: #fff;
         }
         .sidebar-toggle-btn {
@@ -291,6 +317,25 @@
             .main-content {
                 padding: 0;
             }
+            .sidebar {
+                position: fixed;
+                left: -265px;
+                top: 0;
+                height: 100vh;
+                min-height: 100vh;
+                z-index: 2000;
+                transition: left 0.28s;
+            }
+            .sidebar.open {
+                left: 0;
+                box-shadow: 2px 0 15px rgba(60,90,54,0.14);
+            }
+            .sidebar-toggle-btn {
+                display: block;
+            }
+            .layout {
+                flex-direction: column;
+            }
         }
         /* Overlay for mobile menu */
         .sidebar-overlay {
@@ -355,7 +400,7 @@
             overlay.onclick = closeSidebar;
             // Also close sidebar on menu click (mobile)
             sidebar.onclick = function(e) {
-                if(window.innerWidth <= 950 && e.target.classList.contains('sidebar-link') || e.target.classList.contains('sidebar-sublink')) {
+                if(window.innerWidth <= 950 && (e.target.classList.contains('sidebar-link') || e.target.classList.contains('sidebar-sublink'))) {
                     closeSidebar();
                 }
             };
@@ -414,16 +459,10 @@
 
             Object.entries(categoryMap).forEach(([main, subcats]) => {
                 const mainLi = document.createElement('li');
-                // Main cat button
-                const mainBtn = document.createElement('button');
-                mainBtn.className = 'sidebar-link' + (currentMainCat === main && !currentSubCat ? ' active' : '');
+                // Parent cat is always non-selectable (styled as heading)
+                const mainBtn = document.createElement('div');
+                mainBtn.className = 'sidebar-parentcat';
                 mainBtn.textContent = main;
-                mainBtn.onclick = function(e) {
-                    e.preventDefault();
-                    currentMainCat = main;
-                    currentSubCat = '';
-                    renderProducts();
-                };
                 mainLi.appendChild(mainBtn);
 
                 // Subcats (expand all)
@@ -458,16 +497,12 @@
             let filtered = [];
             if (currentMainCat && currentSubCat) {
                 filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
-            } else if (currentMainCat && !currentSubCat) {
-                filtered = allProducts.filter(p => p.mainCat === currentMainCat && !p.subCat);
             }
 
             // Update sidebar active states
-            document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.sidebar-sublink').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.sidebar-menu > li').forEach(li => {
-                const btn = li.querySelector('.sidebar-link');
-                if(btn && btn.textContent === currentMainCat && !currentSubCat) btn.classList.add('active');
+                li.querySelectorAll('.sidebar-parentcat').forEach(btn => btn.classList.remove('active'));
             });
             document.querySelectorAll('.sidebar-submenu > li > .sidebar-sublink').forEach(btn => {
                 if(btn.parentElement.parentElement.previousSibling && btn.parentElement.parentElement.previousSibling.textContent === currentMainCat && btn.textContent === currentSubCat) btn.classList.add('active');
