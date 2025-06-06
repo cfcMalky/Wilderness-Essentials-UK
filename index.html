@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
-    <!-- Favicon: uses the same image as the page logo -->
     <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
     <style>
         :root {
@@ -225,8 +224,8 @@
             <div style="display:flex;justify-content:center;align-items:center;gap:1rem;">
                 <div class="dropdown" style="position:relative;">
                     <button class="category-btn" id="mainCatBtn">Category ▼</button>
-                    <div id="mainCatDropdown" style="display:none;position:absolute;left:0;top:110%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-radius:8px;min-width:140px;z-index:20;">
-                        <!-- Subcategories will be injected here -->
+                    <div id="mainCatDropdown" style="display:none;position:absolute;left:0;top:110%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);border-radius:8px;min-width:180px;z-index:20;">
+                        <!-- Main and subcategories will be injected here -->
                     </div>
                 </div>
             </div>
@@ -244,7 +243,6 @@
         <div class="products-grid" id="productsGrid"></div>
     </main>
     <script>
-        // ====== Using your provided API key =======
         const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
         const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
         const RANGE = "Sheet1";
@@ -297,21 +295,56 @@
                 mainCatDropdown.innerHTML = "<span style='padding:1em;display:block;'>No categories found.</span>";
                 return;
             }
-            currentMainCat = currentMainCat || mainCategories[0];
-            mainCatBtn.textContent = currentMainCat + ' ▼';
+            // Show selected main category on button
+            mainCatBtn.textContent = (currentMainCat || mainCategories[0]) + ' ▼';
+
+            // Build dropdown: main categories, divider, then subcategories
             mainCatDropdown.innerHTML = '';
+
+            // Main categories section
+            mainCategories.forEach(main => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.textContent = main;
+                btn.style.display = 'block';
+                btn.style.width = '100%';
+                btn.onclick = (ev) => {
+                    currentMainCat = main;
+                    currentSubCat = categoryMap[main][0];
+                    mainCatDropdown.style.display = 'none';
+                    populateMainCatDropdown();
+                    renderProducts();
+                    ev.stopPropagation();
+                };
+                mainCatDropdown.appendChild(btn);
+            });
+
+            // Divider if there are subcategories
+            if (categoryMap[currentMainCat] && categoryMap[currentMainCat].length > 0) {
+                const hr = document.createElement('hr');
+                hr.style.margin = "0.45em 0 0.3em 0";
+                mainCatDropdown.appendChild(hr);
+            }
+
+            // Subcategories section
             (categoryMap[currentMainCat] || []).forEach(sub => {
                 const btn = document.createElement('button');
                 btn.className = 'subcat-btn';
                 btn.textContent = sub;
-                btn.onclick = () => {
+                btn.onclick = (ev) => {
                     currentSubCat = sub;
-                    renderProducts();
                     mainCatDropdown.style.display = 'none';
+                    renderProducts();
+                    ev.stopPropagation();
                 };
                 mainCatDropdown.appendChild(btn);
             });
-            if (!currentSubCat || !categoryMap[currentMainCat].includes(currentSubCat)) {
+
+            // Set defaults if not already set
+            if (!currentMainCat || !categoryMap[currentMainCat]) {
+                currentMainCat = mainCategories[0];
+            }
+            if (!currentSubCat || !(categoryMap[currentMainCat] || []).includes(currentSubCat)) {
                 currentSubCat = categoryMap[currentMainCat][0];
             }
         }
@@ -326,47 +359,6 @@
                     mainCatDropdown.style.display = 'none';
                 }
             });
-            mainCatBtn.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                showMainCategoriesMenu(mainCatBtn);
-            });
-        }
-        function showMainCategoriesMenu(anchorBtn) {
-            const oldMenu = document.getElementById('mainCatMenu');
-            if (oldMenu) oldMenu.remove();
-            const mainCategories = Object.keys(categoryMap);
-            if (mainCategories.length <= 1) return;
-            const menu = document.createElement('div');
-            menu.id = 'mainCatMenu';
-            menu.style.position = 'absolute';
-            menu.style.top = '110%';
-            menu.style.left = '0';
-            menu.style.background = '#fff';
-            menu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-            menu.style.borderRadius = '8px';
-            menu.style.zIndex = 21;
-            menu.style.minWidth = '140px';
-            menu.style.padding = '0.5em 0';
-            mainCategories.forEach(main => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn';
-                btn.textContent = main;
-                btn.style.display = 'block';
-                btn.style.width = '100%';
-                btn.onclick = (ev) => {
-                    currentMainCat = main;
-                    btn.blur();
-                    menu.remove();
-                    populateMainCatDropdown();
-                    renderProducts();
-                    ev.stopPropagation();
-                };
-                menu.appendChild(btn);
-            });
-            anchorBtn.parentNode.appendChild(menu);
-            setTimeout(() => {
-                document.addEventListener('click', () => menu.remove(), { once: true });
-            }, 50);
         }
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
