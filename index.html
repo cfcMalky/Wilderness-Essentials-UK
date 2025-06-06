@@ -28,9 +28,27 @@
             color: var(--logo-brown);
             margin: 0;
         }
+        /* FLOATING BACKGROUND IMAGE */
+        .background-float {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') no-repeat right bottom;
+            background-size: cover;
+            opacity: 0.07;
+            /* The below blur and filter makes the bg less obtrusive */
+            filter: blur(0.5px) grayscale(0.3) brightness(1.1);
+        }
+
         .layout {
             display: flex;
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
         }
         .sidebar {
             width: 250px;
@@ -38,14 +56,11 @@
             border-right: 2px solid var(--logo-gold);
             padding: 2rem 1rem 1rem 1rem;
             box-shadow: 2px 0 14px rgba(60,90,54,0.08);
+            position: -webkit-sticky;
             position: sticky;
             top: 0;
             min-height: 100vh;
             z-index: 200;
-            transition: left 0.3s;
-            /* Floating nav */
-            position: -webkit-sticky; /* Safari */
-            position: sticky;
             height: 100vh;
             overflow-y: auto;
         }
@@ -209,6 +224,8 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
         }
         .products-grid {
             display: grid;
@@ -217,6 +234,15 @@
             align-items: stretch;
             justify-items: center;
         }
+        .product-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            max-width: 420px;
+            min-width: 0;
+            min-height: 430px;
+        }
         .product-card {
             background: #fff;
             border-radius: var(--border-radius);
@@ -224,14 +250,15 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 420px;
             min-width: 0;
             min-height: 430px;
             transition: box-shadow 0.24s, transform 0.18s;
             overflow: hidden;
             border: 1.5px solid #ece7e1;
+            position: relative;
+            cursor: pointer;
         }
-        .product-card:hover {
+        .product-card:hover, .product-card-link:focus .product-card {
             box-shadow: var(--card-shadow-hover);
             border-color: var(--logo-gold);
             transform: translateY(-5px) scale(1.012);
@@ -265,6 +292,7 @@
             flex-direction: column;
             justify-content: flex-start;
             min-height: 180px;
+            position: relative;
         }
         .product-title {
             font-size: 1.15rem;
@@ -307,10 +335,16 @@
             width: calc(100% - 2rem);
             box-sizing: border-box;
             letter-spacing: 0.01em;
+            position: relative;
+            z-index: 2;
         }
-        .more-info-btn:hover {
+        .more-info-btn:hover, .more-info-btn:focus {
             background: var(--accent);
             color: var(--logo-brown);
+        }
+        .product-card-link:focus .more-info-btn,
+        .product-card-link:active .more-info-btn {
+            outline: 2px solid var(--accent);
         }
         /* Hide sidebar by default on mobile */
         @media (max-width: 950px) {
@@ -353,6 +387,7 @@
     </style>
 </head>
 <body>
+    <div class="background-float" aria-hidden="true"></div>
     <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open menu">☰ Menu</button>
     <div class="layout">
         <nav class="sidebar" id="sidebar" aria-label="Categories"></nav>
@@ -398,13 +433,11 @@
             }
             toggle.onclick = openSidebar;
             overlay.onclick = closeSidebar;
-            // Also close sidebar on menu click (mobile)
             sidebar.onclick = function(e) {
                 if(window.innerWidth <= 950 && (e.target.classList.contains('sidebar-link') || e.target.classList.contains('sidebar-sublink'))) {
                     closeSidebar();
                 }
             };
-            // Close on resize (helpful if rotating device)
             window.addEventListener('resize', () => {
                 if(window.innerWidth > 950) closeSidebar();
             });
@@ -518,19 +551,47 @@
                 return;
             }
             filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div class="product-image-container">
-                        <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-title">${p.name}</div>
-                        <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-                        ${p.amazon_link ? `<a class="more-info-btn" href="${p.amazon_link}" target="_blank" rel="noopener">More Info</a>` : ''}
-                    </div>
-                `;
-                grid.appendChild(card);
+                // Make the entire card a hyperlink if amazon_link is present
+                if (p.amazon_link) {
+                    const cardLink = document.createElement('a');
+                    cardLink.className = "product-card-link";
+                    cardLink.href = p.amazon_link;
+                    cardLink.target = "_blank";
+                    cardLink.rel = "noopener";
+                    cardLink.tabIndex = 0;
+                    cardLink.innerHTML = `
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">${p.name}</div>
+                                <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                                <span class="more-info-btn" tabindex="0">More Info</span>
+                            </div>
+                        </div>
+                    `;
+                    // Prevent link from following if clicking the More Info button, allow keyboard accessibility
+                    cardLink.querySelector('.more-info-btn').addEventListener('click', e => {
+                        e.stopPropagation();
+                        window.open(p.amazon_link, "_blank");
+                    });
+                    grid.appendChild(cardLink);
+                } else {
+                    // No link: just render card
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <div class="product-image-container">
+                            <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
             });
         }
 
