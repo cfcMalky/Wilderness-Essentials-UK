@@ -28,7 +28,6 @@
             color: var(--logo-brown);
             margin: 0;
         }
-        /* NAVBAR STYLES */
         .navbar {
             background: #fff;
             box-shadow: 0 2px 10px rgba(60,90,54,0.07);
@@ -88,10 +87,9 @@
             flex-direction: column;
             gap: 0.23em;
         }
+        /* Hover activates dropdown on desktop */
         .nav-item:hover > .dropdown-menu,
-        .nav-item:focus-within > .dropdown-menu,
-        .nav-item.dropdown-open > .dropdown-menu,
-        .dropdown-menu.show {
+        .nav-item:focus-within > .dropdown-menu {
             display: flex;
         }
         .dropdown-link {
@@ -111,7 +109,6 @@
             background: var(--logo-green);
             color: #fff;
         }
-        /* Responsive adjustments */
         @media (max-width: 1000px) {
             .nav-list { gap: 0.55rem; }
             .navbar { padding-left: 0.2em; padding-right: 0.2em;}
@@ -275,13 +272,12 @@
             background: var(--accent);
             color: var(--logo-brown);
         }
-        /* Touch device dropdown override */
-        .touch-device .nav-item:hover > .dropdown-menu,
-        .touch-device .nav-item:focus-within > .dropdown-menu {
-            display: none;
-        }
-        .touch-device .nav-item.dropdown-open > .dropdown-menu {
-            display: flex;
+        /* Touch devices: force dropdown on click, not hover */
+        @media (hover: none) and (pointer: coarse) {
+            .nav-item:hover > .dropdown-menu,
+            .nav-item:focus-within > .dropdown-menu {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -307,11 +303,12 @@
         let currentMainCat = '';
         let currentSubCat = '';
 
-        function isTouchDevice() {
-            return (('ontouchstart' in window) ||
-                (navigator.maxTouchPoints > 0) ||
-                (navigator.msMaxTouchPoints > 0));
-        }
+        // --- NAV BEHAVIOUR ---
+        // No category is selected by default
+        // Clicking a main category with subs opens dropdown (on touch)
+        // Hovering a main category with subs opens dropdown (on desktop)
+        // Clicking a main category with no subs shows products
+        // Only when a subcategory is picked, products are shown for that subcategory
 
         async function fetchProducts() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -332,10 +329,7 @@
                 });
                 buildCategoryMap();
                 buildNavbar();
-                // Set default selection to first main/sub cat
-                if (!currentMainCat) currentMainCat = Object.keys(categoryMap)[0];
-                if (!currentSubCat) currentSubCat = (categoryMap[currentMainCat] && categoryMap[currentMainCat][0]) || '';
-                renderProducts();
+                renderProducts(); // Show all or none by default
             } catch (err) {
                 const grid = document.getElementById('productsGrid');
                 if (grid) {
@@ -369,9 +363,20 @@
 
                 if (subcats.length > 0) {
                     const navBtn = document.createElement('button');
-                    navBtn.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
+                    navBtn.className = 'nav-link';
                     navBtn.innerHTML = `${main} <span class="dropdown-arrow">▼</span>`;
                     navBtn.tabIndex = 0;
+
+                    // --- Touch device: open on click ---
+                    navBtn.addEventListener('click', function(e) {
+                        // Only on touch/click (not desktop hover)
+                        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+                            e.preventDefault();
+                            const currentlyOpen = navItem.classList.contains('show-dropdown');
+                            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => item.classList.remove('show-dropdown'));
+                            if (!currentlyOpen) navItem.classList.add('show-dropdown');
+                        }
+                    });
 
                     // Dropdown menu
                     const dropdownMenu = document.createElement('div');
@@ -392,28 +397,10 @@
 
                     navItem.appendChild(navBtn);
                     navItem.appendChild(dropdownMenu);
-
-                    // --- TOGGLE FOR TOUCH DEVICES ---
-                    navBtn.addEventListener('click', function(e) {
-                        if (document.body.classList.contains('touch-device')) {
-                            e.preventDefault();
-                            // toggle open state
-                            const open = navItem.classList.contains('dropdown-open');
-                            closeAllDropdowns();
-                            if (!open) navItem.classList.add('dropdown-open');
-                        }
-                    });
-
-                    // Keyboard accessibility (desktop)
-                    navBtn.addEventListener('keydown', e => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            dropdownMenu.classList.toggle('show');
-                        }
-                    });
                 } else {
+                    // No subcategories: go directly to products
                     const navLink = document.createElement('button');
-                    navLink.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
+                    navLink.className = 'nav-link';
                     navLink.textContent = main;
                     navLink.onclick = (e) => {
                         e.preventDefault();
@@ -428,27 +415,32 @@
             });
             navbar.appendChild(navList);
 
-            // --- CLOSE DROPDOWNS WHEN CLICK OUTSIDE ---
+            // Close dropdowns when clicking outside
             document.addEventListener('click', closeAllDropdowns);
-            navbar.addEventListener('click', e => e.stopPropagation()); // Don't close when clicking inside navbar
+            navbar.addEventListener('click', e => e.stopPropagation());
         }
 
         function closeAllDropdowns() {
-            document.querySelectorAll('.nav-item.dropdown-open').forEach(item => item.classList.remove('dropdown-open'));
-            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+            document.querySelectorAll('.nav-item.show-dropdown').forEach(item => item.classList.remove('show-dropdown'));
         }
 
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
-            let filtered = allProducts.filter(p => {
-                if (currentMainCat && currentSubCat) {
-                    return p.mainCat === currentMainCat && p.subCat === currentSubCat;
-                } else if (currentMainCat) {
-                    return p.mainCat === currentMainCat;
-                }
-                return true;
-            });
+
+            let filtered = [];
+            if (currentMainCat && currentSubCat) {
+                filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
+            } else if (currentMainCat && !currentSubCat) {
+                filtered = allProducts.filter(p => p.mainCat === currentMainCat && !p.subCat);
+            }
+
+            if (!currentMainCat && !currentSubCat) {
+                // No selection: show nothing
+                grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category above.</div>";
+                return;
+            }
+
             if (filtered.length === 0) {
                 grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
                 return;
@@ -468,22 +460,18 @@
                 `;
                 grid.appendChild(card);
             });
+
             // Update nav active states
             document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.dropdown-link').forEach(btn => btn.classList.remove('active'));
             let navMainBtns = Array.from(document.querySelectorAll('.nav-link'));
             let navSubBtns = Array.from(document.querySelectorAll('.dropdown-link'));
             navMainBtns.forEach(btn => {
-                if (btn.textContent.trim().replace('▼','').trim() === currentMainCat) btn.classList.add('active');
+                if (btn.textContent.trim().replace('▼','').trim() === currentMainCat && !currentSubCat) btn.classList.add('active');
             });
             navSubBtns.forEach(btn => {
                 if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
             });
-        }
-
-        // --- DETECT TOUCH DEVICE AND SET CLASS ---
-        if (isTouchDevice()) {
-            document.body.classList.add('touch-device');
         }
 
         fetchProducts();
