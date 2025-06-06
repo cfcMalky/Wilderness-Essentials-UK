@@ -27,8 +27,8 @@
             background: var(--bg-pastel);
             color: var(--logo-brown);
             margin: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
-        /* FLOATING BACKGROUND IMAGE */
         .background-float {
             position: fixed;
             right: 0;
@@ -40,10 +40,8 @@
             background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') no-repeat right bottom;
             background-size: cover;
             opacity: 0.07;
-            /* The below blur and filter makes the bg less obtrusive */
             filter: blur(0.5px) grayscale(0.3) brightness(1.1);
         }
-
         .layout {
             display: flex;
             min-height: 100vh;
@@ -56,13 +54,13 @@
             border-right: 2px solid var(--logo-gold);
             padding: 2rem 1rem 1rem 1rem;
             box-shadow: 2px 0 14px rgba(60,90,54,0.08);
-            position: -webkit-sticky;
             position: sticky;
             top: 0;
             min-height: 100vh;
             z-index: 200;
             height: 100vh;
             overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scroll in sidebar */
         }
         .sidebar h2 {
             font-size: 1.2rem;
@@ -97,6 +95,8 @@
             pointer-events: none;
             box-shadow: none;
             opacity: 1;
+            white-space: normal; /* Allow wrapping of long names */
+            overflow: visible;
         }
         .sidebar-link, .sidebar-sublink {
             display: block;
@@ -113,6 +113,8 @@
             transition: background 0.18s, color 0.18s;
             text-decoration: none;
             margin-bottom: 0.12em;
+            white-space: normal; /* Allow wrapping */
+            overflow: visible;
         }
         .sidebar-link.active,
         .sidebar-link:hover {
@@ -130,6 +132,7 @@
             border-radius: 5px;
             padding: 0.34em 0.7em;
             background: none;
+            white-space: normal;
         }
         .sidebar-sublink.active,
         .sidebar-sublink:hover {
