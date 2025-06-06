@@ -90,6 +90,7 @@
         }
         .nav-item:hover > .dropdown-menu,
         .nav-item:focus-within > .dropdown-menu,
+        .nav-item.dropdown-open > .dropdown-menu,
         .dropdown-menu.show {
             display: flex;
         }
@@ -274,6 +275,14 @@
             background: var(--accent);
             color: var(--logo-brown);
         }
+        /* Touch device dropdown override */
+        .touch-device .nav-item:hover > .dropdown-menu,
+        .touch-device .nav-item:focus-within > .dropdown-menu {
+            display: none;
+        }
+        .touch-device .nav-item.dropdown-open > .dropdown-menu {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -297,6 +306,12 @@
         let categoryMap = {};
         let currentMainCat = '';
         let currentSubCat = '';
+
+        function isTouchDevice() {
+            return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints > 0));
+        }
 
         async function fetchProducts() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -352,23 +367,11 @@
                 const navItem = document.createElement('li');
                 navItem.className = 'nav-item';
 
-                // If there are subcategories, make dropdown
                 if (subcats.length > 0) {
                     const navBtn = document.createElement('button');
                     navBtn.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
                     navBtn.innerHTML = `${main} <span class="dropdown-arrow">▼</span>`;
                     navBtn.tabIndex = 0;
-                    navBtn.onclick = (e) => {
-                        e.preventDefault();
-                        if(currentMainCat !== main) {
-                            currentMainCat = main;
-                            currentSubCat = subcats[0];
-                            renderProducts();
-                        }
-                        // Show dropdown on click for mobile
-                        closeAllDropdowns();
-                        navItem.querySelector('.dropdown-menu').classList.toggle('show');
-                    };
 
                     // Dropdown menu
                     const dropdownMenu = document.createElement('div');
@@ -390,7 +393,18 @@
                     navItem.appendChild(navBtn);
                     navItem.appendChild(dropdownMenu);
 
-                    // Keyboard accessibility
+                    // --- TOGGLE FOR TOUCH DEVICES ---
+                    navBtn.addEventListener('click', function(e) {
+                        if (document.body.classList.contains('touch-device')) {
+                            e.preventDefault();
+                            // toggle open state
+                            const open = navItem.classList.contains('dropdown-open');
+                            closeAllDropdowns();
+                            if (!open) navItem.classList.add('dropdown-open');
+                        }
+                    });
+
+                    // Keyboard accessibility (desktop)
                     navBtn.addEventListener('keydown', e => {
                         if (e.key === "Enter" || e.key === " ") {
                             e.preventDefault();
@@ -398,7 +412,6 @@
                         }
                     });
                 } else {
-                    // No subcats: direct link
                     const navLink = document.createElement('button');
                     navLink.className = 'nav-link' + (currentMainCat === main ? ' active' : '');
                     navLink.textContent = main;
@@ -415,12 +428,13 @@
             });
             navbar.appendChild(navList);
 
-            // Close dropdowns if click outside
+            // --- CLOSE DROPDOWNS WHEN CLICK OUTSIDE ---
             document.addEventListener('click', closeAllDropdowns);
             navbar.addEventListener('click', e => e.stopPropagation()); // Don't close when clicking inside navbar
         }
 
         function closeAllDropdowns() {
+            document.querySelectorAll('.nav-item.dropdown-open').forEach(item => item.classList.remove('dropdown-open'));
             document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
         }
 
@@ -465,6 +479,11 @@
             navSubBtns.forEach(btn => {
                 if (btn.textContent.trim() === currentSubCat) btn.classList.add('active');
             });
+        }
+
+        // --- DETECT TOUCH DEVICE AND SET CLASS ---
+        if (isTouchDevice()) {
+            document.body.classList.add('touch-device');
         }
 
         fetchProducts();
