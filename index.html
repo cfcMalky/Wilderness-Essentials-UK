@@ -360,7 +360,6 @@
             color: var(--logo-green);
             font-weight: 700;
             letter-spacing: 0.02em;
-            /* Underline effect */
             border-bottom: 4px solid var(--logo-gold);
             display: inline-block;
             line-height: 1.2;
@@ -387,8 +386,17 @@
             padding: 1.1rem 1.5rem 1.1rem 1.5rem;
             box-shadow: 0 1px 7px rgba(201,161,74,0.06);
         }
-        .site-logo {
-            display: none !important;
+        .outstanding-content-block {
+            max-width: 670px;
+            margin: 2.5rem auto;
+            background: #f5f7eb;
+            border-radius: 14px;
+            box-shadow: 0 1px 7px rgba(60,90,54,0.09);
+            padding: 2rem 2rem 2rem 2rem;
+            color: #2d3c1e;
+            font-size: 1.14rem;
+            text-align: left;
+            border-left: 7px solid var(--logo-gold);
         }
         .container {
             max-width: 1400px;
@@ -403,18 +411,6 @@
             gap: 2.5rem 2rem;
             align-items: stretch;
             justify-items: center;
-        }
-        .outstanding-content-block {
-            max-width: 670px;
-            margin: 2.5rem auto;
-            background: #f5f7eb;
-            border-radius: 14px;
-            box-shadow: 0 1px 7px rgba(60,90,54,0.09);
-            padding: 2rem 2rem 2rem 2rem;
-            color: #2d3c1e;
-            font-size: 1.14rem;
-            text-align: left;
-            border-left: 7px solid var(--logo-gold);
         }
         .product-card-link {
             text-decoration: none;
@@ -543,22 +539,23 @@
             <header>
                 <div id="heroCarousel" class="hero-carousel-container"></div>
                 <h1>Wilderness Essentials UK</h1>
+            </header>
+            <div id="homepageContent">
                 <div class="site-tagline">
                     Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
                     From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
                 </div>
-            </header>
-            <!-- Outstanding content block for relevant info, tips, inspiration -->
-            <div class="outstanding-content-block">
-                <strong>Adventure Tips & Inspiration</strong><br>
-                <ul style="margin-top:0.7em;">
-                    <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
-                    <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
-                    <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
-                    <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
-                </ul>
-                <div style="margin-top:1.3em; font-size:1.07em; color:#47613a; font-style:italic;">
-                    “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+                <div class="outstanding-content-block">
+                    <strong>Adventure Tips & Inspiration</strong><br>
+                    <ul style="margin-top:0.7em;">
+                        <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
+                        <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
+                        <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
+                        <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
+                    </ul>
+                    <div style="margin-top:1.3em; font-size:1.07em; color:#47613a; font-style:italic;">
+                        “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+                    </div>
                 </div>
             </div>
             <main class="container">
@@ -788,13 +785,19 @@
 
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-
-            let filtered = [];
-            if (currentMainCat && currentSubCat) {
-                filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
+            const homepageContent = document.getElementById('homepageContent');
+            // Home page: show welcome/tips if nothing selected
+            if (!currentMainCat && !currentSubCat) {
+                homepageContent.style.display = "";
+                grid.style.display = "none";
+                grid.innerHTML = "";
+                return;
             }
-
+            // Category selected: hide welcome/tips, show products
+            homepageContent.style.display = "none";
+            grid.style.display = "";
+            grid.innerHTML = '';
+            let filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
             document.querySelectorAll('.sidebar-sublink').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.sidebar-menu > li').forEach(li => {
                 li.querySelectorAll('.sidebar-parentcat').forEach(btn => btn.classList.remove('active'));
@@ -802,16 +805,6 @@
             document.querySelectorAll('.sidebar-submenu > li > .sidebar-sublink').forEach(btn => {
                 if(btn.parentElement.parentElement.previousSibling && btn.parentElement.parentElement.previousSibling.textContent === currentMainCat && btn.textContent === currentSubCat) btn.classList.add('active');
             });
-
-            // REMOVE the prompt about "Please select a category on the left."
-            // if (!currentMainCat && !currentSubCat) {
-            //     grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>Please select a category on the left.</div>";
-            //     return;
-            // }
-
-            if (!currentMainCat && !currentSubCat) {
-                return;
-            }
 
             if (filtered.length === 0) {
                 grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
