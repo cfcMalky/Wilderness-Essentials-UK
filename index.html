@@ -199,7 +199,7 @@
                 const [headers, ...rows] = data.values;
                 allProducts = rows.map(row => {
                     const p = {};
-                    headers.forEach((h, i) => p[h] = row[i] || "";
+                    headers.forEach((h, i) => p[h] = row[i] || "");
                     let [main, sub] = (p.category || '').split('>').map(x => x.trim());
                     p.mainCat = main || '';
                     p.subCat = sub || '';
