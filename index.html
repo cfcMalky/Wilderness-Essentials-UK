@@ -54,24 +54,30 @@
       height: 100vh;
     }
     .sidebar {
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 250px;
       background: #fff;
       border-right: 2px solid var(--logo-gold);
-      padding: 2rem 1rem 1rem 1rem;
       box-shadow: 2px 0 14px rgba(60,90,54,0.08);
+      position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
       height: 100vh;
+      z-index: 200;
+      padding: 2rem 1rem 1rem 1rem;
+      overflow: hidden; /* prevents double scrollbars */
+    }
+    .sidebar-content {
+      width: 100%;
+      flex: 1 1 auto;
       overflow-y: auto;
       overflow-x: hidden;
-      z-index: 200;
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* Remove large bottom padding. */
-      padding-bottom: 1rem;
     }
     .sidebar-logo {
       display: block;
@@ -193,9 +199,6 @@
       box-shadow: 0 2px 8px rgba(60,90,54,0.10);
     }
     .sidebar-disclaimer {
-      position: absolute;
-      left: 0;
-      bottom: 0;
       width: 100%;
       font-size: 0.95em;
       color: #6b4a2b;
@@ -212,6 +215,7 @@
       overflow-wrap: break-word;
       word-break: break-word;
       z-index: 10;
+      flex-shrink: 0;
     }
     @media (max-width: 950px) {
       .sidebar {
@@ -634,10 +638,12 @@
   <button id="sidebarToggle" class="sidebar-toggle-btn" aria-label="Open menu">☰ Menu</button>
   <div class="layout">
     <nav class="sidebar" id="sidebar" aria-label="Categories">
-      <a href="#" id="logoHomeLink">
-        <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
-      </a>
-      <ul class="sidebar-menu"></ul>
+      <div class="sidebar-content">
+        <a href="#" id="logoHomeLink">
+          <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
+        </a>
+        <ul class="sidebar-menu"></ul>
+      </div>
       <div class="sidebar-disclaimer">
         <strong>Disclaimer:</strong> This site contains affiliate links. If you make a purchase after clicking a link, we may receive a small commission at no extra cost to you. As an Amazon Associate, we earn from qualifying purchases. Thank you for supporting Wilderness Essentials UK!
       </div>
