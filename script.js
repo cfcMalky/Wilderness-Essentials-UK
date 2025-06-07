@@ -27,6 +27,7 @@ async function fetchProductsFromSheet() {
   sheetReady = true;
 }
 
+// --- NAV STRUCTURE ---
 function buildNavStructure() {
   navStructure = {};
   for (const prod of allProducts) {
@@ -36,7 +37,7 @@ function buildNavStructure() {
   }
 }
 
-// --- NEW MEGAMENU BAR (No home button, no logo, only categories) ---
+// --- DESKTOP MEGAMENU BUILD ---
 function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
@@ -125,13 +126,61 @@ function closeAllMegamenus() {
   });
 }
 
-// --- MOBILE NAV: Hamburger toggle ---
+// --- MOBILE NAV: Hamburger toggle & Nested Menu ---
+function buildMobileNavMenu() {
+  const megabarMenu = document.getElementById('megabarMenu');
+  megabarMenu.innerHTML = '';
+  Object.entries(navStructure).forEach(([mainCat, subCats]) => {
+    const li = document.createElement('li');
+    li.className = "mobile-maincat";
+    const btn = document.createElement('button');
+    btn.className = 'megabar-link';
+    btn.type = 'button';
+    btn.textContent = mainCat;
+    // Expand/collapse subcategories
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      const expanded = li.classList.toggle('expanded');
+      // Close others
+      if (expanded) {
+        document.querySelectorAll('.mobile-maincat.expanded').forEach(otherLi => {
+          if (otherLi !== li) otherLi.classList.remove('expanded');
+        });
+      }
+    };
+    li.appendChild(btn);
+
+    // Subcat list
+    if (subCats.length) {
+      const subUl = document.createElement('ul');
+      subUl.className = 'mobile-subcat-list';
+      subCats.forEach(subCat => {
+        const subLi = document.createElement('li');
+        const subBtn = document.createElement('button');
+        subBtn.type = "button";
+        subBtn.className = "megabar-link";
+        subBtn.textContent = subCat;
+        subBtn.onclick = function(e) {
+          e.stopPropagation();
+          selectCategoryByPath(`${mainCat} > ${subCat}`);
+          closeMobileMenu();
+        };
+        subLi.appendChild(subBtn);
+        subUl.appendChild(subLi);
+      });
+      li.appendChild(subUl);
+    }
+    megabarMenu.appendChild(li);
+  });
+}
+
 function setupMobileNav() {
   const hamburger = document.getElementById('hamburger');
   const megabar = document.getElementById('megabar');
   const overlay = document.getElementById('megabarOverlay');
 
   function openMenu() {
+    if (window.innerWidth <= 900) buildMobileNavMenu();
     megabar.classList.add('open');
     hamburger.classList.add('active');
     hamburger.setAttribute('aria-expanded', 'true');
@@ -145,25 +194,15 @@ function setupMobileNav() {
     overlay.classList.remove('open');
     document.body.style.overflow = '';
   }
-
   hamburger.addEventListener('click', function() {
-    if (megabar.classList.contains('open')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
+    if (megabar.classList.contains('open')) closeMenu();
+    else openMenu();
   });
-
   overlay.addEventListener('click', closeMenu);
-
-  // Allow close menu from elsewhere in JS
   window.closeMobileMenu = closeMenu;
-
-  // Close nav on window resize if desktop
   window.addEventListener('resize', function() {
-    if (window.innerWidth > 900) {
-      closeMenu();
-    }
+    if (window.innerWidth > 900) closeMenu();
+    if (window.innerWidth <= 900 && megabar.classList.contains('open')) buildMobileNavMenu();
   });
 }
 
@@ -327,4 +366,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   setupMobileNav();
   buildHeroCarouselFromSheet();
   showHome();
+  // Build mobile menu if mobile
+  if (window.innerWidth <= 900) buildMobileNavMenu();
 });
