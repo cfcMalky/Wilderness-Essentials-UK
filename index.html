@@ -413,6 +413,17 @@
       font-style: italic;
       text-align: center;
       line-height: 1.6;
+      position: relative;
+    }
+    #subcategory-title {
+      margin-top: 0.3em;
+      font-weight: 900;
+      color: #c9a14a;
+      font-size: 1.26rem;
+      min-height: 1.2em;
+      line-height: 1.2;
+      text-align: center;
+      display: none;
     }
     .site-intro {
       color: #6b4a2b;
@@ -606,7 +617,10 @@
       <header>
         <div id="heroCarousel" class="hero-carousel-container"></div>
         <span class="page-title">Wilderness Essentials UK</span>
-        <div class="site-tagline">Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.</div>
+        <div class="site-tagline">
+          Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.
+          <div id="subcategory-title"></div>
+        </div>
       </header>
       <div id="homepageContent">
         <div class="site-intro">
@@ -862,9 +876,21 @@
       resetTimer();
     }
 
+    function updateSubcategoryTitle() {
+      const el = document.getElementById('subcategory-title');
+      if (currentSubCat) {
+        el.textContent = currentSubCat;
+        el.style.display = '';
+      } else {
+        el.textContent = '';
+        el.style.display = 'none';
+      }
+    }
+
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
       const homepageContent = document.getElementById('homepageContent');
+      updateSubcategoryTitle();
       // Home page: show welcome/tips if nothing selected
       if (!currentMainCat && !currentSubCat) {
         homepageContent.style.display = "";
@@ -947,6 +973,7 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
+      updateSubcategoryTitle();
     });
   </script>
 </body>
