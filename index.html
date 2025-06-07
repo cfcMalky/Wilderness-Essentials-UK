@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wilderness Essentials UK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- FLOATING CAMPING BG IMAGE -->
+  <div class="camping-bg"></div>
+  <header>
+    <div class="center-logo">
+      <a href="#" id="homeLogoLink" aria-label="Home">
+        <img src="logo.jpg" alt="Wilderness Essentials Logo" class="logo-img">
+      </a>
+    </div>
+    <div class="page-title">Wilderness Essentials UK</div>
+    <div class="site-tagline">
+      Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.
+    </div>
+  </header>
+  <!-- GREEN MEGABAR: No logo or home button here, only categories -->
+  <nav class="megabar" id="megabar">
+    <ul class="megabar-menu" id="megabarMenu"></ul>
+  </nav>
+  <!-- HERO CAROUSEL (always visible) -->
+  <div class="hero-carousel-container" id="heroCarousel"></div>
+  <!-- SITE INTRO (home only) -->
+  <div class="site-intro" id="siteIntro">
+    Embark on your next adventure with confidence, knowing you have the best gear. At Wilderness Essentials UK, we meticulously research and compile the hottest selling and top-rated camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
+    We cut through the noise to bring you unbiased insights and direct links to products adventurers trust. From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, discover everything you need to thrive in the British wilderness. Explore our curated selections and confidently equip your next unforgettable outdoor experience.
+  </div>
+  <!-- TIPS BLOCK (home only) -->
+  <div class="outstanding-content-block" id="tipsBlock">
+    <strong>Adventure Tips & Inspiration</strong><br>
+    <ul style="margin-top:0.7em;">
+      <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
+      <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
+      <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
+      <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
+    </ul>
+    <div style="margin-top:1.3em; font-size:1.05em; color:#47613a; font-style:italic;">
+      “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+    </div>
+  </div>
+  <!-- CATEGORY TITLE & PRODUCTS GRID (not home) -->
+  <div id="categorySection" class="category-section" style="display:none;">
+    <div class="products-section-title" id="productsSectionTitle"></div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+  <!-- DISCLAIMER BAR -->
+  <div class="disclaimer-bar">
+    As an Amazon Associate, we earn from qualifying purchases. This site may earn a commission on sales at no extra cost to you.
+  </div>
+  <footer class="main-footer">
+    2025 Wilderness Essentials UK © All Rights Reserved.
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
