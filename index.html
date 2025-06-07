@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Wilderness Essentials UK | Best Camping Gear 2024</title>
+  <title>Wilderness Essentials UK: Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
@@ -74,13 +74,14 @@
     .sidebar-logo {
       display: block;
       margin: 0 0 2rem 0;
-      width: auto;
-      max-width: 220px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       height: auto;
-      max-height: 80px;
+      max-height: 120px;
       border-radius: 14px;
       background: #fff;
-      padding: 10px;
+      padding: 0;
       box-shadow: 0 2px 8px rgba(60,90,54,0.07);
       object-fit: contain;
       transition: box-shadow 0.2s;
@@ -91,9 +92,7 @@
     }
     @media (max-width: 600px) {
       .sidebar-logo {
-        max-width: 140px;
         max-height: 54px;
-        padding: 6px;
       }
     }
     .sidebar-menu,
@@ -403,8 +402,21 @@
     }
     .site-tagline {
       color: #6b4a2b;
-      font-size: 1.12rem;
-      margin: 0.6rem auto 0 auto;
+      font-size: 1.24rem;
+      max-width: 670px;
+      margin: 0.7rem auto 0.7rem auto;
+      background: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .site-intro {
+      color: #6b4a2b;
+      font-size: 1.13rem;
+      margin: 0.5rem auto 0 auto;
       width: 670px;
       max-width: 98vw;
       line-height: 1.7;
@@ -593,11 +605,13 @@
       <header>
         <div id="heroCarousel" class="hero-carousel-container"></div>
         <span class="page-title">Wilderness Essentials UK</span>
+        <div class="site-tagline">Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.</div>
       </header>
       <div id="homepageContent">
-        <div class="site-tagline">
-          Embark on your next adventure with confidence, equipped by Wilderness Essentials UK. We offer a meticulously curated selection of high-quality camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
-          From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, find everything you need to thrive in the British wilderness. Explore our range designed for durability, performance, and unforgettable outdoor experiences.
+        <div class="site-intro">
+          Embark on your next adventure with confidence, knowing you have the best gear. At Wilderness Essentials UK, we meticulously research and compile the hottest selling and top-rated camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.
+          <br><br>
+          We cut through the noise to bring you unbiased insights and direct links to products adventurers trust. From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, discover everything you need to thrive in the British wilderness. Explore our curated selections and confidently equip your next unforgettable outdoor experience.
         </div>
         <div class="outstanding-content-block">
           <strong>Adventure Tips & Inspiration</strong><br>
@@ -664,7 +678,7 @@
         const [headers, ...rows] = data.values;
         allProducts = rows.map(row => {
           const p = {};
-          headers.forEach((h, i) => p[h] = row[i] || "");
+          headers.forEach((h, i) => p[h] = row[i] || "";
           let [main, sub] = (p.category || '').split('>').map(x => x.trim());
           if (sub && subcatTitles[sub]) sub = subcatTitles[sub];
           p.mainCat = main || '';
