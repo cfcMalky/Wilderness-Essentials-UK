@@ -425,11 +425,24 @@
       text-align: center;
       display: none;
     }
+    /* --- (3) Stretch blocks to carousel width --- */
+    .site-intro,
+    .outstanding-content-block {
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 1200px) {
+      .site-intro,
+      .outstanding-content-block {
+        max-width: 98vw;
+      }
+    }
     .site-intro {
       color: #6b4a2b;
       font-size: 1.13rem;
       margin: 0.5rem auto 0 auto;
-      width: 670px;
+      /* width: 670px; -- REMOVED so it stretches with max-width above */
       max-width: 98vw;
       line-height: 1.7;
       background: #fff8ee;
@@ -439,7 +452,7 @@
       text-align: left;
     }
     .outstanding-content-block {
-      max-width: 670px;
+      /* max-width: 670px; -- REMOVED so it stretches with max-width above */
       margin: 2.2rem auto;
       background: #f5f7eb;
       border-radius: 14px;
@@ -600,6 +613,30 @@
       font-size: 1.15rem;
       box-shadow: 0 1px 6px #a004;
     }
+    /* --- (2) Affiliate disclaimer --- */
+    .affiliate-disclaimer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      background: #222;
+      color: #fff;
+      text-align: center;
+      padding: 9px 0 7px 0;
+      z-index: 9999;
+      font-size: 15px;
+      opacity: 0.97;
+      letter-spacing: 0.01em;
+      font-family: inherit;
+      pointer-events: none;
+      /* pointer-events: auto; if you want links clickable */
+    }
+    @media (max-width: 700px) {
+      .affiliate-disclaimer {
+        font-size: 13px;
+        padding: 8px 0 6px 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -646,6 +683,10 @@
       </main>
       <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">2025 Wilderness Essentials UK © All Rights Reserved.</p>
     </div>
+  </div>
+  <!-- (2) Affiliate disclaimer -->
+  <div class="affiliate-disclaimer">
+    As an Amazon Associate, we earn from qualifying purchases. This site may earn a commission on sales at no extra cost to you.
   </div>
   <script>
     const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
@@ -876,10 +917,11 @@
       resetTimer();
     }
 
+    // (1) Only show subcategory if both main and subcategory are selected
     function updateSubcategoryTitle() {
       const el = document.getElementById('subcategory-title');
       if (currentMainCat && currentSubCat) {
-        el.textContent = currentMainCat + " > " + currentSubCat;
+        el.textContent = currentSubCat; // Only subCat displayed
         el.style.display = '';
       } else if (currentMainCat) {
         el.textContent = currentMainCat;
