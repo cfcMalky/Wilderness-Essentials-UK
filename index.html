@@ -414,12 +414,29 @@
       text-align: center;
       line-height: 1.6;
     }
+
+    /* ---- Make intro/tips as wide as carousel ---- */
+    .site-intro,
+    .outstanding-content-block {
+      max-width: 1100px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 2rem;
+      box-sizing: border-box;
+    }
+    .site-intro {
+      margin-top: 2rem;
+    }
+    .outstanding-content-block {
+      margin-top: 0;
+    }
+    /* -------------------------------------------- */
+
     .site-intro {
       color: #6b4a2b;
       font-size: 1.13rem;
-      margin: 0.5rem auto 0 auto;
-      width: 670px;
-      max-width: 98vw;
+      /* width & max-width overridden above */
       line-height: 1.7;
       background: #fff8ee;
       border-radius: 13px;
@@ -428,8 +445,7 @@
       text-align: left;
     }
     .outstanding-content-block {
-      max-width: 670px;
-      margin: 2.2rem auto;
+      /* max-width & width overridden above */
       background: #f5f7eb;
       border-radius: 14px;
       box-shadow: 0 1px 7px rgba(60,90,54,0.09);
