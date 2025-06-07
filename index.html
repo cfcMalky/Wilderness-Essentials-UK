@@ -7,116 +7,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
   <style>
-    :root {
-      --logo-green: #3c5a36;
-      --logo-brown: #6b4a2b;
-      --logo-gold: #c9a14a;
-      --primary: #3c5a36;
-      --secondary: #6b4a2b;
-      --accent: #c9a14a;
-      --bg-pastel: #f6f7f2;
-      --header-text: #3c5a36;
-      --card-shadow: 0 8px 32px rgba(60,90,54,0.09), 0 1.5px 6px rgba(105,74,43,0.08);
-      --card-shadow-hover: 0 12px 36px rgba(60,90,54,0.13), 0 4px 16px rgba(105,74,43,0.12);
-      --border-radius: 18px;
-    }
-    html, body {
-      font-size: 16px;
-      height: 100%;
-      min-height: 100%;
-    }
-    body {
-      font-family: 'Quicksand', 'Segoe UI', Arial, Verdana, sans-serif;
-      background: var(--bg-pastel);
-      color: var(--logo-brown);
-      margin: 0;
-      overflow-x: hidden;
-      height: 100%;
-    }
-    .background-float {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      top: 0;
-      left: 0;
-      z-index: 0;
-      pointer-events: none;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') no-repeat right bottom;
-      background-size: cover;
-      opacity: 0.12;
-      filter: blur(0.5px) grayscale(0.3) brightness(1.1);
-    }
-    .layout {
-      display: flex;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-      height: 100vh;
-    }
-    .sidebar { /* ... unchanged ... */ }
-    .sidebar-logo { /* ... unchanged ... */ }
-    /* ... all sidebar, carousel, header, grid, card styles unchanged ... */
-
-    .main-content {
-      flex: 1 1 auto;
-      padding: 0;
-      margin-left: 250px;
+    /* ... Your other styles ... */
+    .sidebar-logo {
+      display: block;
+      width: 100%;
+      max-width: 100%;
       min-width: 0;
-    }
-
-    /* --- Make .site-intro and .outstanding-content-block same width --- */
-    .site-intro,
-    .outstanding-content-block {
-      max-width: 670px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .site-intro {
-      color: #6b4a2b;
-      font-size: 1.13rem;
-      margin: 0.5rem auto 0 auto;
-      line-height: 1.7;
-      background: #fff8ee;
-      border-radius: 13px;
-      padding: 1.1rem 1.5rem;
-      box-shadow: 0 1px 7px rgba(201,161,74,0.06);
-      text-align: left;
-    }
-    .outstanding-content-block {
-      margin: 2.2rem auto;
-      background: #f5f7eb;
+      height: auto;
+      max-height: 180px;
+      object-fit: contain;
       border-radius: 14px;
-      box-shadow: 0 1px 7px rgba(60,90,54,0.09);
-      padding: 2rem;
-      color: #2d3c1e;
-      font-size: 1.14rem;
-      text-align: left;
-      border-left: 7px solid #c9a14a;
+      background: #fff;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(60,90,54,0.07);
+      transition: box-shadow 0.2s;
     }
-
-    /* (3) Style for subcategory/category title above product grid */
-    .products-section-title {
-      max-width: 1100px;
-      margin: 2rem auto 1.2rem auto;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--logo-gold);
-      letter-spacing: 0.01em;
-      line-height: 1.2;
-      display: none;
+    @media (max-width: 600px) {
+      .sidebar-logo {
+        max-height: 54px;
+        height: 54px;
+      }
     }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      position: relative;
-      z-index: 1;
+    /* Sidebar still needs to be visible on desktop and mobile */
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 2px solid #c9a14a;
+      padding: 2rem 1rem 1rem 1rem;
+      box-shadow: 2px 0 14px rgba(60,90,54,0.08);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    /* ... rest of your grid/card styles unchanged ... */
+    /* ... (rest of sidebar/menu styles) ... */
 
-    /* (2) Affiliate disclaimer --- */
+    /* Hero carousel and nav styles must be present, see previous answers */
+
+    /* Affiliate disclaimer must be fixed */
     .affiliate-disclaimer {
       position: fixed;
       bottom: 0;
@@ -160,149 +95,53 @@
           Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.
         </div>
       </header>
+      <!-- ... rest of your content ... -->
       <div id="homepageContent">
         <div class="site-intro">
-          Embark on your next adventure with confidence, knowing you have the best gear. At Wilderness Essentials UK, we meticulously research and compile the hottest selling and top-rated camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
-          We cut through the noise to bring you unbiased insights and direct links to products adventurers trust. From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, discover everything you need to thrive in the British wilderness. Explore our curated selections and confidently equip your next unforgettable outdoor experience.
+          <!-- intro text ... -->
         </div>
         <div class="outstanding-content-block">
-          <strong>Adventure Tips & Inspiration</strong><br>
-          <ul style="margin-top:0.7em;">
-            <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
-            <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
-            <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
-            <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
-          </ul>
-          <div style="margin-top:1.3em; font-size:1.07em; color:#47613a; font-style:italic;">
-            “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
-          </div>
+          <!-- tips ... -->
         </div>
       </div>
-      <div id="fetchError" class="fetch-error" style="display:none;"></div>
-      <main class="container">
-        <div id="products-section-title" class="products-section-title"></div>
-        <div class="products-grid" id="productsGrid"></div>
-      </main>
-      <p style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">2025 Wilderness Essentials UK © All Rights Reserved.</p>
+      <!-- ... -->
     </div>
   </div>
-  <!-- (2) Affiliate disclaimer -->
   <div class="affiliate-disclaimer">
     As an Amazon Associate, we earn from qualifying purchases. This site may earn a commission on sales at no extra cost to you.
   </div>
   <script>
-    // ... All your JS up to updateSubcategoryTitle() unchanged ...
-
-    // (3) Show category/subcategory title above grid, not just in header
-    function updateSubcategoryTitle() {
-      const el = document.getElementById('products-section-title');
-      if (currentMainCat && currentSubCat) {
-        el.textContent = currentSubCat;
-        el.style.display = '';
-      } else if (currentMainCat) {
-        el.textContent = currentMainCat;
-        el.style.display = '';
-      } else if (currentSubCat) {
-        el.textContent = currentSubCat;
-        el.style.display = '';
-      } else {
-        el.textContent = '';
-        el.style.display = 'none';
+    // Make sure ALL JS functions are present!
+    // JS must define setupSidebarToggle before it's called!
+    // Place the script at the end of body so all DOM elements exist
+    function setupSidebarToggle() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggle = document.getElementById('sidebarToggle');
+      function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
       }
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById('productsGrid');
-      const homepageContent = document.getElementById('homepageContent');
-      updateSubcategoryTitle();
-      // Home page: show welcome/tips if nothing selected
-      if (!currentMainCat && !currentSubCat) {
-        homepageContent.style.display = "";
-        grid.style.display = "none";
-        document.getElementById('products-section-title').style.display = 'none';
-        grid.innerHTML = "";
-        return;
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
       }
-      // Category selected: hide welcome/tips, show products
-      homepageContent.style.display = "none";
-      grid.style.display = "";
-      grid.innerHTML = '';
-      // products-section-title display handled by updateSubcategoryTitle()
-
-      let filtered = allProducts.filter(p => p.mainCat === currentMainCat && p.subCat === currentSubCat);
-      document.querySelectorAll('.sidebar-sublink').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.sidebar-menu > li').forEach(li => {
-        li.querySelectorAll('.sidebar-parentcat').forEach(btn => btn.classList.remove('active'));
-      });
-      document.querySelectorAll('.sidebar-submenu > li > .sidebar-sublink').forEach(btn => {
-        if(btn.parentElement.parentElement.previousSibling && btn.parentElement.parentElement.previousSibling.textContent === currentMainCat && btn.textContent === currentSubCat) btn.classList.add('active');
-      });
-
-      if (filtered.length === 0) {
-        grid.innerHTML = "<div style='grid-column: 1 / -1; text-align: center; color: #888;'>No products found for this category.</div>";
-        return;
-      }
-      filtered.forEach(p => {
-        if (p.amazon_link) {
-          const cardLink = document.createElement('a');
-          cardLink.className = "product-card-link";
-          cardLink.href = p.amazon_link;
-          cardLink.target = "_blank";
-          cardLink.rel = "noopener";
-          cardLink.tabIndex = 0;
-          cardLink.innerHTML = `
-            <div class="product-card">
-              <div class="product-image-container">
-                <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
-              </div>
-              <div class="product-info">
-                <div class="product-title">${p.name}</div>
-                <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-                <span class="more-info-btn" tabindex="0">More Info</span>
-              </div>
-            </div>
-          `;
-          cardLink.querySelector('.more-info-btn').addEventListener('click', e => {
-            e.stopPropagation();
-            window.open(p.amazon_link, "_blank");
-          });
-          grid.appendChild(cardLink);
-        } else {
-          const card = document.createElement('div');
-          card.className = 'product-card';
-          card.innerHTML = `
-            <div class="product-image-container">
-              <img class="product-image" src="${p.image_url || 'https://via.placeholder.com/220x220?text=No+Image'}" alt="${p.name}">
-            </div>
-            <div class="product-info">
-              <div class="product-title">${p.name}</div>
-              <div class="product-desc">${(p.description || '').replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
-            </div>
-          `;
-          grid.appendChild(card);
+      toggle.onclick = openSidebar;
+      overlay.onclick = closeSidebar;
+      sidebar.onclick = function(e) {
+        if(window.innerWidth <= 950 && (e.target.classList.contains('sidebar-link') || e.target.classList.contains('sidebar-sublink'))) {
+          closeSidebar();
         }
+      };
+      window.addEventListener('resize', () => {
+        if(window.innerWidth > 950) closeSidebar();
       });
     }
-
-    // ... rest of your JS unchanged ...
+    // ... All other JS functions for products, carousel, etc. ...
     setupSidebarToggle();
-    fetchProducts();
-
-    // Make logo a home link
-    document.addEventListener('DOMContentLoaded', function() {
-      const logoHomeLink = document.getElementById('logoHomeLink');
-      if(logoHomeLink){
-        logoHomeLink.addEventListener('click', function(e){
-          e.preventDefault();
-          currentMainCat = '';
-          currentSubCat = '';
-          hideFetchError();
-          renderProducts();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      }
-      updateSubcategoryTitle();
-    });
+    // ... call other setup/load functions ...
   </script>
 </body>
 </html>
