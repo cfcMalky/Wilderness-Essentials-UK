@@ -202,7 +202,7 @@
       box-shadow: 0 2px 8px rgba(60,90,54,0.10);
     }
     .sidebar-disclaimer {
-      width: 100%;
+      width: 230px;
       font-size: 0.95em;
       color: #6b4a2b;
       background: #f7f3e7;
@@ -219,6 +219,9 @@
       word-break: break-word;
       z-index: 10;
       flex-shrink: 0;
+      position: fixed;
+      left: 10px;
+      bottom: 8px;
     }
     @media (max-width: 950px) {
       .sidebar {
@@ -241,6 +244,11 @@
       }
       .main-content {
         margin-left: 0;
+      }
+      .sidebar-disclaimer {
+        position: static;
+        width: 100%;
+        margin-top: 1.2em;
       }
     }
     .main-content {
