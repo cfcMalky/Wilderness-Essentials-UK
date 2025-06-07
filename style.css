@@ -1,333 +1,297 @@
-:root {
-  --logo-green: #3c5a36;
-  --logo-brown: #6b4a2b;
-  --logo-gold: #c9a14a;
-  --bg-pastel: #f6f7f2;
-  --accent: #c9a14a;
-  --card-radius: 22px;
+// --- Data setup ---
+const categories = [
+  {
+    name: "Camp Kitchen", id: "camp-kitchen", subcategories: [
+      { name: "Stove Accessories", id: "stove-accessories" },
+      { name: "Cookware", id: "cookware" },
+      { name: "Utensils", id: "utensils" }
+    ]
+  },
+  {
+    name: "Sleeping Gear", id: "sleeping-gear", subcategories: [
+      { name: "Air Beds", id: "air-beds" },
+      { name: "Sleeping Bags", id: "sleeping-bags" }
+    ]
+  },
+  {
+    name: "Tents", id: "tents", subcategories: [
+      { name: "Dome Tents", id: "dome-tents" },
+      { name: "Tunnel Tents", id: "tunnel-tents" }
+    ]
+  }
+];
+
+// Example product data (replace with your fetched data)
+const products = [
+  // Camp Kitchen
+  {
+    name: "Primus Power Gas Canister",
+    description: "Fuel your outdoor cooking adventures with the Primus Power Gas Canister, an essential for any camping stove. This versatile 230g threaded gas cartridge is packed with a high-performance blend of propane and isobutane, designed to deliver consistent heat output and efficiency in a wide range of temperatures.",
+    category: "Camp Kitchen",
+    subcategory: "Stove Accessories",
+    image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
+    amazon_link: "#"
+  },
+  {
+    name: "Titanium Cookset",
+    description: "Lightweight and durable, this titanium cookset is ideal for minimalist campers who need reliable cookware. Includes pot and pan.",
+    category: "Camp Kitchen",
+    subcategory: "Cookware",
+    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=400&q=80",
+    amazon_link: "#"
+  },
+  // Sleeping Gear
+  {
+    name: "Active Era Air Bed",
+    description: "Transform your sleep experience with the Active Era Luxury Single Size Air Mattress, designed for comfort and convenience wherever you are. This inflatable air bed features a built-in electric pump.",
+    category: "Sleeping Gear",
+    subcategory: "Air Beds",
+    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
+    amazon_link: "#"
+  },
+  // Tents
+  {
+    name: "Dome Tents",
+    description: "Explore our top-rated dome tents, perfect for all UK conditions and campsites.",
+    category: "Tents",
+    subcategory: "Dome Tents",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
+    amazon_link: "#"
+  },
+  {
+    name: "Tunnel Tents",
+    description: "Perfect for families and groups, our tunnel tents provide spacious accommodation and stability in windy weather.",
+    category: "Tents",
+    subcategory: "Tunnel Tents",
+    image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
+    amazon_link: "#"
+  }
+];
+
+// --- Navbar with dropdowns (one open at a time, hover/click) ---
+function buildNav() {
+  const navMenu = document.getElementById('navMenu');
+  navMenu.innerHTML = '';
+  categories.forEach((cat, catIdx) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className = 'nav-link';
+    btn.textContent = cat.name;
+    btn.type = 'button';
+    btn.tabIndex = 0;
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleMenu(catIdx);
+    });
+    btn.addEventListener('mouseenter', function() {
+      openMenu(catIdx);
+    });
+    btn.addEventListener('focus', function() {
+      openMenu(catIdx);
+    });
+    li.appendChild(btn);
+
+    if (cat.subcategories && cat.subcategories.length > 0) {
+      const dropdown = document.createElement('div');
+      dropdown.className = 'nav-dropdown';
+      cat.subcategories.forEach(sub => {
+        const subLink = document.createElement('a');
+        subLink.href = '#';
+        subLink.textContent = sub.name;
+        subLink.tabIndex = 0;
+        subLink.onclick = (e) => {
+          e.preventDefault();
+          selectCategory(cat.name, sub.name);
+        };
+        dropdown.appendChild(subLink);
+      });
+      li.appendChild(dropdown);
+    }
+    li.addEventListener('mouseleave', function() {
+      closeMenu(catIdx);
+    });
+    navMenu.appendChild(li);
+  });
+  // About static link
+  const aboutLi = document.createElement('li');
+  aboutLi.innerHTML = `<a class="nav-link" href="#">About</a>`;
+  navMenu.appendChild(aboutLi);
+
+  // Only one menu open at a time
+  let openIdx = null;
+  function openMenu(idx) {
+    closeAllMenus();
+    navMenu.children[idx].classList.add('open');
+    navMenu.children[idx].querySelector('.nav-link').setAttribute('aria-expanded', 'true');
+    openIdx = idx;
+  }
+  function closeMenu(idx) {
+    navMenu.children[idx].classList.remove('open');
+    navMenu.children[idx].querySelector('.nav-link').setAttribute('aria-expanded', 'false');
+    openIdx = null;
+  }
+  function closeAllMenus() {
+    for (let i = 0; i < navMenu.children.length; i++) {
+      navMenu.children[i].classList.remove('open');
+      const navBtn = navMenu.children[i].querySelector('.nav-link');
+      if (navBtn) navBtn.setAttribute('aria-expanded', 'false');
+    }
+    openIdx = null;
+  }
+  function toggleMenu(idx) {
+    if (openIdx === idx) {
+      closeMenu(idx);
+    } else {
+      openMenu(idx);
+    }
+  }
+  document.addEventListener('click', closeAllMenus);
 }
 
-body {
-  margin: 0;
-  background: var(--bg-pastel);
-  color: var(--logo-brown);
-  font-family: 'Quicksand', Arial, sans-serif;
-  min-height: 100vh;
+// --- Carousel: random subcategory from each main category ---
+function buildHeroCarousel() {
+  const hero = document.getElementById("heroCarousel");
+  // Pick a random product from each main category
+  let slides = [];
+  categories.forEach(cat => {
+    const subs = cat.subcategories;
+    let best = null;
+    if (subs && subs.length) {
+      // Pick a random subcategory
+      const randSub = subs[Math.floor(Math.random() * subs.length)];
+      // Find a product for this subcategory
+      const prod = products.find(p => p.category === cat.name && p.subcategory === randSub.name);
+      if (prod) best = prod;
+    } else {
+      // No subcats, just find a product for the main category
+      best = products.find(p => p.category === cat.name);
+    }
+    if (best) {
+      slides.push({
+        image: best.image,
+        headline: best.subcategory || best.category,
+        mainCat: best.category,
+        subCat: best.subcategory,
+        desc: (best.description || '').split('.').shift() + '.',
+      });
+    }
+  });
+  if (!slides.length) {
+    hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
+    return;
+  }
+  hero.innerHTML = "";
+  slides.forEach((s, i) => {
+    const slide = document.createElement('div');
+    slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
+    slide.innerHTML = `
+      <img class="hero-carousel-image" src="${s.image}" alt="">
+      <div class="hero-carousel-content">
+        <div class="hero-carousel-title">${s.headline}</div>
+        <div class="hero-carousel-desc">${s.desc}</div>
+        <button class="hero-carousel-cta" type="button" data-maincat="${encodeURIComponent(s.mainCat)}" data-subcat="${encodeURIComponent(s.subCat)}">
+          Shop ${s.headline}
+        </button>
+      </div>
+    `;
+    hero.appendChild(slide);
+  });
+  // Dots nav
+  const nav = document.createElement('div');
+  nav.className = "hero-carousel-nav";
+  for (let i = 0; i < slides.length; ++i) {
+    const dot = document.createElement('button');
+    dot.className = "hero-carousel-dot" + (i === 0 ? " active" : "");
+    dot.setAttribute("aria-label", `Show slide ${i + 1}`);
+    dot.onclick = () => setHeroCarouselSlide(i);
+    nav.appendChild(dot);
+  }
+  hero.appendChild(nav);
+
+  // Attach event listeners for the CTA buttons
+  hero.querySelectorAll('.hero-carousel-cta').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const mainCat = decodeURIComponent(this.getAttribute('data-maincat'));
+      const subCat = decodeURIComponent(this.getAttribute('data-subcat'));
+      selectCategory(mainCat, subCat);
+      document.getElementById('categorySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // State
+  let current = 0;
+  let timer = null;
+  function setHeroCarouselSlide(idx) {
+    const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
+    const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
+    slidesEls.forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    dotsEls.forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    current = idx;
+    resetTimer();
+  }
+  function nextSlide() {
+    setHeroCarouselSlide((current + 1) % slides.length);
+  }
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(nextSlide, 7000);
+  }
+  resetTimer();
 }
 
-header {
-  text-align: center;
-  margin-top: 2.5rem;
-  margin-bottom: 1.3rem;
+// --- Category select and products display ---
+function selectCategory(mainCat, subCat) {
+  // Show products for this category/subcategory
+  const section = document.getElementById('categorySection');
+  const title = document.getElementById('productsSectionTitle');
+  const grid = document.getElementById('productsGrid');
+  let filtered = products.filter(p => p.category === mainCat && (!subCat || p.subcategory === subCat));
+  title.textContent = subCat ? `${mainCat} > ${subCat}` : mainCat;
+  grid.innerHTML = '';
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
+  } else {
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      if (p.image) {
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = p.image;
+        img.alt = p.name;
+        card.appendChild(img);
+      }
+      const title = document.createElement('div');
+      title.className = 'product-title';
+      title.textContent = p.name;
+      card.appendChild(title);
+      const desc = document.createElement('div');
+      desc.className = 'product-desc';
+      desc.textContent = p.description;
+      card.appendChild(desc);
+      if (p.amazon_link) {
+        const btn = document.createElement('a');
+        btn.className = 'product-link';
+        btn.href = p.amazon_link;
+        btn.target = "_blank";
+        btn.rel = "noopener";
+        btn.textContent = "Shop on Amazon";
+        card.appendChild(btn);
+      }
+      grid.appendChild(card);
+    });
+  }
+  section.style.display = '';
 }
 
-.page-title {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: var(--logo-green);
-  margin-bottom: 0.3rem;
-}
-
-.site-tagline {
-  color: #6b4a2b;
-  font-size: 1.13rem;
-  margin-bottom: 1.4rem;
-}
-
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(60,90,54,0.07);
-  margin: 0 auto 2.2rem auto;
-  padding: 0.7rem 2rem;
-  max-width: 700px;
-  position: relative;
-  z-index: 10;
-  font-size: 1.09rem;
-}
-
-.nav-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 2.3rem;
-}
-
-.nav-menu > li {
-  position: relative;
-}
-
-.nav-link {
-  background: none;
-  border: none;
-  color: var(--logo-green);
-  font-weight: 700;
-  font-size: 1.07rem;
-  cursor: pointer;
-  padding: 0.5em 0.2em;
-  border-radius: 4px;
-  transition: background 0.16s, color 0.16s;
-}
-
-.nav-link:hover,
-.nav-link:focus,
-.nav-link.active {
-  background: var(--logo-gold);
-  color: #fff;
-  outline: none;
-}
-
-/* Dropdown */
-.nav-dropdown {
-  display: none;
-  position: absolute;
-  left: 0; top: 100%;
-  background: #fff;
-  min-width: 180px;
-  box-shadow: 0 4px 16px rgba(60,90,54,0.13);
-  border-radius: 0 0 8px 8px;
-  margin-top: 0.3em;
-  z-index: 100;
-  padding: 0.5em 0;
-}
-.nav-menu > li.open .nav-dropdown {
-  display: block;
-}
-.nav-dropdown a {
-  display: block;
-  color: var(--logo-brown);
-  text-decoration: none;
-  padding: 0.45em 1.1em;
-  font-size: 1.01rem;
-  border-radius: 5px;
-  transition: background 0.15s, color 0.15s;
-}
-.nav-dropdown a:hover,
-.nav-dropdown a:focus {
-  background: var(--logo-gold);
-  color: #fff;
-}
-
-/* DISCLAIMER */
-.disclaimer-bar {
-  background: #fff6e0;
-  color: #b89c5d;
-  text-align: center;
-  font-size: 0.98rem;
-  font-weight: 500;
-  padding: 0.4em 0 0.3em 0;
-  margin: 1.5em auto 0.5em auto;
-  max-width: 430px;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(60,90,54,0.04);
-}
-
-/* HERO CAROUSEL */
-.hero-carousel-container {
-  max-width: 700px;
-  margin: 2.7rem auto 2.3rem auto;
-  min-height: 270px;
-  position: relative;
-}
-.hero-carousel-slide {
-  display: none;
-  width: 100%;
-  min-height: 210px;
-  border-radius: var(--card-radius);
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 2px 24px rgba(60,90,54,0.12);
-  transition: opacity 0.7s;
-  position: absolute;
-  top: 0; left: 0;
-  align-items: stretch;
-  z-index: 2;
-  padding: 0;
-}
-.hero-carousel-slide.active {
-  display: flex;
-  opacity: 1;
-  position: relative;
-  animation: fadeInScale 1s;
-}
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.98);}
-  to { opacity: 1; transform: scale(1);}
-}
-.hero-carousel-image {
-  width: 44%; min-width: 150px; object-fit: cover; background: #fafaf7;
-}
-.hero-carousel-content {
-  width: 56%; padding: 1.7rem 2rem 1.1rem 1.7rem;
-  display: flex; flex-direction: column; justify-content: center;
-  font-size: 1.04rem;
-}
-.hero-carousel-title {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: var(--logo-green);
-  margin-bottom: 0.6rem;
-}
-.hero-carousel-desc {
-  color: var(--logo-brown);
-  margin-bottom: 1.2rem;
-  font-size: 1.06rem;
-  line-height: 1.45;
-}
-.hero-carousel-cta {
-  align-self: flex-start;
-  background: var(--logo-gold);
-  color: #fff;
-  font-size: 1.01rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.3rem;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: 0 1px 8px rgba(201,161,74,0.08);
-  transition: background 0.17s, color 0.17s;
-  letter-spacing: 0.01em;
-  margin-top: 0.3rem;
-}
-.hero-carousel-cta:hover {
-  background: var(--logo-green);
-}
-.hero-carousel-nav {
-  position: absolute;
-  left: 18px;
-  bottom: 18px;
-  display: flex;
-  gap: 0.7rem;
-  z-index: 10;
-}
-.hero-carousel-dot {
-  width: 13px; height: 13px;
-  background: var(--logo-gold);
-  opacity: 0.55;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: background 0.18s, opacity 0.18s;
-}
-.hero-carousel-dot.active {
-  background: var(--logo-green);
-  opacity: 1;
-}
-
-/* INTRO & TIPS */
-.site-intro, .outstanding-content-block {
-  max-width: 670px;
-  margin: 0 auto;
-}
-.site-intro {
-  background: #fff8ee;
-  border-radius: 13px;
-  padding: 1.1rem 1.5rem;
-  box-shadow: 0 1px 7px rgba(201,161,74,0.06);
-  font-size: 1.09rem;
-  margin-bottom: 1.7rem;
-}
-.outstanding-content-block {
-  background: #f5f7eb;
-  border-radius: 14px;
-  box-shadow: 0 1px 7px rgba(60,90,54,0.09);
-  padding: 2rem;
-  color: #2d3c1e;
-  font-size: 1.09rem;
-  text-align: left;
-  border-left: 7px solid #c9a14a;
-  margin-bottom: 2.5rem;
-}
-
-/* PRODUCT SECTION */
-.category-section {
-  max-width: 1100px;
-  margin: 2.5rem auto;
-}
-.products-section-title {
-  color: var(--logo-gold);
-  font-weight: 700;
-  font-size: 1.3rem;
-  text-align: center;
-  margin: 1.5rem auto 1rem auto;
-}
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem 2rem;
-  margin: 0 auto;
-}
-.product-card {
-  background: #fff;
-  border-radius: var(--card-radius);
-  box-shadow: 0 2px 16px rgba(60,90,54,0.09);
-  padding: 1.3em 1.1em 1.7em 1.1em;
-  border: 1.5px solid #ece7e1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-height: 200px;
-  transition: box-shadow 0.18s, border-color 0.18s;
-}
-.product-card:hover {
-  box-shadow: 0 4px 22px rgba(60,90,54,0.14);
-  border-color: var(--logo-gold);
-}
-.product-title {
-  font-size: 1.08rem;
-  font-weight: bold;
-  color: var(--logo-green);
-  margin-bottom: 0.5rem;
-}
-.product-desc {
-  font-size: 1.01rem;
-  color: var(--logo-brown);
-  margin-bottom: 1.1rem;
-  line-height: 1.51;
-}
-.product-image {
-  max-width: 100%;
-  max-height: 140px;
-  object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 0.7em;
-  align-self: center;
-}
-.product-link {
-  background: var(--logo-green);
-  color: #fff;
-  border: none;
-  border-radius: 7px;
-  padding: 0.5em 1.2em;
-  font-weight: 600;
-  font-size: 1.01rem;
-  cursor: pointer;
-  text-decoration: none;
-  margin-top: auto;
-  align-self: flex-end;
-  transition: background 0.16s;
-}
-.product-link:hover {
-  background: var(--logo-gold);
-  color: #fff;
-}
-
-/* Footer */
-.main-footer {
-  text-align: center;
-  font-size: 0.95em;
-  color: #aaa;
-  margin: 2em 0 1em 0;
-}
-
-/* Responsive tweaks */
-@media (max-width: 900px) {
-  .hero-carousel-container, .category-section, .site-intro, .outstanding-content-block, .disclaimer-bar { max-width: 97vw; }
-  .products-grid { gap: 1.1rem; }
-}
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', function () {
+  buildNav();
+  buildHeroCarousel();
+});
