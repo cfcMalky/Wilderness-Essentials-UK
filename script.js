@@ -39,35 +39,30 @@ function buildNavStructure() {
   }
 }
 
-// --- MEGAMENU: always shown below navbar ---
+// --- MEGAMENU: always shown below header ---
 function buildNavWithMegaMenu() {
-  // Navbar (main cats + About)
-  const navMenu = document.getElementById('navMenu');
-  navMenu.innerHTML = '';
-  const mainCats = Object.keys(navStructure);
-  mainCats.forEach(mainCat => {
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.className = 'nav-link';
-    btn.textContent = mainCat;
-    btn.type = 'button';
-    btn.tabIndex = 0;
-    btn.setAttribute('aria-haspopup', 'false');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.disabled = true; // Not clickable, just a label now
-    li.appendChild(btn);
-    navMenu.appendChild(li);
-  });
-  // About static link
-  const aboutLi = document.createElement('li');
-  aboutLi.innerHTML = `<a class="nav-link" href="#">About</a>`;
-  navMenu.appendChild(aboutLi);
-
-  // Megamenu: always visible, all main cats as columns
+  // Megamenu: always visible, all main cats as columns, with Home link to the left
   const megamenu = document.getElementById('megamenu');
   megamenu.innerHTML = '';
   const row = document.createElement('div');
   row.className = "megamenu-row";
+
+  // Home column
+  const homeCol = document.createElement('div');
+  homeCol.className = "megamenu-home-col";
+  const homeLink = document.createElement('a');
+  homeLink.className = "megamenu-home-link";
+  homeLink.href = "#";
+  homeLink.textContent = "Home";
+  homeLink.onclick = (e) => {
+    e.preventDefault();
+    showHome();
+  };
+  homeCol.appendChild(homeLink);
+  row.appendChild(homeCol);
+
+  // Main categories columns
+  const mainCats = Object.keys(navStructure);
   mainCats.forEach(mainCat => {
     const col = document.createElement('div');
     col.className = "megamenu-cat-col";
@@ -192,7 +187,11 @@ function buildHeroCarouselFromSheet() {
 
 // --- PRODUCT DISPLAY (category path) ---
 function selectCategoryByPath(path) {
-  const section = document.getElementById('categorySection');
+  // Hide intro/tips, show products section
+  document.getElementById('siteIntro').style.display = "none";
+  document.getElementById('tipsBlock').style.display = "none";
+  document.getElementById('categorySection').style.display = "";
+  // Fill products
   const title = document.getElementById('productsSectionTitle');
   const grid = document.getElementById('productsGrid');
   let filtered = allProducts.filter(p => p.category === path);
@@ -231,7 +230,15 @@ function selectCategoryByPath(path) {
       grid.appendChild(card);
     });
   }
-  section.style.display = '';
+}
+
+// --- HOME BUTTON: Show intro/tips, hide products ---
+function showHome() {
+  document.getElementById('siteIntro').style.display = "";
+  document.getElementById('tipsBlock').style.display = "";
+  document.getElementById('categorySection').style.display = "none";
+  // Optionally scroll to top
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 // --- PAGE INIT ---
@@ -239,4 +246,5 @@ document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildNavWithMegaMenu();
   buildHeroCarouselFromSheet();
+  showHome();
 });
