@@ -878,7 +878,13 @@
 
     function updateSubcategoryTitle() {
       const el = document.getElementById('subcategory-title');
-      if (currentSubCat) {
+      if (currentMainCat && currentSubCat) {
+        el.textContent = currentMainCat + " > " + currentSubCat;
+        el.style.display = '';
+      } else if (currentMainCat) {
+        el.textContent = currentMainCat;
+        el.style.display = '';
+      } else if (currentSubCat) {
         el.textContent = currentSubCat;
         el.style.display = '';
       } else {
