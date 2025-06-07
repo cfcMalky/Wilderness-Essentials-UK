@@ -190,6 +190,20 @@
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(60,90,54,0.10);
     }
+    .sidebar-disclaimer {
+      margin-top: auto;
+      width: 100%;
+      font-size: 0.95em;
+      color: #6b4a2b;
+      background: #f7f3e7;
+      border-radius: 10px;
+      padding: 1em 0.7em;
+      box-sizing: border-box;
+      text-align: left;
+      margin-bottom: 0.5em;
+      opacity: 0.8;
+      box-shadow: 0 1px 7px rgba(60,90,54,0.04);
+    }
     @media (max-width: 950px) {
       .sidebar {
         position: fixed;
@@ -415,28 +429,28 @@
       line-height: 1.6;
     }
 
-    /* ---- Make intro/tips as wide as carousel ---- */
+    /* ---- Make intro/tips as wide as carousel and add space between ---- */
     .site-intro,
     .outstanding-content-block {
       max-width: 1100px;
       width: 100%;
       margin-left: auto;
       margin-right: auto;
-      margin-top: 2rem;
       box-sizing: border-box;
     }
     .site-intro {
       margin-top: 2rem;
+      margin-bottom: 2rem;
     }
     .outstanding-content-block {
       margin-top: 0;
+      margin-bottom: 2rem;
     }
     /* -------------------------------------------- */
 
     .site-intro {
       color: #6b4a2b;
       font-size: 1.13rem;
-      /* width & max-width overridden above */
       line-height: 1.7;
       background: #fff8ee;
       border-radius: 13px;
@@ -445,7 +459,6 @@
       text-align: left;
     }
     .outstanding-content-block {
-      /* max-width & width overridden above */
       background: #f5f7eb;
       border-radius: 14px;
       box-shadow: 0 1px 7px rgba(60,90,54,0.09);
@@ -616,6 +629,9 @@
         <img src="logo-wilderness-essentials-uk.jpg" alt="Wilderness Essentials UK Logo" class="sidebar-logo" />
       </a>
       <ul class="sidebar-menu"></ul>
+      <div class="sidebar-disclaimer">
+        <strong>Disclaimer:</strong> This site contains affiliate links. If you make a purchase after clicking a link, we may receive a small commission at no extra cost to you. As an Amazon Associate, we earn from qualifying purchases. Thank you for supporting Wilderness Essentials UK!
+      </div>
     </nav>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="main-content">
