@@ -77,13 +77,13 @@
       width: 100%;
       max-width: 100%;
       min-width: 0;
-      height: auto;
-      max-height: 120px;
+      height: 180px;
+      max-height: 180px;
+      object-fit: contain;
       border-radius: 14px;
       background: #fff;
       padding: 0;
       box-shadow: 0 2px 8px rgba(60,90,54,0.07);
-      object-fit: contain;
       transition: box-shadow 0.2s;
     }
     .sidebar-logo:hover {
@@ -93,6 +93,7 @@
     @media (max-width: 600px) {
       .sidebar-logo {
         max-height: 54px;
+        height: 54px;
       }
     }
     .sidebar-menu,
@@ -677,7 +678,7 @@
         const [headers, ...rows] = data.values;
         allProducts = rows.map(row => {
           const p = {};
-          headers.forEach((h, i) => p[h] = row[i] || "";
+          headers.forEach((h, i) => p[h] = row[i] || "");
           let [main, sub] = (p.category || '').split('>').map(x => x.trim());
           if (sub && subcatTitles[sub]) sub = subcatTitles[sub];
           p.mainCat = main || '';
