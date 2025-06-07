@@ -1,103 +1,180 @@
-// Navigation data
-const categories = [
-  {
-    name: "Camp Kitchen", subcategories: [
-      { name: "Stove Accessories", id: "stove-accessories" },
-      { name: "Cookware", id: "cookware" },
-      { name: "Utensils", id: "utensils" }
-    ]
-  },
-  {
-    name: "Sleeping Gear", subcategories: [
-      { name: "Air Beds", id: "air-beds" },
-      { name: "Sleeping Bags", id: "sleeping-bags" }
-    ]
-  },
-  {
-    name: "Tents", subcategories: [
-      { name: "Dome Tents", id: "dome-tents" },
-      { name: "Tunnel Tents", id: "tunnel-tents" }
-    ]
-  }
-];
+// --- CONFIG: Google Sheet API ---
+const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
+const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
+const RANGE = "Sheet1";
 
-// Build dropdown navigation
-function buildNav() {
+let allProducts = [];
+let navStructure = {};
+let subcatToMaincat = {};
+let sheetReady = false;
+
+// --- DATA LOAD ---
+async function fetchProductsFromSheet() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  const [headers, ...rows] = data.values;
+  allProducts = rows.map(row => {
+    let obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = (row[i] || "").trim());
+    // Parse category
+    const catPath = (obj.category || "").split(">").map(s => s.trim());
+    obj.mainCat = catPath[0] || "";
+    obj.subCat = catPath[1] || "";
+    obj.catPath = obj.category || "";
+    return obj;
+  });
+  buildNavStructure();
+  sheetReady = true;
+}
+
+function buildNavStructure() {
+  navStructure = {};
+  subcatToMaincat = {};
+  for (const prod of allProducts) {
+    if (!prod.mainCat) continue;
+    if (!navStructure[prod.mainCat]) navStructure[prod.mainCat] = [];
+    if (prod.subCat && !navStructure[prod.mainCat].includes(prod.subCat)) navStructure[prod.mainCat].push(prod.subCat);
+    if (prod.subCat) subcatToMaincat[prod.subCat] = prod.mainCat;
+  }
+}
+
+// --- MEGAMENU ---
+function buildNavWithMegaMenu() {
   const navMenu = document.getElementById('navMenu');
   navMenu.innerHTML = '';
-  categories.forEach(cat => {
+  const megamenuPanel = document.getElementById('megamenuPanel');
+  megamenuPanel.style.display = 'none';
+
+  const mainCats = Object.keys(navStructure);
+  mainCats.forEach((mainCat, catIdx) => {
     const li = document.createElement('li');
-    if (cat.subcategories && cat.subcategories.length > 0) {
-      const btn = document.createElement('button');
-      btn.className = 'nav-link';
-      btn.textContent = cat.name;
-      btn.tabIndex = 0;
-      const dropdown = document.createElement('div');
-      dropdown.className = 'nav-dropdown';
-      cat.subcategories.forEach(sub => {
-        const subLink = document.createElement('a');
-        subLink.href = '#';
-        subLink.textContent = sub.name;
-        subLink.tabIndex = 0;
-        subLink.onclick = (e) => {
-          e.preventDefault();
-          alert(`Navigate to: ${cat.name} > ${sub.name}`);
-          // Your code here: update main content, load products, etc.
-        };
-        dropdown.appendChild(subLink);
-      });
-      li.appendChild(btn);
-      li.appendChild(dropdown);
-    } else {
-      const link = document.createElement('a');
-      link.className = 'nav-link';
-      link.href = '#';
-      link.textContent = cat.name;
-      li.appendChild(link);
-    }
+    const btn = document.createElement('button');
+    btn.className = 'nav-link';
+    btn.textContent = mainCat;
+    btn.type = 'button';
+    btn.tabIndex = 0;
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+
+    btn.addEventListener('mouseenter', () => showMegaMenu(mainCat, btn));
+    btn.addEventListener('focus', () => showMegaMenu(mainCat, btn));
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (megamenuPanel.style.display === 'block' && megamenuPanel.dataset.maincat === mainCat) {
+        hideMegaMenu();
+      } else {
+        showMegaMenu(mainCat, btn);
+      }
+    });
+    li.addEventListener('mouseleave', hideMegaMenu);
     navMenu.appendChild(li);
+    li.appendChild(btn);
   });
-  // Add About as a static link
+  // About static link
   const aboutLi = document.createElement('li');
   aboutLi.innerHTML = `<a class="nav-link" href="#">About</a>`;
   navMenu.appendChild(aboutLi);
-}
-buildNav();
 
-// Example carousel data
-const carouselSlides = [
-  {
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80",
-    title: "Dome Tents",
-    desc: "Explore our top-rated dome tents, perfect for all UK conditions and campsites."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=700&q=80",
-    title: "Air Beds",
-    desc: "Rest easy with our selection of comfortable, reliable air beds for any adventure."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=700&q=80",
-    title: "Cookware",
-    desc: "Cook up a storm with the best outdoor cookware, tried and tested by campers."
+  document.addEventListener('click', (e) => {
+    if (!megamenuPanel.contains(e.target) && !navMenu.contains(e.target)) {
+      hideMegaMenu();
+    }
+  });
+
+  function showMegaMenu(mainCat, btn) {
+    const subs = navStructure[mainCat];
+    if (!subs.length) { hideMegaMenu(); return; }
+    megamenuPanel.innerHTML = '';
+    megamenuPanel.dataset.maincat = mainCat;
+
+    const row = document.createElement('div');
+    row.className = "megamenu-row";
+    // Each main category gets a column with its subcats as a vertical list
+    const col = document.createElement('div');
+    col.className = "megamenu-cat-col";
+    const title = document.createElement('div');
+    title.className = "megamenu-title";
+    title.textContent = mainCat;
+    col.appendChild(title);
+    const ul = document.createElement('ul');
+    ul.className = "megamenu-list";
+    subs.forEach(sub => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.className = 'megamenu-link';
+      link.href = "#";
+      link.textContent = sub;
+      link.onclick = (e) => {
+        e.preventDefault();
+        hideMegaMenu();
+        selectCategoryByPath(`${mainCat} > ${sub}`);  // Use category path match!
+      };
+      li.appendChild(link);
+      ul.appendChild(li);
+    });
+    col.appendChild(ul);
+    row.appendChild(col);
+    megamenuPanel.appendChild(row);
+
+    // Position below navbar, show
+    const navRect = document.querySelector('.navbar').getBoundingClientRect();
+    megamenuPanel.style.display = 'block';
+    megamenuPanel.style.left = navRect.left + 'px';
+    megamenuPanel.style.right = (window.innerWidth - navRect.right) + 'px';
+    megamenuPanel.style.top = navRect.bottom + 'px';
   }
-];
 
-function buildHeroCarousel() {
+  function hideMegaMenu() {
+    megamenuPanel.style.display = 'none';
+    megamenuPanel.dataset.maincat = "";
+  }
+}
+
+// --- CAROUSEL (first product with image in first subcat of each maincat) ---
+function buildHeroCarouselFromSheet() {
   const hero = document.getElementById("heroCarousel");
-  if (!carouselSlides.length) {
+  let slides = [];
+  for (const mainCat in navStructure) {
+    const subCats = navStructure[mainCat];
+    let found = null;
+    if (subCats.length) {
+      // Get first product with image in the first subcat
+      const prods = allProducts.filter(p => p.mainCat === mainCat && p.subCat === subCats[0] && p.image_url);
+      if (prods.length > 0) found = prods[0];
+    }
+    // If not found, fallback to any product with image in mainCat
+    if (!found) {
+      const prods = allProducts.filter(p => p.mainCat === mainCat && p.image_url);
+      if (prods.length > 0) found = prods[0];
+    }
+    if (found) {
+      slides.push({
+        image: found.image_url,
+        headline: found.subCat || found.mainCat,
+        mainCat: found.mainCat,
+        subCat: found.subCat,
+        path: found.catPath,
+        desc: (found.description || '').split('.').shift() + '.',
+      });
+    }
+  }
+  if (!slides.length) {
     hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
     return;
   }
   hero.innerHTML = "";
-  carouselSlides.forEach((s, i) => {
+  slides.forEach((s, i) => {
     const slide = document.createElement('div');
-    slide.className = "hero-carousel-slide" + (i===0 ? " active" : "");
+    slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
     slide.innerHTML = `
       <img class="hero-carousel-image" src="${s.image}" alt="">
       <div class="hero-carousel-content">
-        <div class="hero-carousel-title">${s.title}</div>
+        <div class="hero-carousel-title">${s.headline}</div>
         <div class="hero-carousel-desc">${s.desc}</div>
+        <button class="hero-carousel-cta" type="button" data-path="${encodeURIComponent(s.path)}">
+          Shop ${s.headline}
+        </button>
       </div>
     `;
     hero.appendChild(slide);
@@ -105,14 +182,23 @@ function buildHeroCarousel() {
   // Dots nav
   const nav = document.createElement('div');
   nav.className = "hero-carousel-nav";
-  for (let i=0; i<carouselSlides.length; ++i) {
+  for (let i = 0; i < slides.length; ++i) {
     const dot = document.createElement('button');
-    dot.className = "hero-carousel-dot" + (i===0 ? " active" : "");
-    dot.setAttribute("aria-label", `Show slide ${i+1}`);
+    dot.className = "hero-carousel-dot" + (i === 0 ? " active" : "");
+    dot.setAttribute("aria-label", `Show slide ${i + 1}`);
     dot.onclick = () => setHeroCarouselSlide(i);
     nav.appendChild(dot);
   }
   hero.appendChild(nav);
+
+  // Attach event listeners for the CTA buttons
+  hero.querySelectorAll('.hero-carousel-cta').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const path = decodeURIComponent(this.getAttribute('data-path'));
+      selectCategoryByPath(path);
+      document.getElementById('categorySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 
   // State
   let current = 0;
@@ -130,12 +216,62 @@ function buildHeroCarousel() {
     resetTimer();
   }
   function nextSlide() {
-    setHeroCarouselSlide((current+1)%carouselSlides.length);
+    setHeroCarouselSlide((current + 1) % slides.length);
   }
   function resetTimer() {
     if (timer) clearInterval(timer);
-    timer = setInterval(nextSlide, 5000);
+    timer = setInterval(nextSlide, 7000);
   }
   resetTimer();
 }
-buildHeroCarousel();
+
+// --- PRODUCT DISPLAY (category path) ---
+function selectCategoryByPath(path) {
+  const section = document.getElementById('categorySection');
+  const title = document.getElementById('productsSectionTitle');
+  const grid = document.getElementById('productsGrid');
+  let filtered = allProducts.filter(p => p.category === path);
+  title.textContent = path;
+  grid.innerHTML = '';
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
+  } else {
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      if (p.image_url) {
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = p.image_url;
+        img.alt = p.name;
+        card.appendChild(img);
+      }
+      const title = document.createElement('div');
+      title.className = 'product-title';
+      title.textContent = p.name;
+      card.appendChild(title);
+      const desc = document.createElement('div');
+      desc.className = 'product-desc';
+      desc.textContent = p.description;
+      card.appendChild(desc);
+      if (p.amazon_link) {
+        const btn = document.createElement('a');
+        btn.className = 'product-link';
+        btn.href = p.amazon_link;
+        btn.target = "_blank";
+        btn.rel = "noopener";
+        btn.textContent = "Shop on Amazon";
+        card.appendChild(btn);
+      }
+      grid.appendChild(card);
+    });
+  }
+  section.style.display = '';
+}
+
+// --- PAGE INIT ---
+document.addEventListener('DOMContentLoaded', async function () {
+  await fetchProductsFromSheet();
+  buildNavWithMegaMenu();
+  buildHeroCarouselFromSheet();
+});
