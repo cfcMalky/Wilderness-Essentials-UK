@@ -90,6 +90,7 @@
     border-radius: 0 14px 14px 0;
     padding-top: 66px;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .megabar.open {
     display: flex !important;
@@ -98,6 +99,8 @@
   .megabar-menu {
     flex-direction: column;
     width: 100%;
+    overflow-y: auto;
+    max-height: calc(100vh - 66px);
     margin: 0;
     padding: 0;
     gap: 0;
@@ -128,6 +131,23 @@
   }
   .megabar-overlay.open {
     display: block;
+  }
+  /* Mobile expandable subcat styles */
+  .mobile-maincat .mobile-subcat-list {
+    display: none;
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .mobile-maincat.expanded .mobile-subcat-list {
+    display: block;
+  }
+  .mobile-subcat-list .megabar-link {
+    font-weight: 500;
+    font-size: 1em;
+    background: none;
+    color: #47613a;
+    padding-left: 1.5em;
+    border-left: 2px solid #e7f4e3;
   }
 }
 .megabar-overlay {
