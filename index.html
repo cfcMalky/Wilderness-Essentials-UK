@@ -53,6 +53,8 @@
       z-index: 1;
       height: 100vh;
     }
+
+    /* --- SIDEBAR --- */
     .sidebar {
       display: flex;
       flex-direction: column;
@@ -65,14 +67,16 @@
       left: 0;
       top: 0;
       bottom: 0;
-      height: 100vh;
       z-index: 200;
       padding: 2rem 1rem 1rem 1rem;
-      overflow: hidden; /* prevents double scrollbars */
+      /* height: 100vh;  <-- REMOVE this line */
+      /* overflow: hidden; <-- REMOVE this line */
+      min-height: 0;
     }
     .sidebar-content {
       width: 100%;
-      flex: 1 1 auto;
+      flex: 1 1 0;
+      min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
       display: flex;
@@ -222,7 +226,6 @@
         position: fixed;
         left: -265px;
         top: 0;
-        height: 100vh;
         min-height: 100vh;
         z-index: 2000;
         transition: left 0.28s;
@@ -725,7 +728,7 @@
         const [headers, ...rows] = data.values;
         allProducts = rows.map(row => {
           const p = {};
-          headers.forEach((h, i) => p[h] = row[i] || "");
+          headers.forEach((h, i) => p[h] = row[i] || "";
           let [main, sub] = (p.category || '').split('>').map(x => x.trim());
           if (sub && subcatTitles[sub]) sub = subcatTitles[sub];
           p.mainCat = main || '';
