@@ -37,7 +37,7 @@ function buildNavStructure() {
   }
 }
 
-// --- DESKTOP MEGAMENU BUILD ---
+// --- DESKTOP MEGAMENU BUILD (for desktop only, hidden on mobile) ---
 function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
@@ -126,89 +126,15 @@ function closeAllMegamenus() {
   });
 }
 
-// --- MOBILE NAV: Hamburger toggle & Nested Menu ---
-function buildMobileNavMenu() {
-  const megabarMenu = document.getElementById('megabarMenu');
-  megabarMenu.innerHTML = '';
-  Object.entries(navStructure).forEach(([mainCat, subCats]) => {
-    const li = document.createElement('li');
-    li.className = "mobile-maincat";
-    const btn = document.createElement('button');
-    btn.className = 'megabar-link';
-    btn.type = 'button';
-    btn.textContent = mainCat;
-    // Expand/collapse subcategories
-    btn.onclick = function(e) {
-      e.stopPropagation();
-      const expanded = li.classList.toggle('expanded');
-      // Close others
-      if (expanded) {
-        document.querySelectorAll('.mobile-maincat.expanded').forEach(otherLi => {
-          if (otherLi !== li) otherLi.classList.remove('expanded');
-        });
-      }
-    };
-    li.appendChild(btn);
-
-    // Subcat list
-    if (subCats.length) {
-      const subUl = document.createElement('ul');
-      subUl.className = 'mobile-subcat-list';
-      subCats.forEach(subCat => {
-        const subLi = document.createElement('li');
-        const subBtn = document.createElement('button');
-        subBtn.type = "button";
-        subBtn.className = "megabar-link";
-        subBtn.textContent = subCat;
-        subBtn.onclick = function(e) {
-          e.stopPropagation();
-          selectCategoryByPath(`${mainCat} > ${subCat}`);
-          closeMobileMenu();
-        };
-        subLi.appendChild(subBtn);
-        subUl.appendChild(subLi);
-      });
-      li.appendChild(subUl);
-    }
-    megabarMenu.appendChild(li);
-  });
-}
-
-function setupMobileNav() {
-  const hamburger = document.getElementById('hamburger');
-  const megabar = document.getElementById('megabar');
-  const overlay = document.getElementById('megabarOverlay');
-
-  function openMenu() {
-    if (window.innerWidth <= 900) buildMobileNavMenu();
-    megabar.classList.add('open');
-    hamburger.classList.add('active');
-    hamburger.setAttribute('aria-expanded', 'true');
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu() {
-    megabar.classList.remove('open');
-    hamburger.classList.remove('active');
-    hamburger.setAttribute('aria-expanded', 'false');
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  hamburger.addEventListener('click', function() {
-    if (megabar.classList.contains('open')) closeMenu();
-    else openMenu();
-  });
-  overlay.addEventListener('click', closeMenu);
-  window.closeMobileMenu = closeMenu;
-  window.addEventListener('resize', function() {
-    if (window.innerWidth > 900) closeMenu();
-    if (window.innerWidth <= 900 && megabar.classList.contains('open')) buildMobileNavMenu();
-  });
-}
-
-// --- CAROUSEL (first product with image in first subcat of each maincat) ---
+// --- HERO CAROUSEL (desktop only, hidden on mobile) ---
 function buildHeroCarouselFromSheet() {
   const hero = document.getElementById("heroCarousel");
+  if (window.innerWidth <= 900) {
+    hero.style.display = "none";
+    return;
+  } else {
+    hero.style.display = "";
+  }
   let slides = [];
   for (const mainCat in navStructure) {
     const subCats = navStructure[mainCat];
@@ -302,11 +228,62 @@ function buildHeroCarouselFromSheet() {
   resetTimer();
 }
 
+// --- MOBILE CATEGORY GRID HOMEPAGE ---
+function showMobileCategoryGrid() {
+  const grid = document.getElementById('mobileCategoryGrid');
+  grid.innerHTML = '';
+  Object.entries(navStructure).forEach(([mainCat, subCats]) => {
+    // Find first product with image in this mainCat
+    let prodImg = '';
+    for (const p of allProducts) {
+      if (p.mainCat === mainCat && p.image_url) {
+        prodImg = p.image_url;
+        break;
+      }
+    }
+    const card = document.createElement('div');
+    card.className = "category-card";
+    if (prodImg) {
+      const img = document.createElement('img');
+      img.className = "category-image";
+      img.src = prodImg;
+      img.alt = mainCat;
+      card.appendChild(img);
+    }
+    const title = document.createElement('div');
+    title.className = "category-title";
+    title.textContent = mainCat;
+    card.appendChild(title);
+
+    const subcatsDiv = document.createElement('div');
+    subcatsDiv.className = "category-subcats";
+    subCats.forEach(sub => {
+      const link = document.createElement('button');
+      link.className = "category-subcat-link";
+      link.type = "button";
+      link.textContent = sub;
+      link.onclick = () => {
+        // Use your existing product display logic
+        selectCategoryByPath(`${mainCat} > ${sub}`);
+        // Hide mobile grid/tips/intro, show product section
+        document.getElementById('siteIntro').style.display = "none";
+        document.getElementById('mobileCategoryGrid').style.display = "none";
+        document.getElementById('tipsBlock').style.display = "none";
+        document.getElementById('categorySection').style.display = "";
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      };
+      subcatsDiv.appendChild(link);
+    });
+    card.appendChild(subcatsDiv);
+    grid.appendChild(card);
+  });
+}
+
 // --- PRODUCT DISPLAY (category path) ---
 function selectCategoryByPath(path) {
   document.getElementById('siteIntro').style.display = "none";
   document.getElementById('tipsBlock').style.display = "none";
-  // Carousel always visible
+  document.getElementById('mobileCategoryGrid').style.display = "none";
   document.getElementById('categorySection').style.display = "";
   const title = document.getElementById('productsSectionTitle');
   const grid = document.getElementById('productsGrid');
@@ -348,24 +325,46 @@ function selectCategoryByPath(path) {
   }
 }
 
-// --- HOME BUTTON: Show intro/tips, hide products ---
+// --- HOME BUTTON: Show intro/tips/grid, hide products ---
 function showHome() {
-  document.getElementById('siteIntro').style.display = "";
-  document.getElementById('tipsBlock').style.display = "";
-  // Carousel always visible
-  document.getElementById('categorySection').style.display = "none";
+  if (window.innerWidth <= 900) {
+    document.getElementById('siteIntro').style.display = "";
+    document.getElementById('mobileCategoryGrid').style.display = "";
+    document.getElementById('tipsBlock').style.display = "";
+    document.getElementById('categorySection').style.display = "none";
+    showMobileCategoryGrid();
+  } else {
+    document.getElementById('siteIntro').style.display = "";
+    document.getElementById('tipsBlock').style.display = "";
+    document.getElementById('categorySection').style.display = "none";
+    document.getElementById('mobileCategoryGrid').style.display = "none";
+  }
   window.scrollTo({top: 0, behavior: 'smooth'});
   closeAllMegamenus();
   closeMobileMenu();
 }
 
-// --- PAGE INIT ---
+// --- MOBILE NAV SETUP (present for compatibility, but not shown on mobile grid version) ---
+function closeMobileMenu() {
+  // No-op: nav is hidden on mobile grid
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildWPStyleMegaMenu();
-  setupMobileNav();
   buildHeroCarouselFromSheet();
-  showHome();
-  // Build mobile menu if mobile
-  if (window.innerWidth <= 900) buildMobileNavMenu();
+  if (window.innerWidth <= 900) {
+    showHome();
+  } else {
+    showHome();
+  }
+});
+
+// Optional: support resizing (switch between mobile grid and desktop nav)
+window.addEventListener('resize', function() {
+  if (window.innerWidth <= 900) {
+    showHome();
+  } else {
+    showHome();
+  }
 });
