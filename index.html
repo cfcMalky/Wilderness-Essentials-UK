@@ -5,6 +5,445 @@
   <title>Wilderness Essentials UK</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --logo-green: #3c5a36;
+      --logo-brown: #6b4a2b;
+      --logo-gold: #c9a14a;
+      --bg-pastel: #f6f7f2;
+      --accent: #c9a14a;
+    }
+    body {
+      margin: 0;
+      background: var(--bg-pastel);
+      color: var(--logo-brown);
+      font-family: 'Quicksand', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      margin-top: 2.5rem;
+      margin-bottom: 1.3rem;
+    }
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--logo-green);
+      margin-bottom: 0.3rem;
+    }
+    .site-tagline {
+      color: #6b4a2b;
+      font-size: 1.13rem;
+      margin-bottom: 1.4rem;
+    }
+    /* NAVBAR */
+    .navbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(60,90,54,0.07);
+      margin: 0 auto 2.2rem auto;
+      padding: 0.7rem 2rem;
+      max-width: 700px;
+      position: relative;
+      z-index: 10;
+      font-size: 1.09rem;
+    }
+    .nav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 2.3rem;
+    }
+    .nav-menu > li {
+      position: relative;
+    }
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--logo-green);
+      font-weight: 700;
+      font-size: 1.07rem;
+      cursor: pointer;
+      padding: 0.5em 0.2em;
+      border-radius: 4px;
+      transition: background 0.16s, color 0.16s;
+    }
+    .nav-link:hover,
+    .nav-link:focus {
+      background: var(--logo-gold);
+      color: #fff;
+      outline: none;
+    }
+    /* Dropdown */
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      left: 0; top: 100%;
+      background: #fff;
+      min-width: 180px;
+      box-shadow: 0 4px 16px rgba(60,90,54,0.13);
+      border-radius: 0 0 8px 8px;
+      margin-top: 0.3em;
+      z-index: 100;
+      padding: 0.5em 0;
+    }
+    .nav-menu > li:hover .nav-dropdown,
+    .nav-menu > li:focus-within .nav-dropdown {
+      display: block;
+    }
+    .nav-dropdown a {
+      display: block;
+      color: var(--logo-brown);
+      text-decoration: none;
+      padding: 0.45em 1.1em;
+      font-size: 1.01rem;
+      border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-dropdown a:hover,
+    .nav-dropdown a:focus {
+      background: var(--logo-gold);
+      color: #fff;
+    }
+    /* DISCLAIMER */
+    .disclaimer-bar {
+      background: var(--logo-gold);
+      color: #fff;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.55em 0;
+      margin: 0 auto 2.2rem auto;
+      max-width: 500px;
+      border-radius: 0 0 9px 9px;
+      box-shadow: 0 2px 6px rgba(60,90,54,0.05);
+    }
+    /* HERO CAROUSEL */
+    .hero-carousel-container {
+      max-width: 900px;
+      margin: 2.7rem auto 2.3rem auto;
+      min-height: 340px;
+      position: relative;
+    }
+    .hero-carousel-slide {
+      display: none;
+      width: 100%;
+      height: 340px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #eee;
+      box-shadow: 0 2px 24px rgba(60,90,54,0.12);
+      transition: opacity 0.7s;
+      position: absolute;
+      top: 0; left: 0;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      padding: 0;
+    }
+    .hero-carousel-slide.active {
+      display: flex;
+      opacity: 1;
+      position: relative;
+      animation: fadeInScale 1s;
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.98);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .hero-carousel-image {
+      height: 100%;
+      width: 55%;
+      object-fit: contain;
+      object-position: center;
+      background: #fafaf7;
+      border-radius: 22px 0 0 22px;
+    }
+    .hero-carousel-content {
+      width: 45%;
+      padding: 1.7rem 2rem 1.1rem 1.7rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(255,255,255,0.86);
+      border-radius: 0 22px 22px 0;
+      font-size: 1.04rem;
+      min-height: 100%;
+    }
+    .hero-carousel-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--logo-green);
+      margin-bottom: 0.6rem;
+      text-shadow: 0 2px 12px rgba(60,90,54,0.08);
+    }
+    .hero-carousel-desc {
+      color: var(--logo-brown);
+      margin-bottom: 1.2rem;
+      font-size: 1.08rem;
+      line-height: 1.45;
+    }
+    .hero-carousel-nav {
+      position: absolute;
+      left: 18px;
+      bottom: 20px;
+      display: flex;
+      gap: 0.7rem;
+      z-index: 10;
+    }
+    .hero-carousel-dot {
+      width: 14px;
+      height: 14px;
+      background: var(--logo-gold);
+      opacity: 0.55;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: background 0.18s, opacity 0.18s;
+    }
+    .hero-carousel-dot.active {
+      background: var(--logo-green);
+      opacity: 1;
+    }
+    /* INTRO & TIPS */
+    .site-intro, .outstanding-content-block {
+      max-width: 670px;
+      margin: 0 auto;
+    }
+    .site-intro {
+      background: #fff8ee;
+      border-radius: 13px;
+      padding: 1.1rem 1.5rem;
+      box-shadow: 0 1px 7px rgba(201,161,74,0.06);
+      font-size: 1.09rem;
+      margin-bottom: 1.7rem;
+    }
+    .outstanding-content-block {
+      background: #f5f7eb;
+      border-radius: 14px;
+      box-shadow: 0 1px 7px rgba(60,90,54,0.09);
+      padding: 2rem;
+      color: #2d3c1e;
+      font-size: 1.09rem;
+      text-align: left;
+      border-left: 7px solid #c9a14a;
+      margin-bottom: 2.5rem;
+    }
+    /* Responsive tweaks */
+    @media (max-width: 800px) {
+      .navbar { flex-direction: column; gap: 1.3rem; padding: 1rem 0.7rem; }
+      .nav-menu { gap: 1.2rem; }
+      .hero-carousel-container, .site-intro, .outstanding-content-block, .disclaimer-bar { max-width: 97vw; }
+      .hero-carousel-slide, .hero-carousel-slide.active {
+        flex-direction: column;
+        height: 340px;
+      }
+      .hero-carousel-image, .hero-carousel-content {
+        width: 100%;
+        min-height: 160px;
+        border-radius: 22px 22px 0 0;
+      }
+      .hero-carousel-content {
+        border-radius: 0 0 22px 22px;
+        padding: 1.2rem 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="page-title">Wilderness Essentials UK</div>
+    <div class="site-tagline">
+      Your Definitive Guide to the UK's Hottest Selling Outdoor Gear.
+    </div>
+  </header>
+  <!-- NAVIGATION DROPDOWN BAR -->
+  <nav class="navbar">
+    <ul class="nav-menu" id="navMenu">
+      <!-- Filled by JS -->
+    </ul>
+  </nav>
+  <!-- DISCLAIMER BAR -->
+  <div class="disclaimer-bar">
+    As an Amazon Associate, we earn from qualifying purchases. This site may earn a commission on sales at no extra cost to you.
+  </div>
+  <!-- HERO CAROUSEL -->
+  <div class="hero-carousel-container" id="heroCarousel"></div>
+  <!-- SITE INTRO -->
+  <div class="site-intro">
+    Embark on your next adventure with confidence, knowing you have the best gear. At Wilderness Essentials UK, we meticulously research and compile the hottest selling and top-rated camping gear, hiking essentials, and outdoor equipment specifically chosen for the diverse landscapes of the United Kingdom.<br><br>
+    We cut through the noise to bring you unbiased insights and direct links to products adventurers trust. From robust tents and comfortable sleeping bags to efficient cookware, reliable backpacks, and essential bushcraft tools, discover everything you need to thrive in the British wilderness. Explore our curated selections and confidently equip your next unforgettable outdoor experience.
+  </div>
+  <!-- TIPS BLOCK -->
+  <div class="outstanding-content-block">
+    <strong>Adventure Tips & Inspiration</strong><br>
+    <ul style="margin-top:0.7em;">
+      <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
+      <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
+      <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
+      <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
+    </ul>
+    <div style="margin-top:1.3em; font-size:1.05em; color:#47613a; font-style:italic;">
+      “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+    </div>
+  </div>
+  <footer style="text-align:center;font-size:0.95em;color:#aaa;margin:2em 0 1em 0;">
+    2025 Wilderness Essentials UK © All Rights Reserved.
+  </footer>
+  <script>
+    // Example data
+    const categories = [
+      {
+        name: "Camp Kitchen", subcategories: [
+          { name: "Stove Accessories", id: "stove-accessories" },
+          { name: "Cookware", id: "cookware" },
+          { name: "Utensils", id: "utensils" }
+        ]
+      },
+      {
+        name: "Sleeping Gear", subcategories: [
+          { name: "Air Beds", id: "air-beds" },
+          { name: "Sleeping Bags", id: "sleeping-bags" }
+        ]
+      },
+      {
+        name: "Tents", subcategories: [
+          { name: "Dome Tents", id: "dome-tents" },
+          { name: "Tunnel Tents", id: "tunnel-tents" }
+        ]
+      }
+    ];
+    // Build dropdown navigation
+    function buildNav() {
+      const navMenu = document.getElementById('navMenu');
+      navMenu.innerHTML = '';
+      categories.forEach(cat => {
+        const li = document.createElement('li');
+        if (cat.subcategories && cat.subcategories.length > 0) {
+          const btn = document.createElement('button');
+          btn.className = 'nav-link';
+          btn.textContent = cat.name;
+          btn.tabIndex = 0;
+          const dropdown = document.createElement('div');
+          dropdown.className = 'nav-dropdown';
+          cat.subcategories.forEach(sub => {
+            const subLink = document.createElement('a');
+            subLink.href = '#';
+            subLink.textContent = sub.name;
+            subLink.tabIndex = 0;
+            subLink.onclick = (e) => {
+              e.preventDefault();
+              alert(`Navigate to: ${cat.name} > ${sub.name}`);
+              // Your code here: update main content, load products, etc.
+            };
+            dropdown.appendChild(subLink);
+          });
+          li.appendChild(btn);
+          li.appendChild(dropdown);
+        } else {
+          const link = document.createElement('a');
+          link.className = 'nav-link';
+          link.href = '#';
+          link.textContent = cat.name;
+          li.appendChild(link);
+        }
+        navMenu.appendChild(li);
+      });
+      // Add About as a static link
+      const aboutLi = document.createElement('li');
+      aboutLi.innerHTML = `<a class="nav-link" href="#">About</a>`;
+      navMenu.appendChild(aboutLi);
+    }
+    buildNav();
+
+    // Example carousel data
+    const carouselSlides = [
+      {
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80",
+        title: "Dome Tents",
+        desc: "Explore our top-rated dome tents, perfect for all UK conditions and campsites."
+      },
+      {
+        image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=700&q=80",
+        title: "Air Beds",
+        desc: "Rest easy with our selection of comfortable, reliable air beds for any adventure."
+      },
+      {
+        image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=700&q=80",
+        title: "Cookware",
+        desc: "Cook up a storm with the best outdoor cookware, tried and tested by campers."
+      }
+    ];
+
+    function buildHeroCarousel() {
+      const hero = document.getElementById("heroCarousel");
+      if (!carouselSlides.length) {
+        hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
+        return;
+      }
+      hero.innerHTML = "";
+      carouselSlides.forEach((s, i) => {
+        const slide = document.createElement('div');
+        slide.className = "hero-carousel-slide" + (i===0 ? " active" : "");
+        slide.innerHTML = `
+          <img class="hero-carousel-image" src="${s.image}" alt="">
+          <div class="hero-carousel-content">
+            <div class="hero-carousel-title">${s.title}</div>
+            <div class="hero-carousel-desc">${s.desc}</div>
+          </div>
+        `;
+        hero.appendChild(slide);
+      });
+      // Dots nav
+      const nav = document.createElement('div');
+      nav.className = "hero-carousel-nav";
+      for (let i=0; i<carouselSlides.length; ++i) {
+        const dot = document.createElement('button');
+        dot.className = "hero-carousel-dot" + (i===0 ? " active" : "");
+        dot.setAttribute("aria-label", `Show slide ${i+1}`);
+        dot.onclick = () => setHeroCarouselSlide(i);
+        nav.appendChild(dot);
+      }
+      hero.appendChild(nav);
+
+      // State
+      let current = 0;
+      let timer = null;
+      function setHeroCarouselSlide(idx) {
+        const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
+        const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
+        slidesEls.forEach((el, i) => {
+          el.classList.toggle('active', i === idx);
+        });
+        dotsEls.forEach((el, i) => {
+          el.classList.toggle('active', i === idx);
+        });
+        current = idx;
+        resetTimer();
+      }
+      function nextSlide() {
+        setHeroCarouselSlide((current+1)%carouselSlides.length);
+      }
+      function resetTimer() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(nextSlide, 5000);
+      }
+      resetTimer();
+    }
+    buildHeroCarousel();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wilderness Essentials UK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="logo-wilderness-essentials-uk.jpg">
   <style>
     :root {
