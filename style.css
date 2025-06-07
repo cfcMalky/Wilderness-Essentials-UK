@@ -1,250 +1,338 @@
-// --- CONFIG: Google Sheet API ---
-const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
-const RANGE = "Sheet1";
+:root {
+  --logo-green: #3c5a36;
+  --logo-brown: #6b4a2b;
+  --logo-gold: #c9a14a;
+  --bg-pastel: #f6f7f2;
+  --accent: #c9a14a;
+  --card-radius: 22px;
+}
+body {
+  margin: 0;
+  background: var(--bg-pastel);
+  color: var(--logo-brown);
+  font-family: 'Quicksand', Arial, sans-serif;
+  min-height: 100vh;
+}
+header { text-align: center; margin-top: 2.5rem; margin-bottom: 1.3rem; }
+.page-title { font-size: 2.2rem; font-weight: 900; color: var(--logo-green); margin-bottom: 0.3rem; }
+.site-tagline { color: #6b4a2b; font-size: 1.13rem; margin-bottom: 1.4rem; }
 
-let allProducts = [];
-let navStructure = {};
-let subcatToMaincat = {};
-let sheetReady = false;
-
-// --- DATA LOAD ---
-async function fetchProductsFromSheet() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-  const resp = await fetch(url);
-  const data = await resp.json();
-  const [headers, ...rows] = data.values;
-  allProducts = rows.map(row => {
-    let obj = {};
-    headers.forEach((h, i) => obj[h.trim()] = (row[i] || "").trim());
-    // Parse category
-    const catPath = (obj.category || "").split(">").map(s => s.trim());
-    obj.mainCat = catPath[0] || "";
-    obj.subCat = catPath[1] || "";
-    obj.catPath = obj.category || "";
-    return obj;
-  });
-  buildNavStructure();
-  sheetReady = true;
+/* MEGAMENU: always visible under header */
+#megamenu {
+  display: block;
+  position: static;
+  margin: 0 auto 2rem auto;
+  z-index: 40;
+  max-width: 700px;
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(60,90,54,0.13);
+  border-radius: 0 0 14px 14px;
+  padding: 1.3rem 2.2rem 1.3rem 2.2rem;
+  min-height: 80px;
+}
+.megamenu-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.7rem 2.2rem;
+  align-items: flex-start;
+}
+.megamenu-cat-col {
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+.megamenu-title {
+  font-weight: 700;
+  color: var(--logo-green);
+  font-size: 1.11rem;
+  margin-bottom: 0.6em;
+}
+.megamenu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.megamenu-list li {
+  margin-bottom: 0.45em;
+}
+.megamenu-link {
+  color: var(--logo-gold);
+  background: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.04rem;
+  border-radius: 5px;
+  padding: 0.31em 1em;
+  display: inline-block;
+  transition: background 0.16s, color 0.16s;
+  border: 1.5px solid transparent;
+  letter-spacing: 0.01em;
+}
+.megamenu-link:hover, .megamenu-link:focus, .megamenu-link.active {
+  background: var(--logo-gold);
+  color: var(--logo-green);
+  border-color: var(--logo-gold);
+  outline: none;
+}
+/* Home link special style */
+.megamenu-home-col {
+  min-width: 120px;
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.megamenu-home-link {
+  color: var(--logo-green);
+  background: var(--logo-gold);
+  font-weight: 800;
+  font-size: 1.09rem;
+  border-radius: 6px;
+  padding: 0.34em 1.1em;
+  display: inline-block;
+  margin-bottom: 0.8em;
+  text-decoration: none;
+  transition: background 0.16s, color 0.16s;
+  border: 2px solid var(--logo-gold);
+  box-shadow: 0 2px 8px rgba(201,161,74,0.08);
+}
+.megamenu-home-link:hover, .megamenu-home-link:focus {
+  background: var(--logo-green);
+  color: #fff;
+  border-color: var(--logo-green);
 }
 
-function buildNavStructure() {
-  navStructure = {};
-  subcatToMaincat = {};
-  for (const prod of allProducts) {
-    if (!prod.mainCat) continue;
-    if (!navStructure[prod.mainCat]) navStructure[prod.mainCat] = [];
-    if (prod.subCat && !navStructure[prod.mainCat].includes(prod.subCat)) navStructure[prod.mainCat].push(prod.subCat);
-    if (prod.subCat) subcatToMaincat[prod.subCat] = prod.mainCat;
-  }
+/* Make .disclaimer-bar match width/layout of .outstanding-content-block */
+.site-intro,
+.outstanding-content-block,
+.disclaimer-bar {
+  max-width: 670px;
+  margin-left: auto;
+  margin-right: auto;
 }
-
-// --- MEGAMENU: always shown below header ---
-function buildNavWithMegaMenu() {
-  // Megamenu: always visible, all main cats as columns, with Home link to the left
-  const megamenu = document.getElementById('megamenu');
-  megamenu.innerHTML = '';
-  const row = document.createElement('div');
-  row.className = "megamenu-row";
-
-  // Home column
-  const homeCol = document.createElement('div');
-  homeCol.className = "megamenu-home-col";
-  const homeLink = document.createElement('a');
-  homeLink.className = "megamenu-home-link";
-  homeLink.href = "#";
-  homeLink.textContent = "Home";
-  homeLink.onclick = (e) => {
-    e.preventDefault();
-    showHome();
-  };
-  homeCol.appendChild(homeLink);
-  row.appendChild(homeCol);
-
-  // Main categories columns
-  const mainCats = Object.keys(navStructure);
-  mainCats.forEach(mainCat => {
-    const col = document.createElement('div');
-    col.className = "megamenu-cat-col";
-    const title = document.createElement('div');
-    title.className = "megamenu-title";
-    title.textContent = mainCat;
-    col.appendChild(title);
-    const ul = document.createElement('ul');
-    ul.className = "megamenu-list";
-    navStructure[mainCat].forEach(sub => {
-      const li = document.createElement('li');
-      const link = document.createElement('a');
-      link.className = 'megamenu-link';
-      link.href = "#";
-      link.textContent = sub;
-      link.onclick = (e) => {
-        e.preventDefault();
-        selectCategoryByPath(`${mainCat} > ${sub}`);
-      };
-      li.appendChild(link);
-      ul.appendChild(li);
-    });
-    col.appendChild(ul);
-    row.appendChild(col);
-  });
-  megamenu.appendChild(row);
+.disclaimer-bar {
+  background: #fff6e0;
+  color: #b89c5d;
+  text-align: center;
+  font-size: 0.98rem;
+  font-weight: 500;
+  padding: 0.4em 0 0.3em 0;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(60,90,54,0.04);
+  margin: 1.5em auto 0.5em auto;
 }
-
-// --- CAROUSEL (first product with image in first subcat of each maincat) ---
-function buildHeroCarouselFromSheet() {
-  const hero = document.getElementById("heroCarousel");
-  let slides = [];
-  for (const mainCat in navStructure) {
-    const subCats = navStructure[mainCat];
-    let found = null;
-    if (subCats.length) {
-      // Get first product with image in the first subcat
-      const prods = allProducts.filter(p => p.mainCat === mainCat && p.subCat === subCats[0] && p.image_url);
-      if (prods.length > 0) found = prods[0];
-    }
-    // If not found, fallback to any product with image in mainCat
-    if (!found) {
-      const prods = allProducts.filter(p => p.mainCat === mainCat && p.image_url);
-      if (prods.length > 0) found = prods[0];
-    }
-    if (found) {
-      slides.push({
-        image: found.image_url,
-        headline: found.subCat || found.mainCat,
-        mainCat: found.mainCat,
-        subCat: found.subCat,
-        path: found.catPath,
-        desc: (found.description || '').split('.').shift() + '.',
-      });
-    }
-  }
-  if (!slides.length) {
-    hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
-    return;
-  }
-  hero.innerHTML = "";
-  slides.forEach((s, i) => {
-    const slide = document.createElement('div');
-    slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
-    slide.innerHTML = `
-      <img class="hero-carousel-image" src="${s.image}" alt="">
-      <div class="hero-carousel-content">
-        <div class="hero-carousel-title">${s.headline}</div>
-        <div class="hero-carousel-desc">${s.desc}</div>
-        <button class="hero-carousel-cta" type="button" data-path="${encodeURIComponent(s.path)}">
-          Shop ${s.headline}
-        </button>
-      </div>
-    `;
-    hero.appendChild(slide);
-  });
-  // Dots nav
-  const nav = document.createElement('div');
-  nav.className = "hero-carousel-nav";
-  for (let i = 0; i < slides.length; ++i) {
-    const dot = document.createElement('button');
-    dot.className = "hero-carousel-dot" + (i === 0 ? " active" : "");
-    dot.setAttribute("aria-label", `Show slide ${i + 1}`);
-    dot.onclick = () => setHeroCarouselSlide(i);
-    nav.appendChild(dot);
-  }
-  hero.appendChild(nav);
-
-  // Attach event listeners for the CTA buttons
-  hero.querySelectorAll('.hero-carousel-cta').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const path = decodeURIComponent(this.getAttribute('data-path'));
-      selectCategoryByPath(path);
-      document.getElementById('categorySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-
-  // State
-  let current = 0;
-  let timer = null;
-  function setHeroCarouselSlide(idx) {
-    const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
-    const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
-    slidesEls.forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-    dotsEls.forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-    current = idx;
-    resetTimer();
-  }
-  function nextSlide() {
-    setHeroCarouselSlide((current + 1) % slides.length);
-  }
-  function resetTimer() {
-    if (timer) clearInterval(timer);
-    timer = setInterval(nextSlide, 7000);
-  }
-  resetTimer();
+/* HERO CAROUSEL */
+.hero-carousel-container {
+  max-width: 700px;
+  margin: 2.7rem auto 2.3rem auto;
+  min-height: 270px;
+  position: relative;
 }
-
-// --- PRODUCT DISPLAY (category path) ---
-function selectCategoryByPath(path) {
-  // Hide intro/tips, show products section
-  document.getElementById('siteIntro').style.display = "none";
-  document.getElementById('tipsBlock').style.display = "none";
-  document.getElementById('categorySection').style.display = "";
-  // Fill products
-  const title = document.getElementById('productsSectionTitle');
-  const grid = document.getElementById('productsGrid');
-  let filtered = allProducts.filter(p => p.category === path);
-  title.textContent = path;
-  grid.innerHTML = '';
-  if (!filtered.length) {
-    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
-  } else {
-    filtered.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      if (p.image_url) {
-        const img = document.createElement('img');
-        img.className = 'product-image';
-        img.src = p.image_url;
-        img.alt = p.name;
-        card.appendChild(img);
-      }
-      const title = document.createElement('div');
-      title.className = 'product-title';
-      title.textContent = p.name;
-      card.appendChild(title);
-      const desc = document.createElement('div');
-      desc.className = 'product-desc';
-      desc.textContent = p.description;
-      card.appendChild(desc);
-      if (p.amazon_link) {
-        const btn = document.createElement('a');
-        btn.className = 'product-link';
-        btn.href = p.amazon_link;
-        btn.target = "_blank";
-        btn.rel = "noopener";
-        btn.textContent = "Shop on Amazon";
-        card.appendChild(btn);
-      }
-      grid.appendChild(card);
-    });
-  }
+.hero-carousel-slide {
+  display: none;
+  width: 100%;
+  min-height: 210px;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 24px rgba(60,90,54,0.12);
+  transition: opacity 0.7s;
+  position: absolute;
+  top: 0; left: 0;
+  align-items: stretch;
+  z-index: 2;
+  padding: 0;
 }
-
-// --- HOME BUTTON: Show intro/tips, hide products ---
-function showHome() {
-  document.getElementById('siteIntro').style.display = "";
-  document.getElementById('tipsBlock').style.display = "";
-  document.getElementById('categorySection').style.display = "none";
-  // Optionally scroll to top
-  window.scrollTo({top: 0, behavior: 'smooth'});
+.hero-carousel-slide.active {
+  display: flex;
+  opacity: 1;
+  position: relative;
+  animation: fadeInScale 1s;
 }
-
-// --- PAGE INIT ---
-document.addEventListener('DOMContentLoaded', async function () {
-  await fetchProductsFromSheet();
-  buildNavWithMegaMenu();
-  buildHeroCarouselFromSheet();
-  showHome();
-});
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.98);}
+  to { opacity: 1; transform: scale(1);}
+}
+.hero-carousel-image {
+  width: 44%; min-width: 150px; object-fit: cover; background: #fafaf7;
+}
+.hero-carousel-content {
+  width: 56%; padding: 1.7rem 2rem 1.1rem 1.7rem;
+  display: flex; flex-direction: column; justify-content: center;
+  font-size: 1.04rem;
+}
+.hero-carousel-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--logo-green);
+  margin-bottom: 0.6rem;
+}
+.hero-carousel-desc {
+  color: var(--logo-brown);
+  margin-bottom: 1.2rem;
+  font-size: 1.06rem;
+  line-height: 1.45;
+}
+.hero-carousel-cta {
+  align-self: flex-start;
+  background: var(--logo-gold);
+  color: #fff;
+  font-size: 1.01rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 1px 8px rgba(201,161,74,0.08);
+  transition: background 0.17s, color 0.17s;
+  letter-spacing: 0.01em;
+  margin-top: 0.3rem;
+}
+.hero-carousel-cta:hover {
+  background: var(--logo-green);
+}
+.hero-carousel-nav {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  display: flex;
+  gap: 0.7rem;
+  z-index: 10;
+}
+.hero-carousel-dot {
+  width: 13px; height: 13px;
+  background: var(--logo-gold);
+  opacity: 0.55;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, opacity 0.18s;
+}
+.hero-carousel-dot.active {
+  background: var(--logo-green);
+  opacity: 1;
+}
+/* INTRO & TIPS */
+.site-intro, .outstanding-content-block {
+  max-width: 670px;
+  margin: 0 auto;
+}
+.site-intro {
+  background: #fff8ee;
+  border-radius: 13px;
+  padding: 1.1rem 1.5rem;
+  box-shadow: 0 1px 7px rgba(201,161,74,0.06);
+  font-size: 1.09rem;
+  margin-bottom: 1.7rem;
+}
+.outstanding-content-block {
+  background: #f5f7eb;
+  border-radius: 14px;
+  box-shadow: 0 1px 7px rgba(60,90,54,0.09);
+  padding: 2rem;
+  color: #2d3c1e;
+  font-size: 1.09rem;
+  text-align: left;
+  border-left: 7px solid #c9a14a;
+  margin-bottom: 2.5rem;
+}
+/* PRODUCT SECTION */
+.category-section {
+  max-width: 1100px;
+  margin: 2.5rem auto;
+}
+.products-section-title {
+  color: var(--logo-gold);
+  font-weight: 700;
+  font-size: 1.3rem;
+  text-align: center;
+  margin: 1.5rem auto 1rem auto;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem 2rem;
+  margin: 0 auto;
+  align-items: stretch;
+}
+.product-card {
+  background: #fff;
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 16px rgba(60,90,54,0.09);
+  padding: 1.1em 1.1em 1.5em 1.1em;
+  border: 1.5px solid #ece7e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 350px;
+  min-width: 0;
+  max-width: 340px;
+  margin: 0 auto;
+  width: 100%;
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+.product-card:hover {
+  box-shadow: 0 4px 22px rgba(60,90,54,0.14);
+  border-color: var(--logo-gold);
+}
+.product-image {
+  max-width: 100%;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 0.7em;
+  align-self: center;
+}
+.product-title {
+  font-size: 1.08rem;
+  font-weight: bold;
+  color: var(--logo-green);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.product-desc {
+  font-size: 1.01rem;
+  color: var(--logo-brown);
+  margin-bottom: 1.1rem;
+  line-height: 1.51;
+  text-align: left;
+}
+.product-link {
+  background: var(--logo-green);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5em 1.2em;
+  font-weight: 600;
+  font-size: 1.01rem;
+  cursor: pointer;
+  text-decoration: none;
+  margin-top: auto;
+  align-self: flex-end;
+  transition: background 0.16s;
+}
+.product-link:hover {
+  background: var(--logo-gold);
+  color: #fff;
+}
+/* Footer */
+.main-footer {
+  text-align: center;
+  font-size: 0.95em;
+  color: #aaa;
+  margin: 2em 0 1em 0;
+}
+/* Responsive tweaks */
+@media (max-width: 1100px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .products-grid { grid-template-columns: repeat(1, 1fr); }
+  .product-card { min-height: 0; }
+}
+@media (max-width: 900px) {
+  .hero-carousel-container, .category-section, .site-intro, .outstanding-content-block, .disclaimer-bar, #megamenu { max-width: 97vw; }
+  .products-grid { gap: 1.1rem; }
+  #megamenu { padding: 1rem 0.5rem; }
+}
