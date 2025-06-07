@@ -8,7 +8,7 @@
   --card-radius: 22px;
 }
 
-/* Hamburger styles (improved for visibility and animation) */
+/* Hamburger styles (hidden on mobile grid homepage) */
 .hamburger {
   display: none;
   position: absolute;
@@ -66,103 +66,75 @@
   transform: translateY(-10px) rotate(-45deg);
 }
 
-/* --- Mobile Menu CSS --- */
+/* --- Mobile grid homepage: show grid, hide nav and carousel --- */
 @media (max-width: 900px) {
-  .hamburger {
-    display: block;
-  }
-  .megabar {
+  .megabar, .hamburger, .megabar-overlay, .hero-carousel-container {
     display: none !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 85vw;
-    max-width: 340px;
-    height: 100vh;
+  }
+  #mobileCategoryGrid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2em;
+    margin: 1.2em 0 1.8em 0;
+    width: 100%;
+  }
+  .category-card {
     background: #fff;
-    box-shadow: 2px 0 12px rgba(60,90,54,0.12);
-    transform: translateX(-100%);
-    transition: transform 0.33s cubic-bezier(0.4,0,0.2,1);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(60,90,54,0.09);
+    padding: 0.7em 0.6em 0.7em 0.6em;
+    text-align: center;
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    z-index: 9999;
-    min-height: 100vh;
-    border-radius: 0 14px 14px 0;
-    padding-top: 66px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    align-items: center;
   }
-  .megabar.open {
-    display: flex !important;
-    transform: translateX(0);
-  }
-  .megabar-menu {
-    flex-direction: column;
-    width: 100%;
-    overflow-y: auto;
-    max-height: calc(100vh - 66px);
-    margin: 0;
-    padding: 0;
-    gap: 0;
+  .category-image {
+    width: 90%;
+    max-width: 120px;
     height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 0.5em;
+    margin-top: 0.2em;
   }
-  .megabar-link {
-    font-size: 1.08rem;
-    padding: 0.65em 1em;
-    height: auto;
-    line-height: 1.5em;
-    border-radius: 0;
-    width: 100%;
-    text-align: left;
-    color: #3c5a36;
-    background: none;
-    border: none;
-    font-weight: 700;
-    transition: background 0.16s, color 0.16s;
-    cursor: pointer;
+  .category-title {
+    font-weight: bold;
+    color: var(--logo-green);
+    font-size: 1.08em;
+    margin-bottom: 0.5em;
+    margin-top: 0.3em;
   }
-  .megabar-link:hover, .megabar-link:focus, .megabar-link.active {
-    background: #e7f4e3;
-    color: #1b2e18;
-    outline: none;
+  .category-subcats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em 0.8em;
+    justify-content: center;
+    margin-top: 0.2em;
+    margin-bottom: 0.3em;
   }
-  .megamenu-panel {
-    display: none !important;
-  }
-  .megabar-overlay.open {
-    display: block;
-  }
-  /* Mobile expandable subcat styles */
-  .mobile-maincat .mobile-subcat-list {
-    display: none;
-    padding-left: 1.2em;
-    margin: 0;
-  }
-  .mobile-maincat.expanded .mobile-subcat-list {
-    display: block;
-  }
-  .mobile-subcat-list .megabar-link {
-    font-weight: 500;
+  .category-subcat-link {
+    color: var(--logo-brown);
     font-size: 1em;
     background: none;
-    color: #47613a;
-    padding-left: 1.5em;
-    border-left: 2px solid #e7f4e3;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+  /* Hide product grid section by default on mobile */
+  #categorySection {
+    margin-top: 1.1em;
   }
 }
-.megabar-overlay {
-  display: none;
-  position: fixed;
-  z-index: 9998;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(60,90,54,0.28);
-  transition: opacity 0.2s;
-}
-.megabar-overlay.open {
-  display: block;
+
+/* Desktop nav, carousel, grid hidden by default */
+@media (min-width: 901px) {
+  #mobileCategoryGrid {
+    display: none !important;
+  }
 }
 
-/* FLOATING CAMPING BG IMAGE */
+/* Background image */
 .camping-bg {
   position: fixed;
   top: 0; left: 0;
