@@ -265,6 +265,21 @@ function searchProducts(query) {
   }
 }
 
+// --- HEADER COLLAPSE ON SCROLL, ANIMATED ---
+function handleHeaderCollapse() {
+  const header = document.querySelector('.banner-header');
+  if (!header) return;
+  const collapseAt = 80; // px from top before collapsing
+  if (window.scrollY > collapseAt) {
+    header.classList.add('collapsed');
+  } else {
+    header.classList.remove('collapsed');
+  }
+}
+
+window.addEventListener('scroll', handleHeaderCollapse);
+window.addEventListener('resize', handleHeaderCollapse);
+
 // --- SEARCH BAR EVENTS ---
 document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
