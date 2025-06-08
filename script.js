@@ -61,10 +61,8 @@ function buildWPStyleMegaMenu() {
     row.className = "megamenu-row";
     const col = document.createElement('div');
     col.className = "megamenu-cat-col";
-    const title = document.createElement('div');
-    title.className = "megamenu-title";
-    title.textContent = mainCat;
-    col.appendChild(title);
+    // --- REMOVE MAIN CAT TITLE FROM DROPDOWN ---
+    // (Do not add main category title to the dropdown panel)
     const ul = document.createElement('ul');
     ul.className = "megamenu-list";
     navStructure[mainCat].forEach(sub => {
