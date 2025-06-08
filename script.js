@@ -52,8 +52,6 @@ function buildWPStyleMegaMenu() {
     mainBtn.tabIndex = 0;
     mainBtn.onclick = (e) => {
       e.preventDefault();
-      // Optionally, you could link to a main category page here
-      // window.location.href = `products/${mainCat.toLowerCase().replace(/\s+/g, '-')}.html`;
     };
     const panel = document.createElement('div');
     panel.className = 'megamenu-panel';
@@ -61,18 +59,15 @@ function buildWPStyleMegaMenu() {
     row.className = "megamenu-row";
     const col = document.createElement('div');
     col.className = "megamenu-cat-col";
-    // Main cat title removed from dropdown here
     const ul = document.createElement('ul');
     ul.className = "megamenu-list";
     navStructure[mainCat].forEach(sub => {
       const li2 = document.createElement('li');
-      // Subcat page URL
       const fileName = `${mainCat.toLowerCase().replace(/\s+/g, '-')}-${sub.toLowerCase().replace(/\s+/g, '-')}.html`;
       const link = document.createElement('a');
       link.className = 'megamenu-sublink';
       link.href = `products/${fileName}`;
       link.textContent = sub;
-      // No JS click handler: allow default link navigation
       li2.appendChild(link);
       ul.appendChild(li2);
     });
@@ -112,7 +107,7 @@ function buildWPStyleMegaMenu() {
   if (logoLink) {
     logoLink.onclick = (e) => {
       e.preventDefault();
-      window.location.href = 'index.html';
+      window.location.href = logoLink.getAttribute("href");
     };
   }
 }
@@ -125,9 +120,101 @@ function closeAllMegamenus() {
   });
 }
 
-// --- (Category/Product grid rendering removed; only nav is needed for index.html) ---
+// --- HERO CAROUSEL (only on index.html) ---
+function buildHeroCarouselFromSheet() {
+  const hero = document.getElementById("heroCarousel");
+  if (!hero) return;
+  if (window.innerWidth <= 900) {
+    hero.style.display = "none";
+    return;
+  } else {
+    hero.style.display = "";
+  }
+  let slides = [];
+  for (const mainCat in navStructure) {
+    const subCats = navStructure[mainCat];
+    let found = null;
+    if (subCats.length) {
+      const prods = allProducts.filter(p => p.mainCat === mainCat && p.subCat === subCats[0] && p.image_url);
+      if (prods.length > 0) found = prods[0];
+    }
+    if (!found) {
+      const prods = allProducts.filter(p => p.mainCat === mainCat && p.image_url);
+      if (prods.length > 0) found = prods[0];
+    }
+    if (found) {
+      slides.push({
+        image: found.image_url,
+        headline: found.subCat || found.mainCat,
+        mainCat: found.mainCat,
+        subCat: found.subCat,
+        path: found.catPath,
+        desc: (found.description || '').split('.').shift() + '.',
+      });
+    }
+  }
+  if (!slides.length) {
+    hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
+    return;
+  }
+  hero.innerHTML = "";
+  slides.forEach((s, i) => {
+    const btnLabel = `Browse ${s.subCat ? s.subCat : s.mainCat}`;
+    const slide = document.createElement('div');
+    slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
+    slide.innerHTML = `
+      <img class="hero-carousel-image" src="${s.image}" alt="">
+      <div class="hero-carousel-content">
+        <div class="hero-carousel-title">${s.headline}</div>
+        <div class="hero-carousel-desc">${s.desc}</div>
+        <a class="hero-carousel-cta" href="products/${s.mainCat.toLowerCase().replace(/\s+/g, '-')}-${s.subCat.toLowerCase().replace(/\s+/g, '-')}.html">
+          ${btnLabel}
+        </a>
+      </div>
+    `;
+    hero.appendChild(slide);
+  });
+  const nav = document.createElement('div');
+  nav.className = "hero-carousel-nav";
+  for (let i = 0; i < slides.length; ++i) {
+    const dot = document.createElement('button');
+    dot.className = "hero-carousel-dot" + (i === 0 ? " active" : "");
+    dot.setAttribute("aria-label", `Show slide ${i + 1}`);
+    dot.onclick = () => setHeroCarouselSlide(i);
+    nav.appendChild(dot);
+  }
+  hero.appendChild(nav);
 
+  let current = 0;
+  let timer = null;
+  function setHeroCarouselSlide(idx) {
+    const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
+    const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
+    slidesEls.forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    dotsEls.forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    current = idx;
+    resetTimer();
+  }
+  function nextSlide() {
+    setHeroCarouselSlide((current + 1) % slides.length);
+  }
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(nextSlide, 7000);
+  }
+  resetTimer();
+}
+
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildWPStyleMegaMenu();
+  // Only run carousel code if on index.html (has heroCarousel)
+  if (document.getElementById('heroCarousel')) {
+    buildHeroCarouselFromSheet();
+  }
 });
