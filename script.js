@@ -41,13 +41,10 @@ function buildNavStructure() {
 function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
-
-  // Main categories ONLY
   const mainCats = Object.keys(navStructure);
   mainCats.forEach((mainCat, idx) => {
     const li = document.createElement('li');
     li.className = "megabar-has-megamenu";
-    // Main nav link (now a button to show all in mainCat)
     const mainBtn = document.createElement('button');
     mainBtn.className = 'megabar-main-link';
     mainBtn.textContent = mainCat;
@@ -59,8 +56,6 @@ function buildWPStyleMegaMenu() {
       closeAllMegamenus();
       closeMobileMenu();
     };
-
-    // Megamenu panel (hidden on mobile, for desktop only)
     const panel = document.createElement('div');
     panel.className = 'megamenu-panel';
     const row = document.createElement('div');
@@ -92,8 +87,7 @@ function buildWPStyleMegaMenu() {
     row.appendChild(col);
     panel.appendChild(row);
 
-    // Only one open at a time logic (desktop only)
-    // Prevent flicker: keep menu open while mouse is over button or panel
+    // Flicker prevention
     let closeTimeout;
     function openMenu() {
       clearTimeout(closeTimeout);
@@ -105,11 +99,9 @@ function buildWPStyleMegaMenu() {
       closeTimeout = setTimeout(() => {
         li.classList.remove('open');
         panel.style.display = "none";
-      }, 180); // short delay for pointer movement
+      }, 180);
     }
-    function cancelCloseMenu() {
-      clearTimeout(closeTimeout);
-    }
+    function cancelCloseMenu() { clearTimeout(closeTimeout); }
     mainBtn.addEventListener('mouseenter', openMenu);
     mainBtn.addEventListener('focus', openMenu);
     mainBtn.addEventListener('click', openMenu);
@@ -123,7 +115,6 @@ function buildWPStyleMegaMenu() {
     li.appendChild(panel);
   });
 
-  // Center logo click acts as home button
   const logoLink = document.getElementById('homeLogoLink');
   if (logoLink) {
     logoLink.onclick = (e) => {
@@ -143,7 +134,7 @@ function closeAllMegamenus() {
   });
 }
 
-// --- HERO CAROUSEL (desktop only, hidden on mobile) ---
+// --- HERO CAROUSEL (side-by-side layout) ---
 function buildHeroCarouselFromSheet() {
   const hero = document.getElementById("heroCarousel");
   if (window.innerWidth <= 900) {
@@ -241,7 +232,7 @@ function buildHeroCarouselFromSheet() {
   resetTimer();
 }
 
-// --- MOBILE CATEGORY GRID HOMEPAGE ---
+// --- MOBILE CATEGORY GRID HOMEPAGE (unchanged) ---
 function showMobileCategoryGrid() {
   const grid = document.getElementById('mobileCategoryGrid');
   grid.innerHTML = '';
@@ -304,33 +295,7 @@ function selectCategoryByPath(path) {
     grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
   } else {
     filtered.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      if (p.image_url) {
-        const img = document.createElement('img');
-        img.className = 'product-image';
-        img.src = p.image_url;
-        img.alt = p.name;
-        card.appendChild(img);
-      }
-      const title = document.createElement('div');
-      title.className = 'product-title';
-      title.textContent = p.name;
-      card.appendChild(title);
-      const desc = document.createElement('div');
-      desc.className = 'product-desc';
-      desc.textContent = p.description || "";
-      card.appendChild(desc);
-      if (p.amazon_link) {
-        const btn = document.createElement('a');
-        btn.className = 'product-link';
-        btn.href = p.amazon_link;
-        btn.target = "_blank";
-        btn.rel = "noopener";
-        btn.textContent = "More Details";
-        card.appendChild(btn);
-      }
-      grid.appendChild(card);
+      grid.appendChild(makeProductCard(p));
     });
   }
 }
@@ -350,35 +315,44 @@ function selectMainCategory(mainCat) {
     grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
   } else {
     filtered.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      if (p.image_url) {
-        const img = document.createElement('img');
-        img.className = 'product-image';
-        img.src = p.image_url;
-        img.alt = p.name;
-        card.appendChild(img);
-      }
-      const title = document.createElement('div');
-      title.className = 'product-title';
-      title.textContent = p.name;
-      card.appendChild(title);
-      const desc = document.createElement('div');
-      desc.className = 'product-desc';
-      desc.textContent = p.description || "";
-      card.appendChild(desc);
-      if (p.amazon_link) {
-        const btn = document.createElement('a');
-        btn.className = 'product-link';
-        btn.href = p.amazon_link;
-        btn.target = "_blank";
-        btn.rel = "noopener";
-        btn.textContent = "More Details";
-        card.appendChild(btn);
-      }
-      grid.appendChild(card);
+      grid.appendChild(makeProductCard(p));
     });
   }
+}
+
+// --- PRODUCT CARD: Image left, text right, button below text
+function makeProductCard(p) {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  if (p.image_url) {
+    const img = document.createElement('img');
+    img.className = 'product-image';
+    img.src = p.image_url;
+    img.alt = p.name;
+    card.appendChild(img);
+  }
+  const details = document.createElement('div');
+  details.className = 'product-details';
+  const title = document.createElement('div');
+  title.className = 'product-title';
+  title.textContent = p.name;
+  details.appendChild(title);
+  const desc = document.createElement('div');
+  desc.className = 'product-desc';
+  // Only show first paragraph
+  desc.textContent = (p.description || "").split('\n')[0];
+  details.appendChild(desc);
+  if (p.amazon_link) {
+    const btn = document.createElement('a');
+    btn.className = 'product-link';
+    btn.href = p.amazon_link;
+    btn.target = "_blank";
+    btn.rel = "noopener";
+    btn.textContent = "More Details";
+    details.appendChild(btn);
+  }
+  card.appendChild(details);
+  return card;
 }
 
 // --- HOME BUTTON: Show intro/tips/grid, hide products ---
@@ -400,10 +374,7 @@ function showHome() {
   closeMobileMenu();
 }
 
-// --- MOBILE NAV SETUP (present for compatibility, but not shown on mobile grid version) ---
-function closeMobileMenu() {
-  // No-op: nav is hidden on mobile grid
-}
+function closeMobileMenu() {}
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async function () {
