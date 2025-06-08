@@ -14,6 +14,33 @@
   --shadow: 0 4px 18px 0 #0001;
 }
 
+/* --- PAGE BACKGROUND --- */
+body {
+  position: relative;
+  font-family: 'Montserrat', Arial, sans-serif;
+  background: var(--beige);
+  color: var(--text);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.body-bg-image {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url('background.avif') center center/cover no-repeat;
+  opacity: 0.17;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#mainContent, .main-nav, .subcat-tiles, .products-section, .search-results, .site-footer {
+  position: relative;
+  z-index: 1;
+}
+
 /* Banner header styles */
 .banner-header {
   position: relative;
@@ -24,6 +51,7 @@
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
+  z-index: 2;
 }
 .banner-bg {
   position: absolute;
@@ -289,7 +317,7 @@
   padding: 0 1.5em;
 }
 .product-card {
-  background: #fff;
+  background: rgba(255,255,255,0.83);  /* Slight transparency */
   border-radius: 12px;
   box-shadow: var(--shadow);
   margin: 0;
@@ -301,6 +329,7 @@
   overflow: hidden;
   min-height: 340px;
   position: relative;
+  backdrop-filter: blur(1px); /* subtle glassy effect */
 }
 .product-image {
   width: 100%;
@@ -335,7 +364,6 @@
   margin-bottom: 0.4em;
   color: var(--green);
 }
-/* Allow basic HTML tags in product-desc */
 .product-desc {
   color: #444;
   font-size: 0.99em;
