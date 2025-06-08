@@ -37,6 +37,7 @@ function buildNavStructure() {
 }
 
 // --- DESKTOP MEGAMENU BUILD ---
+// Now, subcat links open their own category page in /products/
 function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
@@ -51,9 +52,8 @@ function buildWPStyleMegaMenu() {
     mainBtn.tabIndex = 0;
     mainBtn.onclick = (e) => {
       e.preventDefault();
-      selectMainCategory(mainCat);
-      closeAllMegamenus();
-      closeMobileMenu();
+      // Optionally, you could link to a main category page here
+      // window.location.href = `products/${mainCat.toLowerCase().replace(/\s+/g, '-')}.html`;
     };
     const panel = document.createElement('div');
     panel.className = 'megamenu-panel';
@@ -61,23 +61,18 @@ function buildWPStyleMegaMenu() {
     row.className = "megamenu-row";
     const col = document.createElement('div');
     col.className = "megamenu-cat-col";
-    // --- REMOVE MAIN CAT TITLE FROM DROPDOWN ---
-    // (Do not add main category title to the dropdown panel)
+    // Main cat title removed from dropdown here
     const ul = document.createElement('ul');
     ul.className = "megamenu-list";
     navStructure[mainCat].forEach(sub => {
       const li2 = document.createElement('li');
-      // Use anchor for accessibility/tabbable links
+      // Subcat page URL
+      const fileName = `${mainCat.toLowerCase().replace(/\s+/g, '-')}-${sub.toLowerCase().replace(/\s+/g, '-')}.html`;
       const link = document.createElement('a');
       link.className = 'megamenu-sublink';
-      link.href = "#";
+      link.href = `products/${fileName}`;
       link.textContent = sub;
-      link.onclick = (e) => {
-        e.preventDefault();
-        selectCategoryByPath(`${mainCat} > ${sub}`);
-        closeAllMegamenus();
-        closeMobileMenu();
-      };
+      // No JS click handler: allow default link navigation
       li2.appendChild(link);
       ul.appendChild(li2);
     });
@@ -117,9 +112,7 @@ function buildWPStyleMegaMenu() {
   if (logoLink) {
     logoLink.onclick = (e) => {
       e.preventDefault();
-      showHome();
-      closeAllMegamenus();
-      closeMobileMenu();
+      window.location.href = 'index.html';
     };
   }
 }
@@ -132,260 +125,9 @@ function closeAllMegamenus() {
   });
 }
 
-// --- HERO CAROUSEL (side-by-side layout) ---
-function buildHeroCarouselFromSheet() {
-  const hero = document.getElementById("heroCarousel");
-  if (!hero) return;
-  if (window.innerWidth <= 900) {
-    hero.style.display = "none";
-    return;
-  } else {
-    hero.style.display = "";
-  }
-  let slides = [];
-  for (const mainCat in navStructure) {
-    const subCats = navStructure[mainCat];
-    let found = null;
-    if (subCats.length) {
-      const prods = allProducts.filter(p => p.mainCat === mainCat && p.subCat === subCats[0] && p.image_url);
-      if (prods.length > 0) found = prods[0];
-    }
-    if (!found) {
-      const prods = allProducts.filter(p => p.mainCat === mainCat && p.image_url);
-      if (prods.length > 0) found = prods[0];
-    }
-    if (found) {
-      slides.push({
-        image: found.image_url,
-        headline: found.subCat || found.mainCat,
-        mainCat: found.mainCat,
-        subCat: found.subCat,
-        path: found.catPath,
-        desc: (found.description || '').split('.').shift() + '.',
-      });
-    }
-  }
-  if (!slides.length) {
-    hero.innerHTML = `<div style="color:#a00;text-align:center;padding:2em;font-size:1.2em;">No featured products</div>`;
-    return;
-  }
-  hero.innerHTML = "";
-  slides.forEach((s, i) => {
-    const btnLabel = `Browse ${s.subCat ? s.subCat : s.mainCat}`;
-    const slide = document.createElement('div');
-    slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
-    slide.innerHTML = `
-      <img class="hero-carousel-image" src="${s.image}" alt="">
-      <div class="hero-carousel-content">
-        <div class="hero-carousel-title">${s.headline}</div>
-        <div class="hero-carousel-desc">${s.desc}</div>
-        <button class="hero-carousel-cta" type="button" data-path="${encodeURIComponent(s.path)}">
-          ${btnLabel}
-        </button>
-      </div>
-    `;
-    hero.appendChild(slide);
-  });
-  const nav = document.createElement('div');
-  nav.className = "hero-carousel-nav";
-  for (let i = 0; i < slides.length; ++i) {
-    const dot = document.createElement('button');
-    dot.className = "hero-carousel-dot" + (i === 0 ? " active" : "");
-    dot.setAttribute("aria-label", `Show slide ${i + 1}`);
-    dot.onclick = () => setHeroCarouselSlide(i);
-    nav.appendChild(dot);
-  }
-  hero.appendChild(nav);
+// --- (Category/Product grid rendering removed; only nav is needed for index.html) ---
 
-  hero.querySelectorAll('.hero-carousel-cta').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const path = decodeURIComponent(this.getAttribute('data-path'));
-      selectCategoryByPath(path);
-      closeAllMegamenus();
-      closeMobileMenu();
-      document.getElementById('categorySection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-
-  let current = 0;
-  let timer = null;
-  function setHeroCarouselSlide(idx) {
-    const slidesEls = hero.querySelectorAll('.hero-carousel-slide');
-    const dotsEls = hero.querySelectorAll('.hero-carousel-dot');
-    slidesEls.forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-    dotsEls.forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-    current = idx;
-    resetTimer();
-  }
-  function nextSlide() {
-    setHeroCarouselSlide((current + 1) % slides.length);
-  }
-  function resetTimer() {
-    if (timer) clearInterval(timer);
-    timer = setInterval(nextSlide, 7000);
-  }
-  resetTimer();
-}
-
-// --- MOBILE CATEGORY GRID HOMEPAGE (unchanged) ---
-function showMobileCategoryGrid() {
-  const grid = document.getElementById('mobileCategoryGrid');
-  grid.innerHTML = '';
-  Object.entries(navStructure).forEach(([mainCat, subCats]) => {
-    let prodImg = '';
-    for (const p of allProducts) {
-      if (p.mainCat === mainCat && p.image_url) {
-        prodImg = p.image_url;
-        break;
-      }
-    }
-    const card = document.createElement('div');
-    card.className = "category-card";
-    if (prodImg) {
-      const img = document.createElement('img');
-      img.className = "category-image";
-      img.src = prodImg;
-      img.alt = mainCat;
-      card.appendChild(img);
-    }
-    const title = document.createElement('div');
-    title.className = "category-title";
-    title.textContent = mainCat;
-    card.appendChild(title);
-
-    const subcatsDiv = document.createElement('div');
-    subcatsDiv.className = "category-subcats";
-    subCats.forEach(sub => {
-      const link = document.createElement('button');
-      link.className = "category-subcat-link";
-      link.type = "button";
-      link.textContent = sub;
-      link.onclick = () => {
-        selectCategoryByPath(`${mainCat} > ${sub}`);
-        document.getElementById('siteIntro').style.display = "none";
-        document.getElementById('mobileCategoryGrid').style.display = "none";
-        document.getElementById('tipsBlock').style.display = "none";
-        document.getElementById('categorySection').style.display = "";
-        window.scrollTo({top: 0, behavior: 'smooth'});
-      };
-      subcatsDiv.appendChild(link);
-    });
-    card.appendChild(subcatsDiv);
-    grid.appendChild(card);
-  });
-}
-
-// --- PRODUCT DISPLAY (category path) ---
-function selectCategoryByPath(path) {
-  document.getElementById('siteIntro').style.display = "none";
-  document.getElementById('tipsBlock').style.display = "none";
-  document.getElementById('mobileCategoryGrid').style.display = "none";
-  document.getElementById('categorySection').style.display = "";
-  const title = document.getElementById('productsSectionTitle');
-  const grid = document.getElementById('productsGrid');
-  title.textContent = path;
-  title.style.display = 'inline-block';
-  title.style.margin = "2em auto 0.5em auto";
-  grid.innerHTML = '';
-  let filtered = allProducts.filter(p => p.category === path);
-  if (!filtered.length) {
-    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
-  } else {
-    filtered.forEach(p => {
-      grid.appendChild(makeProductCard(p));
-    });
-  }
-}
-
-// --- MAIN CATEGORY: Show all products under a main category (not subcat) ---
-function selectMainCategory(mainCat) {
-  document.getElementById('siteIntro').style.display = "none";
-  document.getElementById('tipsBlock').style.display = "none";
-  document.getElementById('mobileCategoryGrid').style.display = "none";
-  document.getElementById('categorySection').style.display = "";
-  const title = document.getElementById('productsSectionTitle');
-  const grid = document.getElementById('productsGrid');
-  title.textContent = mainCat;
-  title.style.display = 'inline-block';
-  title.style.margin = "2em auto 0.5em auto";
-  grid.innerHTML = '';
-  let filtered = allProducts.filter(p => p.mainCat === mainCat);
-  if (!filtered.length) {
-    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
-  } else {
-    filtered.forEach(p => {
-      grid.appendChild(makeProductCard(p));
-    });
-  }
-}
-
-// --- PRODUCT CARD: Image left, text right, button below text
-function makeProductCard(p) {
-  const card = document.createElement('div');
-  card.className = 'product-card';
-  if (p.image_url) {
-    const img = document.createElement('img');
-    img.className = 'product-image';
-    img.src = p.image_url;
-    img.alt = p.name;
-    card.appendChild(img);
-  }
-  const details = document.createElement('div');
-  details.className = 'product-details';
-  const title = document.createElement('div');
-  title.className = 'product-title';
-  title.textContent = p.name;
-  details.appendChild(title);
-  const desc = document.createElement('div');
-  desc.className = 'product-desc';
-  desc.textContent = (p.description || "").split('\n')[0];
-  details.appendChild(desc);
-  if (p.amazon_link) {
-    const btn = document.createElement('a');
-    btn.className = 'product-link';
-    btn.href = p.amazon_link;
-    btn.target = "_blank";
-    btn.rel = "noopener";
-    btn.textContent = "More Details";
-    details.appendChild(btn);
-  }
-  card.appendChild(details);
-  return card;
-}
-
-// --- HOME BUTTON: Show intro/tips/grid, hide products ---
-function showHome() {
-  if (window.innerWidth <= 900) {
-    document.getElementById('siteIntro').style.display = "";
-    document.getElementById('mobileCategoryGrid').style.display = "";
-    document.getElementById('tipsBlock').style.display = "";
-    document.getElementById('categorySection').style.display = "none";
-    showMobileCategoryGrid();
-  } else {
-    document.getElementById('siteIntro').style.display = "";
-    document.getElementById('tipsBlock').style.display = "";
-    document.getElementById('categorySection').style.display = "none";
-    document.getElementById('mobileCategoryGrid').style.display = "none";
-  }
-  window.scrollTo({top: 0, behavior: 'smooth'});
-  closeAllMegamenus();
-  closeMobileMenu();
-}
-
-function closeMobileMenu() {}
-
-// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildWPStyleMegaMenu();
-  buildHeroCarouselFromSheet();
-  showHome();
-});
-
-window.addEventListener('resize', function() {
-  showHome();
 });
