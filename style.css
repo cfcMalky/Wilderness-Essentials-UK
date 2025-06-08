@@ -47,18 +47,61 @@ body {
   z-index: 1;
 }
 
-/* Banner header styles */
+/* --- STICKY NAV, ANIMATED COLLAPSING HEADER --- */
+.main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+}
+
+/* Collapsible header: default state */
 .banner-header {
   position: relative;
   width: 100vw;
   min-height: 340px;
+  height: 340px;
   background: var(--green);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
   z-index: 2;
+  transition: min-height 0.38s cubic-bezier(.4,.2,.2,1), height 0.38s cubic-bezier(.4,.2,.2,1), padding 0.35s;
 }
+
+/* Collapsed state: header shrinks out with animation */
+.banner-header.collapsed {
+  min-height: 0;
+  height: 0;
+  padding: 0 !important;
+  transition: min-height 0.48s cubic-bezier(.4,.2,.2,1), height 0.48s cubic-bezier(.4,.2,.2,1), padding 0.45s;
+}
+
+/* Animate content fade out when collapsed */
+.banner-header .banner-content {
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.4s cubic-bezier(.4,.2,.2,1);
+}
+
+.banner-header.collapsed .banner-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(.4,.2,.2,1);
+}
+
+/* Animate logo background fade out */
+.banner-header .banner-logo-bg {
+  opacity: 0.10;
+  transition: opacity 0.27s cubic-bezier(.4,.2,.2,1);
+}
+
+.banner-header.collapsed .banner-logo-bg {
+  opacity: 0 !important;
+  transition: opacity 0.18s cubic-bezier(.4,.2,.2,1);
+}
+
+/* Banner header styles */
 .banner-bg {
   position: absolute;
   width: 100vw;
@@ -448,6 +491,10 @@ body {
   }
   .product-details {
     padding: 1.1em 1em 1.2em 1em;
+  }
+  .banner-header {
+    min-height: 220px;
+    height: 220px;
   }
 }
 
