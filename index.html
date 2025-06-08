@@ -14,7 +14,9 @@
       Wilderness Essentials UK
       <span>Your Definitive Guide to the UK's Hottest Selling Camping Gear.</span>
     </div>
-    <div id="siteNav"></div>
+    <nav class="megabar" aria-label="Main Navigation">
+      <ul id="megabarMenu" class="megabar-menu"></ul>
+    </nav>
   </header>
 
   <div id="heroCarousel"></div>
@@ -31,38 +33,6 @@
     &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
   </footer>
 
-  <!-- First define the nav loader script -->
-  <script>
-    function getNavBasePath() {
-      var path = window.location.pathname;
-      if (path === "/" || path === "/index.html") return "products/";
-      if (path.startsWith("/products/")) return "";
-      return "products/";
-    }
-
-    function applyNavLinks() {
-      var basePath = getNavBasePath();
-      document.querySelectorAll('.megamenu-sublink[data-path]').forEach(function(link) {
-        link.href = basePath + link.getAttribute('data-path');
-      });
-    }
-
-    function loadNavAndApplyLinks(navPath = "nav.html") {
-      fetch(navPath)
-        .then(r => r.text())
-        .then(html => {
-          document.getElementById('siteNav').innerHTML = html;
-          applyNavLinks();
-        });
-    }
-  </script>
-
-  <!-- Then call it -->
-  <script>
-    loadNavAndApplyLinks('nav.html');
-  </script>
-
-  <!-- Your other scripts -->
   <script src="script.js"></script>
 </body>
 </html>
