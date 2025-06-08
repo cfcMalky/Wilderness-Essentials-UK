@@ -164,10 +164,10 @@ body {
   background: #406c38;
 }
 
-/* --- NAVIGATION MENU --- */
+/* --- NAVIGATION MENU (Dropdown style) --- */
 .megabar {
   background: #406c38;
-  padding: 0 0;
+  padding: 0;
 }
 .megabar-menu {
   display: flex;
@@ -177,8 +177,9 @@ body {
   padding: 0.5em 0;
   list-style: none;
   gap: 40px;
+  position: relative;
 }
-.megabar-link, .megabar-main-link {
+.megabar-main-link {
   color: #fff;
   background: none;
   border: none;
@@ -191,42 +192,75 @@ body {
   outline: none;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
+  position: relative;
+  z-index: 2;
 }
-.megabar-link:hover, .megabar-link:focus,
-.megabar-main-link:hover, .megabar-main-link:focus {
+.megabar-main-link:hover,
+.megabar-main-link:focus {
   background: #274d22;
   color: #fff;
+}
+
+/* Dropdown Panel */
+.megabar-menu li {
+  position: relative;
 }
 .megabar-menu ul {
   display: none;
   position: absolute;
-  left: 0;
-  top: 2.6em;
-  min-width: 210px;
-  padding: 1em 1.5em 1.2em 1.5em;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 2.4em;
+  min-width: 230px;
   background: #fff;
+  border: 2px solid #406c38;
   border-radius: 12px;
   box-shadow: 0 2px 16px #0002;
+  padding: 0.6em 0.8em 0.7em 0.8em;
+  margin: 0;
+  list-style: none;
   z-index: 10;
+  text-align: left;
 }
-.megabar-menu li:hover > ul, .megabar-menu li:focus-within > ul {
+.megabar-menu li:hover > ul,
+.megabar-menu li:focus-within > ul {
   display: block;
 }
+
+/* Subcategory links */
 .megamenu-sublink {
-  color: #406c38;
+  display: block;
+  color: #fff;
   background: none;
   border: none;
   font: inherit;
   font-size: 1em;
   cursor: pointer;
   text-decoration: none;
-  padding: 0.2em 0;
-  display: block;
-  transition: color 0.2s;
+  padding: 0.45em 0.9em;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+  background: transparent;
 }
-.megamenu-sublink:hover,
-.megamenu-sublink:focus {
-  color: #274d22;
+.megabar-menu ul .megamenu-sublink {
+  color: #fff !important;
+  background: transparent !important;
+}
+.megabar-menu ul .megamenu-sublink:hover,
+.megabar-menu ul .megamenu-sublink:focus {
+  color: #ffd700 !important; /* Gold */
+  background: #274d22 !important;
+}
+
+/* Dropdown background & border for submenu */
+.megabar-menu ul {
+  background: #fff;
+  border: 2px solid #406c38;
+}
+
+/* For white submenu background, sublinks white text */
+.megabar-menu ul li {
+  margin: 0;
 }
 
 /* --- PRODUCT GRID: 3 columns max, centered --- */
