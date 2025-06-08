@@ -64,6 +64,7 @@ function buildMainNav() {
 
 // --- SUBCATEGORY TILES (with image carousel) ---
 function showSubcatTiles(mainCat, focusSubcat = null) {
+  document.getElementById("subcatTilesSection").style.display = ""; // <-- Critical fix after search
   document.getElementById("productsSection").style.display = "none";
   document.getElementById("searchResultsSection").style.display = "none";
   const subcatTiles = document.getElementById("subcatTilesSection");
@@ -131,6 +132,7 @@ function showProductsSection(mainCat, subCat) {
   document.getElementById("subcatTilesSection").scrollIntoView({behavior:'smooth'});
   document.getElementById("productsSection").style.display = "";
   document.getElementById("searchResultsSection").style.display = "none";
+  document.getElementById("subcatTilesSection").style.display = "none";
   // Section title & SEO
   document.getElementById("productsSectionTitle").textContent = `${mainCat} — ${subCat}`;
   let seoText = "";
