@@ -5,7 +5,17 @@ body {
   padding: 0;
 }
 
-/* Add this or edit your existing */
+/* Logo size fix */
+.logo-img {
+  max-width: 120px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* --- HERO CAROUSEL --- */
 #heroCarousel {
   max-width: 900px;
   margin: 2em auto 0 auto;
@@ -114,6 +124,7 @@ body {
 .megabar-has-megamenu {
   position: relative;
 }
+
 .megamenu-panel {
   display: none;
   position: absolute;
@@ -124,7 +135,7 @@ body {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 16px #0002;
-  z-index: 2;
+  z-index: 10; /* was 2 */
 }
 .megabar-has-megamenu.open .megamenu-panel {
   display: flex;
@@ -154,6 +165,11 @@ body {
 .megamenu-sublink:hover,
 .megamenu-sublink:focus {
   color: #274d22;
+}
+
+/* Prevent flicker: Make sure li contains both button and panel, no margin or padding splits */
+.megabar-has-megamenu {
+  /* No extra padding/margin, so mouse can move directly between nav and panel */
 }
 
 /* ...Your other styles remain unchanged... */
