@@ -43,6 +43,113 @@ let allMainCats = [];
 let allSubCats = {};
 let sheetReady = false;
 
+// --- GUIDE NAV & LOADING ---
+let guidesList = [];
+let currentGuide = null;
+
+// Load guides manifest
+async function loadGuidesManifest() {
+  try {
+    const resp = await fetch('guides/guides.json');
+    guidesList = await resp.json();
+  } catch (e) {
+    guidesList = [];
+  }
+}
+
+// Add "Guides" with dropdown to nav
+function addGuidesToNav() {
+  const navMenu = document.getElementById("mainNavMenu");
+  // Remove old Guides dropdown if exists
+  const old = navMenu.querySelector('.guides-dropdown');
+  if (old) old.remove();
+
+  // Make dropdown
+  const li = document.createElement("li");
+  li.className = "guides-dropdown";
+  const btn = document.createElement("button");
+  btn.textContent = "Guides";
+  btn.className = "guides-dropdown-btn";
+  btn.setAttribute('aria-haspopup', 'true');
+  btn.setAttribute('aria-expanded', 'false');
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "guides-dropdown-content";
+  guidesList.forEach(guide => {
+    const b = document.createElement("button");
+    b.textContent = guide.title || guide.file;
+    b.onclick = (e) => {
+      e.preventDefault();
+      openGuide(guide);
+      closeGuidesDropdown();
+    };
+    dropdown.appendChild(b);
+  });
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    const open = !li.classList.contains('open');
+    closeAllDropdowns();
+    if (open) {
+      li.classList.add('open');
+      btn.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
+    } else {
+      li.classList.remove('open');
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  };
+
+  li.appendChild(btn);
+  li.appendChild(dropdown);
+  navMenu.appendChild(li);
+
+  // Close dropdown on outside click
+  document.addEventListener('click', closeGuidesDropdown);
+}
+
+function closeGuidesDropdown() {
+  document.querySelectorAll('.guides-dropdown').forEach(dd => {
+    dd.classList.remove('open');
+    dd.querySelector('.guides-dropdown-btn').classList.remove('active');
+    dd.querySelector('.guides-dropdown-btn').setAttribute('aria-expanded', 'false');
+  });
+}
+function closeAllDropdowns() {
+  closeGuidesDropdown();
+}
+
+// --- GUIDE LOAD & DISPLAY ---
+async function openGuide(guide) {
+  // Hide other content
+  document.getElementById("productsSection").style.display = "none";
+  document.getElementById("subcatTilesSection").style.display = "none";
+  document.getElementById("searchResultsSection").style.display = "none";
+
+  // Load guide HTML
+  const guideSection = document.getElementById('guideSection');
+  guideSection.style.display = "block";
+  guideSection.innerHTML = `<div style="padding:2.2em 0;text-align:center;color:#888;">Loading guide...</div>`;
+  try {
+    const resp = await fetch(`guides/${guide.file}`);
+    if (!resp.ok) throw new Error("404");
+    const html = await resp.text();
+    guideSection.innerHTML = `<article>${html}</article>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    guideSection.innerHTML = `<div style="padding:2.2em 0;text-align:center;color:#c00;">Unable to load guide.</div>`;
+  }
+  currentGuide = guide;
+}
+
+// Allow "closing" guide (e.g. if you want to add a close/back button in guideSection)
+function closeGuideSection() {
+  document.getElementById('guideSection').style.display = "none";
+  // Optionally show subcat tiles or products again
+  if (allMainCats.length) showSubcatTiles(allMainCats[0]);
+}
+
 // --- DATA LOAD ---
 async function fetchProductsFromSheet() {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -84,20 +191,25 @@ function buildNavStructure() {
 // --- MAIN NAV ---
 function buildMainNav() {
   const navMenu = document.getElementById("mainNavMenu");
-  navMenu.innerHTML = "";
+  // Remove all except guides dropdown
+  navMenu.querySelectorAll("li:not(.guides-dropdown)").forEach(e => e.remove());
   allMainCats.forEach(mainCat => {
     const li = document.createElement("li");
     const btn = document.createElement("button");
     btn.textContent = mainCat;
     btn.className = "main-nav-btn";
-    btn.onclick = () => showSubcatTiles(mainCat);
+    btn.onclick = () => {
+      closeGuideSection();
+      showSubcatTiles(mainCat);
+    };
     li.appendChild(btn);
-    navMenu.appendChild(li);
+    navMenu.insertBefore(li, navMenu.querySelector('.guides-dropdown') || null);
   });
 }
 
 // --- SUBCATEGORY TILES (with image carousel) ---
 function showSubcatTiles(mainCat, focusSubcat = null) {
+  closeGuideSection();
   document.getElementById("subcatTilesSection").style.display = "";
   document.getElementById("productsSection").style.display = "none";
   document.getElementById("searchResultsSection").style.display = "none";
@@ -162,6 +274,7 @@ function showSubcatTiles(mainCat, focusSubcat = null) {
 
 // --- PRODUCTS SECTION (with tabs if multiple subcats) ---
 function showProductsSection(mainCat, subCat) {
+  closeGuideSection();
   document.getElementById("subcatTilesSection").scrollIntoView({behavior:'smooth'});
   document.getElementById("productsSection").style.display = "";
   document.getElementById("searchResultsSection").style.display = "none";
@@ -243,6 +356,7 @@ function makeProductCard(p) {
 
 // --- SEARCH FUNCTIONALITY ---
 function searchProducts(query) {
+  closeGuideSection();
   query = query.trim().toLowerCase();
   if (!query) return;
   document.getElementById("productsSection").style.display = "none";
@@ -280,12 +394,18 @@ function handleHeaderCollapse() {
 window.addEventListener('scroll', handleHeaderCollapse);
 window.addEventListener('resize', handleHeaderCollapse);
 
-// --- SEARCH BAR EVENTS ---
-document.addEventListener('DOMContentLoaded', async function () {
+// --- MAIN ENTRYPOINT: now loads guides, then categories ---
+async function setupWithGuides() {
+  await loadGuidesManifest();
   await fetchProductsFromSheet();
   buildNavStructure();
   buildMainNav();
+  addGuidesToNav();
   if (allMainCats.length) showSubcatTiles(allMainCats[0]);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  setupWithGuides();
   document.getElementById("searchForm").onsubmit = function(e) {
     e.preventDefault();
     const q = document.getElementById("searchInput").value;
@@ -293,5 +413,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   };
   // Click logo returns to tiles
   const logo = document.querySelector('.banner-logo-main');
-  if (logo) logo.onclick = () => showSubcatTiles(allMainCats[0]);
+  if (logo) logo.onclick = () => {
+    closeGuideSection();
+    showSubcatTiles(allMainCats[0]);
+  };
 });
