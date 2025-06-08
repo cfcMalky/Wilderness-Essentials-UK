@@ -36,7 +36,7 @@
 
   <script src="../script.js"></script>
   <script>
-    // --- Ensure makeProductCard exists in this scope ---
+    // --- Card rendering function ---
     function makeProductCard(p) {
       const card = document.createElement('div');
       card.className = 'product-card';
@@ -71,16 +71,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
-      // Wait for products to load if script.js is asynchronous
       if (typeof fetchProductsFromSheet === 'function') {
         await fetchProductsFromSheet();
       }
       if (typeof buildWPStyleMegaMenu === 'function') {
         buildWPStyleMegaMenu();
       }
-      // Render only the correct products
+      // Only show products for this subcategory
       const grid = document.getElementById('productsGrid');
-      const catPath = "Tents > Dome Tents"; // Adjust for each category page!
+      const catPath = "Tents > Dome Tents";
       grid.innerHTML = '';
       let filtered = [];
       if (typeof allProducts !== "undefined" && allProducts.length) {
