@@ -1,12 +1,13 @@
 // --- CONFIG: Google Sheet API ---
 // Replace these values with your actual sheet and API key
-const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
+const SHEET_ID = "YOUR_SHEET_ID";
+const API_KEY = "YOUR_API_KEY";
 const RANGE = "Sheet1";
 
 // --- SEO INTROS FOR CATEGORIES (CURATED/NOT SOLD) ---
 const seoIntros = {
-  // ... (populate as needed, unchanged from earlier examples)
+  // Example: "Tents > Backpacking": "Backpacking tents are lightweight, packable, and designed to keep you dry in the British outdoors.",
+  // Populate as needed for your shop.
 };
 
 let allProducts = [];
@@ -352,7 +353,7 @@ async function loadGuide(guide) {
     const resp = await fetch(`guides/${guide.file}`);
     if (!resp.ok) throw new Error("404");
     const html = await resp.text();
-    guideSection.innerHTML = `<article class="guide-article">${html}</article>`;
+    guideSection.innerHTML = `<section class="guide-container">${html}</section>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {
     guideSection.innerHTML = `<div style="padding:2.2em 0;text-align:center;color:#c00;">Unable to load guide.</div>`;
