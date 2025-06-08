@@ -232,6 +232,30 @@ body {
   background: var(--brown);
 }
 
+/* --- GUIDES & LIBRARY CENTERED CONTAINERS --- */
+.guide-container, .guides-library-container {
+  max-width: 1240px;   /* Matches main-nav/header */
+  margin: 2em auto 2.5em auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px 0 #0001;
+  padding: 2em 2em 2.5em 2em;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 1300px) {
+  .guide-container, .guides-library-container {
+    max-width: 98vw;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+}
+@media (max-width: 700px) {
+  .guide-container, .guides-library-container {
+    padding: 1em 0.5em 1.2em 0.5em;
+  }
+}
+
 /* SEO/Guides/Front Page blocks */
 .frontpage-seo-intro,
 #guidesLibrarySection,
