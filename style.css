@@ -201,6 +201,7 @@ body {
   color: #fff;
 }
 
+/* Dropdown Panel */
 .megabar-menu li {
   position: relative;
 }
@@ -218,7 +219,7 @@ body {
   box-shadow: 0 2px 16px #0002;
   padding: 0.6em 0.8em 0.7em 0.8em;
   margin: 0;
-  list-style: none;
+  list-style: none !important;
   z-index: 10;
   text-align: left;
 }
@@ -229,22 +230,27 @@ body {
 .megabar-menu > li > ul:hover {
   display: block;
 }
-.megabar-menu > li > ul > li {
-  margin: 0;
+.megabar-menu > li > ul > li,
+.megamenu-list > li {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Remove bullets from dropdowns */
+/* Remove bullets and green box from dropdowns */
 .megamenu-list, .megabar-menu ul {
   list-style: none !important;
-  padding-left: 0 !important;
+  padding: 0 !important;
   margin: 0 !important;
+  background: #fff;
+  border: none !important;
 }
 
-/* Subcategory links - GREEN text, main nav font, NO underline, NO rectangle box */
+/* Subcategory links - green text, no border, no background, no box, no bullets */
 .megamenu-sublink {
   display: block !important;
   color: #406c38 !important;
-  background: transparent !important;
+  background: none !important;
+  border: none !important;
   font-family: 'Quicksand', Arial, sans-serif !important;
   font-size: 1.15em !important;
   font-weight: 700 !important;
@@ -253,16 +259,18 @@ body {
   border-radius: 7px !important;
   transition: background 0.2s, color 0.2s !important;
   cursor: pointer !important;
-  border: none !important;
   box-shadow: none !important;
+  outline: none !important;
+  list-style: none !important;
 }
+
 .megamenu-sublink:hover,
 .megamenu-sublink:focus {
   background: #406c38 !important;
   color: #fff !important;
-  text-decoration: none !important;
   border: none !important;
   box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Dropdown background & border for submenu */
