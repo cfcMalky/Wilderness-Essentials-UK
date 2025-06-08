@@ -234,7 +234,14 @@ body {
   margin: 0;
 }
 
-/* Subcategory links - GREEN text, main nav font, NO underline */
+/* Remove bullets from dropdowns */
+.megamenu-list, .megabar-menu ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+/* Subcategory links - GREEN text, main nav font, NO underline, NO rectangle box */
 .megamenu-sublink {
   display: block !important;
   color: #406c38 !important;
@@ -248,12 +255,15 @@ body {
   transition: background 0.2s, color 0.2s !important;
   cursor: pointer !important;
   border: none !important;
+  box-shadow: none !important;
 }
 .megamenu-sublink:hover,
 .megamenu-sublink:focus {
   background: #406c38 !important;
   color: #fff !important;
   text-decoration: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Dropdown background & border for submenu */
