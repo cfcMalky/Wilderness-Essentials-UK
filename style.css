@@ -205,7 +205,8 @@ body {
 .megabar-menu li {
   position: relative;
 }
-.megabar-menu > li > ul {
+.megabar-menu > li > ul,
+.megabar-menu > li > .megamenu-panel {
   display: none;
   position: absolute;
   left: 50%;
@@ -222,6 +223,8 @@ body {
   z-index: 10;
   text-align: left;
 }
+.megabar-menu > li.open > ul,
+.megabar-menu > li.open > .megamenu-panel,
 .megabar-menu > li:hover > ul,
 .megabar-menu > li:focus-within > ul,
 .megabar-menu > li > ul:hover {
@@ -231,28 +234,31 @@ body {
   margin: 0;
 }
 
-/* Subcategory links - GREEN text, main nav font */
+/* Subcategory links - GREEN text, main nav font, NO underline */
 .megamenu-sublink {
-  display: block;
-  color: #406c38 !important;   /* Green text */
+  display: block !important;
+  color: #406c38 !important;
   background: transparent !important;
-  font-family: 'Quicksand', Arial, sans-serif;
-  font-size: 1.15em;
-  font-weight: 700;
-  text-decoration: none;
-  padding: 0.3em 0.9em;
-  border-radius: 7px;
-  transition: background 0.2s, color 0.2s;
-  cursor: pointer;
+  font-family: 'Quicksand', Arial, sans-serif !important;
+  font-size: 1.15em !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  padding: 0.3em 0.9em !important;
+  border-radius: 7px !important;
+  transition: background 0.2s, color 0.2s !important;
+  cursor: pointer !important;
+  border: none !important;
 }
 .megamenu-sublink:hover,
 .megamenu-sublink:focus {
   background: #406c38 !important;
   color: #fff !important;
+  text-decoration: none !important;
 }
 
 /* Dropdown background & border for submenu */
-.megabar-menu ul {
+.megabar-menu ul,
+.megabar-menu .megamenu-panel {
   background: #fff;
   border: 2px solid #406c38;
 }
