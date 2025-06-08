@@ -69,9 +69,10 @@ function buildWPStyleMegaMenu() {
     ul.className = "megamenu-list";
     navStructure[mainCat].forEach(sub => {
       const li2 = document.createElement('li');
-      const link = document.createElement('button');
+      // Use anchor for accessibility/tabbable links
+      const link = document.createElement('a');
       link.className = 'megamenu-sublink';
-      link.type = 'button';
+      link.href = "#";
       link.textContent = sub;
       link.onclick = (e) => {
         e.preventDefault();
