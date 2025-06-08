@@ -93,19 +93,30 @@ function buildWPStyleMegaMenu() {
     panel.appendChild(row);
 
     // Only one open at a time logic (desktop only)
+    // Prevent flicker: keep menu open while mouse is over button or panel
+    let closeTimeout;
     function openMenu() {
+      clearTimeout(closeTimeout);
       closeAllMegamenus();
       li.classList.add('open');
       panel.style.display = "flex";
     }
     function closeMenu() {
-      li.classList.remove('open');
-      panel.style.display = "none";
+      closeTimeout = setTimeout(() => {
+        li.classList.remove('open');
+        panel.style.display = "none";
+      }, 180); // short delay for pointer movement
+    }
+    function cancelCloseMenu() {
+      clearTimeout(closeTimeout);
     }
     mainBtn.addEventListener('mouseenter', openMenu);
     mainBtn.addEventListener('focus', openMenu);
     mainBtn.addEventListener('click', openMenu);
     li.addEventListener('mouseleave', closeMenu);
+    li.addEventListener('mouseenter', cancelCloseMenu);
+    panel.addEventListener('mouseenter', cancelCloseMenu);
+    panel.addEventListener('mouseleave', closeMenu);
 
     megabarMenu.appendChild(li);
     li.appendChild(mainBtn);
@@ -394,6 +405,7 @@ function closeMobileMenu() {
   // No-op: nav is hidden on mobile grid
 }
 
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildWPStyleMegaMenu();
