@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wilderness Essentials UK</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="topbar">
+      <div class="topbar-content">
+        <span class="contact"><b>Wilderness Essentials UK</b> &bull; Adventure starts here</span>
+        <span class="spacer"></span>
+        <span class="account">
+          <a href="#"><span class="icon">🛒</span> Cart</a>
+        </span>
+      </div>
+    </div>
+    <div class="main-header">
+      <div class="logo">
+        <img src="logo.jpg" alt="Wilderness Essentials Logo">
+      </div>
+      <form id="searchForm" class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search camping gear, tents, stoves…">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+    <nav class="main-nav">
+      <ul id="mainNavMenu">
+        <!-- Dynamic nav items -->
+      </ul>
+    </nav>
+  </header>
+
+  <section class="subcat-tiles" id="subcatTilesSection">
+    <!-- Dynamic subcategory tiles go here -->
+  </section>
+
+  <main id="mainContent">
+    <section class="products-section" id="productsSection" style="display:none;">
+      <div class="section-header">
+        <h2 id="productsSectionTitle"></h2>
+        <div id="categorySEOText"></div>
+      </div>
+      <div class="products-tabs" id="productsTabs">
+        <!-- Dynamic product tabs for subcats -->
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <!-- Dynamic product cards -->
+      </div>
+    </section>
+    <section class="search-results" id="searchResultsSection" style="display:none;">
+      <div class="section-header">
+        <h2>Search Results</h2>
+      </div>
+      <div class="products-grid" id="searchResultsGrid">
+        <!-- Dynamic search result cards -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
