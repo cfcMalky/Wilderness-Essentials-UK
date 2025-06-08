@@ -143,11 +143,10 @@ async function openGuide(guide) {
   currentGuide = guide;
 }
 
-// Allow "closing" guide (e.g. if you want to add a close/back button in guideSection)
+// Allows hiding the guide section without recursion or restoring categories
 function closeGuideSection() {
   document.getElementById('guideSection').style.display = "none";
-  // Optionally show subcat tiles or products again
-  if (allMainCats.length) showSubcatTiles(allMainCats[0]);
+  // Do NOT call showSubcatTiles here, to avoid recursion!
 }
 
 // --- DATA LOAD ---
