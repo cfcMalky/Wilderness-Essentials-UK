@@ -14,17 +14,22 @@
   --shadow: 0 4px 18px 0 #0001;
 }
 
-/* --- PAGE BACKGROUND --- */
-body {
-  position: relative;
+html, body {
+  margin: 0;
+  padding: 0;
   font-family: 'Montserrat', Arial, sans-serif;
   background: var(--beige);
   color: var(--text);
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
+  height: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
   overflow-x: hidden;
 }
+
 .body-bg-image {
   position: fixed;
   top: 0; left: 0;
@@ -36,6 +41,7 @@ body {
   pointer-events: none;
 }
 
+/* Ensure content is always above background */
 #mainContent, .main-nav, .subcat-tiles, .products-section, .search-results, .site-footer {
   position: relative;
   z-index: 1;
