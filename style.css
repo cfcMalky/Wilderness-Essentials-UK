@@ -52,6 +52,112 @@ body {
   position: sticky;
   top: 0;
   z-index: 101;
+  background: var(--nav-bg);
+  box-shadow: var(--shadow);
+}
+
+.main-nav ul {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  list-style: none;
+  padding: 0 1.5em;
+}
+
+.main-nav li {
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav a, .main-nav button {
+  display: block;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1.1em;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 1em 1.4em 1em 1.4em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.main-nav a.active, .main-nav a[aria-current="true"], .main-nav button.active {
+  background: var(--nav-active);
+  color: var(--green);
+  border-radius: 6px 6px 0 0;
+}
+.main-nav a:hover, .main-nav button:hover {
+  background: var(--nav-hover);
+  color: #fff;
+}
+
+/* --- GUIDES DROPDOWN IN NAV --- */
+.main-nav .guides-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.main-nav .guides-dropdown-btn {
+  display: block;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1.1em;
+  font-weight: 700;
+  padding: 1em 1.4em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.main-nav .guides-dropdown-btn.active,
+.main-nav .guides-dropdown-btn:focus {
+  background: var(--nav-active);
+  color: var(--green);
+  border-radius: 6px 6px 0 0;
+}
+
+.main-nav .guides-dropdown-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  min-width: 240px;
+  background: #fff;
+  z-index: 999;
+  box-shadow: 0 10px 32px #0003;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  padding: 0.3em 0;
+}
+
+.main-nav .guides-dropdown.open .guides-dropdown-content {
+  display: block;
+}
+
+.main-nav .guides-dropdown-content button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--green);
+  font-size: 1.08em;
+  font-family: inherit;
+  padding: 0.97em 1.5em 0.97em 1.5em;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s;
+  border-bottom: 1px solid #eee;
+}
+
+.main-nav .guides-dropdown-content button:last-child {
+  border-bottom: none;
+}
+
+.main-nav .guides-dropdown-content button:hover,
+.main-nav .guides-dropdown-content button.active {
+  background: var(--beige);
+  color: var(--accent);
 }
 
 /* Collapsible header: default state */
@@ -69,7 +175,6 @@ body {
   transition: min-height 0.38s cubic-bezier(.4,.2,.2,1), height 0.38s cubic-bezier(.4,.2,.2,1), padding 0.35s;
 }
 
-/* Collapsed state: header shrinks out with animation */
 .banner-header.collapsed {
   min-height: 0;
   height: 0;
@@ -77,7 +182,6 @@ body {
   transition: min-height 0.48s cubic-bezier(.4,.2,.2,1), height 0.48s cubic-bezier(.4,.2,.2,1), padding 0.45s;
 }
 
-/* Animate content fade out when collapsed */
 .banner-header .banner-content {
   opacity: 1;
   pointer-events: all;
@@ -90,7 +194,6 @@ body {
   transition: opacity 0.3s cubic-bezier(.4,.2,.2,1);
 }
 
-/* Animate logo background fade out */
 .banner-header .banner-logo-bg {
   opacity: 0.10;
   transition: opacity 0.27s cubic-bezier(.4,.2,.2,1);
@@ -101,7 +204,6 @@ body {
   transition: opacity 0.18s cubic-bezier(.4,.2,.2,1);
 }
 
-/* Banner header styles */
 .banner-bg {
   position: absolute;
   width: 100vw;
@@ -196,43 +298,23 @@ body {
   background: var(--brown);
 }
 
-/* Main navigation */
-.main-nav {
-  background: var(--nav-bg);
-  box-shadow: var(--shadow);
-}
-.main-nav ul {
-  max-width: 1240px;
-  margin: 0 auto;
-  display: flex;
-  list-style: none;
+/* Guide display section */
+#guideSection {
+  max-width: 900px;
+  margin: 2.4em auto 2.5em auto;
   padding: 0 1.5em;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  min-height: 320px;
+  display: none;
+  animation: fadeIn 0.45s;
 }
-.main-nav li {
-  margin: 0;
-  padding: 0;
-}
-.main-nav a, .main-nav button {
-  display: block;
-  color: var(--text-light);
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 1.1em;
-  font-weight: 700;
-  text-decoration: none;
-  padding: 1em 1.4em 1em 1.4em;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.main-nav a.active, .main-nav a[aria-current="true"], .main-nav button.active {
-  background: var(--nav-active);
+
+/* Guide title style */
+#guideSection h1, #guideSection h2 {
   color: var(--green);
-  border-radius: 6px 6px 0 0;
-}
-.main-nav a:hover, .main-nav button:hover {
-  background: var(--nav-hover);
-  color: #fff;
+  margin-top: 1.0em;
 }
 
 /* Subcategory Tiles */
@@ -474,6 +556,16 @@ body {
 }
 
 /* --- MOBILE RESPONSIVE --- */
+@media (max-width: 900px) {
+  .banner-header {
+    min-height: 220px;
+    height: 220px;
+  }
+  .main-nav {
+    top: 0;
+  }
+}
+
 @media (max-width: 700px) {
   .products-grid { padding: 0 0.5em; }
   .product-card {
@@ -492,10 +584,7 @@ body {
   .product-details {
     padding: 1.1em 1em 1.2em 1em;
   }
-  .banner-header {
-    min-height: 220px;
-    height: 220px;
-  }
+  #guideSection { padding: 0 0.7em; }
 }
 
 /* Footer */
