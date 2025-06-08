@@ -37,14 +37,24 @@ function buildNavStructure() {
   }
 }
 
-// --- SUBCAT TO PAGE FILENAME ---
+// --- SUBCAT TO PRODUCT PAGE FILENAME ---
 function subcatPathToPage(mainCat, subCat) {
   const filename = `${mainCat} ${subCat}`.toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-+/g, '-');
-  return `${filename}.html`;
+  return `products/${filename}.html`;
+}
+
+// --- (FUTURE) GUIDE NAME TO GUIDE PAGE FILENAME ---
+function guidePathToPage(guideTitle) {
+  const filename = guideTitle.toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-+/g, '-');
+  return `guides/${filename}.html`;
 }
 
 // --- DESKTOP MEGAMENU BUILD (for desktop only, hidden on mobile) ---
@@ -52,12 +62,11 @@ function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
 
-  // Main categories ONLY
+  // Main product categories
   const mainCats = Object.keys(navStructure);
   mainCats.forEach((mainCat, idx) => {
     const li = document.createElement('li');
     li.className = "megabar-has-megamenu";
-    // Main nav link
     const btn = document.createElement('button');
     btn.className = 'megabar-link';
     btn.textContent = mainCat;
@@ -81,9 +90,8 @@ function buildWPStyleMegaMenu() {
       const li2 = document.createElement('li');
       const link = document.createElement('a');
       link.className = 'megamenu-sublink';
-      link.href = subcatPathToPage(mainCat, sub);
+      link.href = subcatPathToPage(mainCat, sub); // <-- products/ folder
       link.textContent = sub;
-      // No onclick: browser will follow link
       li2.appendChild(link);
       ul.appendChild(li2);
     });
@@ -91,7 +99,6 @@ function buildWPStyleMegaMenu() {
     row.appendChild(col);
     panel.appendChild(row);
 
-    // Only one open at a time logic (desktop only)
     function openMenu() {
       closeAllMegamenus();
       li.classList.add('open');
@@ -110,6 +117,67 @@ function buildWPStyleMegaMenu() {
     li.appendChild(btn);
     li.appendChild(panel);
   });
+
+  // ------- GUIDES SECTION IN NAV (DESKTOP) --------
+  // Example guides list (update as needed)
+  const guides = [
+    { name: "Beginner's Camping Guide" },
+    { name: "Choosing a Tent" }
+    // Add more as you create them
+  ];
+
+  if (guides.length) {
+    const guidesLi = document.createElement('li');
+    guidesLi.className = "megabar-has-megamenu";
+    const guidesBtn = document.createElement('button');
+    guidesBtn.className = 'megabar-link';
+    guidesBtn.type = 'button';
+    guidesBtn.tabIndex = 0;
+    guidesBtn.textContent = "Guides";
+    const guidesPanel = document.createElement('div');
+    guidesPanel.className = 'megamenu-panel';
+    const guidesRow = document.createElement('div');
+    guidesRow.className = "megamenu-row";
+    const guidesCol = document.createElement('div');
+    guidesCol.className = "megamenu-cat-col";
+    const guidesTitle = document.createElement('div');
+    guidesTitle.className = "megamenu-title";
+    guidesTitle.textContent = "Guides";
+    guidesCol.appendChild(guidesTitle);
+
+    const guidesList = document.createElement('ul');
+    guidesList.className = "megamenu-list";
+    guides.forEach(guide => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.className = 'megamenu-sublink';
+      link.href = guidePathToPage(guide.name); // <-- guides/ folder
+      link.textContent = guide.name;
+      li.appendChild(link);
+      guidesList.appendChild(li);
+    });
+    guidesCol.appendChild(guidesList);
+    guidesRow.appendChild(guidesCol);
+    guidesPanel.appendChild(guidesRow);
+
+    function openGuideMenu() {
+      closeAllMegamenus();
+      guidesLi.classList.add('open');
+      guidesPanel.style.display = "flex";
+    }
+    function closeGuideMenu() {
+      guidesLi.classList.remove('open');
+      guidesPanel.style.display = "none";
+    }
+    guidesBtn.addEventListener('mouseenter', openGuideMenu);
+    guidesBtn.addEventListener('focus', openGuideMenu);
+    guidesBtn.addEventListener('click', openGuideMenu);
+    guidesLi.addEventListener('mouseleave', closeGuideMenu);
+
+    guidesLi.appendChild(guidesBtn);
+    guidesLi.appendChild(guidesPanel);
+    megabarMenu.appendChild(guidesLi);
+  }
 
   // Center logo click acts as home button
   const logoLink = document.getElementById('homeLogoLink');
@@ -229,7 +297,6 @@ function showMobileCategoryGrid() {
   if (!grid) return;
   grid.innerHTML = '';
   Object.entries(navStructure).forEach(([mainCat, subCats]) => {
-    // Find first product with image in this mainCat
     let prodImg = '';
     for (const p of allProducts) {
       if (p.mainCat === mainCat && p.image_url) {
@@ -256,9 +323,8 @@ function showMobileCategoryGrid() {
     subCats.forEach(sub => {
       const link = document.createElement('a');
       link.className = "category-subcat-link";
-      link.href = subcatPathToPage(mainCat, sub);
+      link.href = subcatPathToPage(mainCat, sub); // <-- products/ folder
       link.textContent = sub;
-      // No onclick: browser will follow link
       subcatsDiv.appendChild(link);
     });
     card.appendChild(subcatsDiv);
