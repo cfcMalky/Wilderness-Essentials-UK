@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wilderness Essentials UK: Your Definitive Guide to the UK's Hottest Selling Camping Gear.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- FLOATING CAMPING BG IMAGE -->
+  <div class="camping-bg"></div>
+  <header>
+    <div class="center-logo">
+      <a href="#" id="homeLogoLink" aria-label="Home">
+        <img src="logo.jpg" alt="Wilderness Essentials Logo" class="logo-img">
+      </a>
+    </div>
+    <div class="page-title">Wilderness Essentials UK</div>
+    <div class="site-tagline">
+      Your Definitive Guide to the UK's Hottest Selling Camping Gear.
+    </div>
+  </header>
+  <!-- HAMBURGER BUTTON FOR MOBILE (hidden by CSS on mobile grid version) -->
+  <button class="hamburger" id="hamburger" aria-label="Open navigation" aria-controls="megabar" aria-expanded="false">
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+  </button>
+  <!-- MOBILE OVERLAY FOR MENU (hidden by CSS on mobile grid version) -->
+  <div class="megabar-overlay" id="megabarOverlay"></div>
+  <!-- DESKTOP NAV ONLY -->
+  <nav class="megabar" id="megabar">
+    <ul class="megabar-menu" id="megabarMenu"></ul>
+  </nav>
+  <!-- HERO CAROUSEL (always visible except on mobile) -->
+  <div class="hero-carousel-container" id="heroCarousel"></div>
+  <!-- SITE INTRO (home only) -->
+  <div class="site-intro" id="siteIntro">
+    Ready for adventure? Wilderness Essentials UK brings you the best in outdoor and camping gear, curated from the UK’s most trusted brands and top-rated products. We make it easy to discover high-quality tents, sleeping systems, camp kitchens, and essential accessories—whether you’re planning a weekend in the wild or your next family getaway.
+    <br><br>
+    Our expert recommendations, practical tips, and unbiased reviews help you choose gear that lasts, so you can explore with confidence and comfort. Browse by category, get inspired, and start your journey to unforgettable outdoor experiences today!
+  </div>
+  <!-- MOBILE CATEGORY GRID (visible only on mobile) -->
+  <div id="mobileCategoryGrid" class="category-grid-home" style="display:none;"></div>
+  <!-- TIPS BLOCK (home only) -->
+  <div class="outstanding-content-block" id="tipsBlock">
+    <strong>Adventure Tips & Inspiration</strong><br>
+    <ul style="margin-top:0.7em;">
+      <li><b>Plan Your Escape:</b> Research the area, check the weather, and let someone know your route before heading out.</li>
+      <li><b>Pack Smart:</b> Prioritize essentials like shelter, sleeping gear, food/water, and first aid. Don’t forget eco-friendly supplies!</li>
+      <li><b>Leave No Trace:</b> Respect nature—take rubbish home, minimize campfire impact, and leave wild spaces better than you found them.</li>
+      <li><b>Explore the UK:</b> From the Lake District’s rugged peaks to the Scottish Highlands’ wild beauty, the UK offers endless adventure. Find your next destination!</li>
+    </ul>
+    <div style="margin-top:1.3em; font-size:1.05em; color:#47613a; font-style:italic;">
+      “The wilderness holds answers to more questions than we have yet learned to ask.” – Nancy Wynne Newhall
+    </div>
+  </div>
+  <!-- CATEGORY TITLE & PRODUCTS GRID (not home) -->
+  <div id="categorySection" class="category-section" style="display:none;">
+    <div class="products-section-title" id="productsSectionTitle"></div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+  <!-- DISCLAIMER BAR -->
+  <div class="disclaimer-bar">
+    As affiliates, we may earn from qualifying purchases via our website.<br/>
+    This site may earn a commission on sales at no extra cost to you.
+  </div>
+  <footer class="main-footer">
+    2025 Wilderness Essentials UK © All Rights Reserved.
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
