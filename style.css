@@ -1,150 +1,231 @@
-// --- CONFIG: Google Sheet API ---
-const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
-const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
-const RANGE = "Sheet1";
-
-let allProducts = [];
-let navStructure = {};
-let sheetReady = false;
-
-// --- DATA LOAD ---
-async function fetchProductsFromSheet() {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-  const resp = await fetch(url);
-  const data = await resp.json();
-  const [headers, ...rows] = data.values;
-  allProducts = rows.map(row => {
-    let obj = {};
-    headers.forEach((h, i) => obj[h.trim()] = (row[i] || "").trim());
-    // Parse category
-    const catPath = (obj.category || "").split(">").map(s => s.trim());
-    obj.mainCat = catPath[0] || "";
-    obj.subCat = catPath[1] || "";
-    obj.catPath = obj.category || "";
-    return obj;
-  });
-  buildNavStructure();
-  sheetReady = true;
+/* GENERAL */
+body {
+  font-family: 'Quicksand', Arial, sans-serif;
+  background: #f5f6f3;
+  margin: 0;
+  padding: 0;
 }
 
-// --- NAV STRUCTURE ---
-function buildNavStructure() {
-  navStructure = {};
-  for (const prod of allProducts) {
-    if (!prod.mainCat) continue;
-    if (!navStructure[prod.mainCat]) navStructure[prod.mainCat] = [];
-    if (prod.subCat && !navStructure[prod.mainCat].includes(prod.subCat)) navStructure[prod.mainCat].push(prod.subCat);
+/* LOGO SIZING: Works for #logo, .logo, .logo-img, img.logo-img, etc. */
+#logo, .logo, .logo-img, img.logo-img, #homeLogoLink img, header img {
+  max-width: 140px;
+  max-height: 140px;
+  width: auto !important;
+  height: auto !important;
+  display: block;
+  margin: 1.5em auto 0 auto;
+}
+
+/* --- HERO CAROUSEL --- */
+#heroCarousel {
+  max-width: 900px;
+  margin: 2em auto 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 16px #0002;
+}
+.hero-carousel-slide {
+  display: none;
+  padding: 0;
+  background: #fff;
+}
+.hero-carousel-slide.active {
+  display: block;
+}
+.hero-carousel-image {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  display: block;
+}
+.hero-carousel-content {
+  padding: 2em;
+  text-align: left;
+}
+.hero-carousel-title {
+  font-size: 1.6em;
+  font-weight: 900;
+  margin-bottom: 0.4em;
+  color: #2a3c16;
+}
+.hero-carousel-desc {
+  font-size: 1.08em;
+  color: #444;
+  margin-bottom: 1.2em;
+}
+.hero-carousel-cta {
+  background: #406c38;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.7em 1.6em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.07em;
+  transition: background 0.2s;
+}
+.hero-carousel-cta:hover {
+  background: #274d22;
+}
+.hero-carousel-nav {
+  text-align: center;
+  padding: 0.7em 0 1.2em 0;
+}
+.hero-carousel-dot {
+  background: #b2c9b7;
+  border: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 3px;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.hero-carousel-dot.active,
+.hero-carousel-dot:hover {
+  background: #406c38;
+}
+
+/* --- Navigation menu --- */
+.megabar {
+  background: #406c38;
+  padding: 0 0;
+}
+.megabar-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0.5em 0;
+  list-style: none;
+  gap: 40px;
+}
+.megabar-link, .megabar-main-link {
+  color: #fff;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 1.15em;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.3em 0.9em;
+  border-radius: 7px;
+  outline: none;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.megabar-link:hover, .megabar-link:focus,
+.megabar-main-link:hover, .megabar-main-link:focus {
+  background: #274d22;
+  color: #fff;
+}
+
+.megabar-has-megamenu {
+  position: relative;
+}
+.megamenu-panel {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 2.6em;
+  min-width: 210px;
+  padding: 1em 1.5em 1.2em 1.5em;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px #0002;
+  z-index: 10;
+}
+.megabar-has-megamenu.open .megamenu-panel {
+  display: flex;
+}
+.megamenu-title {
+  font-weight: 900;
+  color: #274d22;
+  margin-bottom: 0.5em;
+}
+.megamenu-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.megamenu-sublink {
+  color: #406c38;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.2em 0;
+  display: block;
+  transition: color 0.2s;
+}
+.megamenu-sublink:hover,
+.megamenu-sublink:focus {
+  color: #274d22;
+}
+
+/* --- Product grid, cards, etc. --- */
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px #0001;
+  margin: 1em;
+  padding: 1em;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.product-image {
+  width: 100%;
+  max-width: 180px;
+  max-height: 180px;
+  object-fit: contain;
+  margin-bottom: 1em;
+}
+.product-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+}
+.product-desc {
+  color: #444;
+  font-size: 0.95em;
+  margin-bottom: 1em;
+}
+.product-link {
+  background: #406c38;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5em 1.2em;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.product-link:hover {
+  background: #274d22;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+  #heroCarousel {
+    max-width: 100vw;
   }
 }
-
-// --- DESKTOP MEGAMENU BUILD (for desktop only, hidden on mobile) ---
-function buildWPStyleMegaMenu() {
-  const megabarMenu = document.getElementById('megabarMenu');
-  megabarMenu.innerHTML = '';
-
-  // Main categories ONLY
-  const mainCats = Object.keys(navStructure);
-  mainCats.forEach((mainCat, idx) => {
-    const li = document.createElement('li');
-    li.className = "megabar-has-megamenu";
-    // Main nav link (now a button to show all in mainCat)
-    const mainBtn = document.createElement('button');
-    mainBtn.className = 'megabar-main-link';
-    mainBtn.textContent = mainCat;
-    mainBtn.type = 'button';
-    mainBtn.tabIndex = 0;
-    mainBtn.onclick = (e) => {
-      e.preventDefault();
-      selectMainCategory(mainCat);
-      closeAllMegamenus();
-      closeMobileMenu();
-    };
-
-    // Megamenu panel (hidden on mobile, for desktop only)
-    const panel = document.createElement('div');
-    panel.className = 'megamenu-panel';
-    const row = document.createElement('div');
-    row.className = "megamenu-row";
-    const col = document.createElement('div');
-    col.className = "megamenu-cat-col";
-    const title = document.createElement('div');
-    title.className = "megamenu-title";
-    title.textContent = mainCat;
-    col.appendChild(title);
-    const ul = document.createElement('ul');
-    ul.className = "megamenu-list";
-    navStructure[mainCat].forEach(sub => {
-      const li2 = document.createElement('li');
-      const link = document.createElement('button');
-      link.className = 'megamenu-sublink';
-      link.type = 'button';
-      link.textContent = sub;
-      link.onclick = (e) => {
-        e.preventDefault();
-        selectCategoryByPath(`${mainCat} > ${sub}`);
-        closeAllMegamenus();
-        closeMobileMenu();
-      };
-      li2.appendChild(link);
-      ul.appendChild(li2);
-    });
-    col.appendChild(ul);
-    row.appendChild(col);
-    panel.appendChild(row);
-
-    // Only one open at a time logic (desktop only)
-    // Fix: Keep menu open as long as mouse is over the li or panel
-    let closeTimeout;
-    function openMenu() {
-      clearTimeout(closeTimeout);
-      closeAllMegamenus();
-      li.classList.add('open');
-      panel.style.display = "flex";
-    }
-    function closeMenu() {
-      closeTimeout = setTimeout(() => {
-        li.classList.remove('open');
-        panel.style.display = "none";
-      }, 200); // Give user a short time to move mouse from button to panel
-    }
-    function cancelCloseMenu() {
-      clearTimeout(closeTimeout);
-    }
-    mainBtn.addEventListener('mouseenter', openMenu);
-    mainBtn.addEventListener('focus', openMenu);
-    mainBtn.addEventListener('click', openMenu);
-    li.addEventListener('mouseleave', closeMenu);
-    li.addEventListener('mouseenter', cancelCloseMenu);
-    panel.addEventListener('mouseenter', cancelCloseMenu);
-    panel.addEventListener('mouseleave', closeMenu);
-
-    megabarMenu.appendChild(li);
-    li.appendChild(mainBtn);
-    li.appendChild(panel);
-  });
-
-  // Center logo click acts as home button
-  const logoLink = document.getElementById('homeLogoLink');
-  if (logoLink) {
-    logoLink.onclick = (e) => {
-      e.preventDefault();
-      showHome();
-      closeAllMegamenus();
-      closeMobileMenu();
-    };
+@media (max-width: 800px) {
+  .product-card {
+    max-width: 90vw;
+  }
+  #heroCarousel {
+    max-width: 100vw;
+  }
+  .hero-carousel-content {
+    padding: 1em;
   }
 }
-
-function closeAllMegamenus() {
-  document.querySelectorAll('.megabar-has-megamenu').forEach(li => {
-    li.classList.remove('open');
-    let panel = li.querySelector('.megamenu-panel');
-    if (panel) panel.style.display = "none";
-  });
-}
-
-// --- HERO CAROUSEL (desktop only, hidden on mobile) ---
-// ... (UNCHANGED from your current version) ...
-
-// --- The rest of your code remains unchanged ---
-// (If you want the full script, let me know. Only the megamenu logic and logo img style needed to change.)
