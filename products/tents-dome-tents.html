@@ -19,16 +19,16 @@
     </nav>
   </header>
 
-  <div class="category-intro">
-    <h1>Dome Tents</h1>
-    <p>
-      Discover our selection of dome tents, designed for quick setup and superior stability. 
-      Perfect for camping adventures in all weather conditions. 
-      Browse top-selling models and find the ideal shelter for your next outdoor trip.
-    </p>
-  </div>
-
-  <div id="productsGrid"></div>
+  <main id="mainContent">
+    <div class="category-intro">
+      <h1>Dome Tents</h1>
+      <p>
+        Discover our selection of dome tents, designed for quick setup and superior stability.
+        Perfect for camping adventures in all weather conditions. Browse top-selling models and find the ideal shelter for your next outdoor trip.
+      </p>
+    </div>
+    <div id="productsGrid"></div>
+  </main>
 
   <footer id="siteFooter">
     &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
@@ -36,13 +36,45 @@
 
   <script src="../script.js"></script>
   <script>
-    // --- Only show the products for this subcategory ---
+    // --- Ensure makeProductCard exists in this scope ---
+    function makeProductCard(p) {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      if (p.image_url) {
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = p.image_url;
+        img.alt = p.name;
+        card.appendChild(img);
+      }
+      const details = document.createElement('div');
+      details.className = 'product-details';
+      const title = document.createElement('div');
+      title.className = 'product-title';
+      title.textContent = p.name;
+      details.appendChild(title);
+      const desc = document.createElement('div');
+      desc.className = 'product-desc';
+      desc.textContent = (p.description || "").split('\n')[0];
+      details.appendChild(desc);
+      if (p.amazon_link) {
+        const btn = document.createElement('a');
+        btn.className = 'product-link';
+        btn.href = p.amazon_link;
+        btn.target = "_blank";
+        btn.rel = "noopener";
+        btn.textContent = "More Details";
+        details.appendChild(btn);
+      }
+      card.appendChild(details);
+      return card;
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
       // Wait for products to load if script.js is asynchronous
       if (typeof fetchProductsFromSheet === 'function') {
         await fetchProductsFromSheet();
       }
-      // Setup menu (again, in case not already built)
       if (typeof buildWPStyleMegaMenu === 'function') {
         buildWPStyleMegaMenu();
       }
