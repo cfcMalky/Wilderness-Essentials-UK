@@ -165,10 +165,11 @@ function showProductsSection(mainCat, subCat) {
   }, 80);
 }
 
-// --- PRODUCT CARD RENDERING (with HTML description) ---
+// --- PRODUCT CARD: LIST STYLE, IMAGE LEFT, CONTENT RIGHT ---
 function makeProductCard(p) {
   const card = document.createElement("div");
   card.className = "product-card";
+  // Product image (left)
   if (p.image_url) {
     const img = document.createElement("img");
     img.className = "product-image";
@@ -176,12 +177,14 @@ function makeProductCard(p) {
     img.alt = p.name;
     card.appendChild(img);
   }
+  // Optional badge (e.g. NEW)
   if (/new/i.test(p.name)) {
     const badge = document.createElement("span");
     badge.className = "product-badge";
     badge.textContent = "NEW";
     card.appendChild(badge);
   }
+  // Product details (right)
   const details = document.createElement("div");
   details.className = "product-details";
   const title = document.createElement("div");
@@ -190,7 +193,6 @@ function makeProductCard(p) {
   details.appendChild(title);
   const desc = document.createElement("div");
   desc.className = "product-desc";
-  // Use innerHTML so you can use <b>, <i>, <br> in the description cell in the sheet
   desc.innerHTML = (p.description || "");
   details.appendChild(desc);
   if (p.amazon_link) {
