@@ -37,27 +37,27 @@ function buildNavStructure() {
   }
 }
 
-// --- SUBCAT TO PRODUCT PAGE FILENAME ---
+// --- SUBCAT TO PRODUCT PAGE FILENAME (ROOT-RELATIVE) ---
 function subcatPathToPage(mainCat, subCat) {
   const filename = `${mainCat} ${subCat}`.toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-+/g, '-');
-  return `products/${filename}.html`;
+  return "/Wilderness-Essentials-UK/products/" + filename + ".html";
 }
 
-// --- (FUTURE) GUIDE NAME TO GUIDE PAGE FILENAME ---
+// --- (FUTURE) GUIDE NAME TO GUIDE PAGE FILENAME (ROOT-RELATIVE) ---
 function guidePathToPage(guideTitle) {
   const filename = guideTitle.toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-+/g, '-');
-  return `guides/${filename}.html`;
+  return "/Wilderness-Essentials-UK/guides/" + filename + ".html";
 }
 
-// --- DESKTOP MEGAMENU BUILD (for desktop only, hidden on mobile) ---
+// --- DESKTOP MEGAMENU BUILD ---
 function buildWPStyleMegaMenu() {
   const megabarMenu = document.getElementById('megabarMenu');
   megabarMenu.innerHTML = '';
@@ -73,7 +73,7 @@ function buildWPStyleMegaMenu() {
     btn.type = 'button';
     btn.tabIndex = 0;
 
-    // Megamenu panel (hidden on mobile, for desktop only)
+    // Megamenu panel
     const panel = document.createElement('div');
     panel.className = 'megamenu-panel';
     const row = document.createElement('div');
@@ -90,7 +90,7 @@ function buildWPStyleMegaMenu() {
       const li2 = document.createElement('li');
       const link = document.createElement('a');
       link.className = 'megamenu-sublink';
-      link.href = subcatPathToPage(mainCat, sub); // <-- products/ folder
+      link.href = subcatPathToPage(mainCat, sub);
       link.textContent = sub;
       li2.appendChild(link);
       ul.appendChild(li2);
@@ -119,7 +119,6 @@ function buildWPStyleMegaMenu() {
   });
 
   // ------- GUIDES SECTION IN NAV (DESKTOP) --------
-  // Example guides list (update as needed)
   const guides = [
     { name: "Beginner's Camping Guide" },
     { name: "Choosing a Tent" }
@@ -151,7 +150,7 @@ function buildWPStyleMegaMenu() {
       const li = document.createElement('li');
       const link = document.createElement('a');
       link.className = 'megamenu-sublink';
-      link.href = guidePathToPage(guide.name); // <-- guides/ folder
+      link.href = guidePathToPage(guide.name);
       link.textContent = guide.name;
       li.appendChild(link);
       guidesList.appendChild(li);
@@ -238,7 +237,6 @@ function buildHeroCarouselFromSheet() {
   }
   hero.innerHTML = "";
   slides.forEach((s, i) => {
-    // Button text: "Browse [Subcategory]" or fallback to "Browse [Main Category]"
     const btnLabel = `Browse ${s.subCat ? s.subCat : s.mainCat}`;
     const slide = document.createElement('div');
     slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
@@ -323,7 +321,7 @@ function showMobileCategoryGrid() {
     subCats.forEach(sub => {
       const link = document.createElement('a');
       link.className = "category-subcat-link";
-      link.href = subcatPathToPage(mainCat, sub); // <-- products/ folder
+      link.href = subcatPathToPage(mainCat, sub);
       link.textContent = sub;
       subcatsDiv.appendChild(link);
     });
