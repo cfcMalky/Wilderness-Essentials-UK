@@ -47,12 +47,18 @@ function buildWPStyleMegaMenu() {
   mainCats.forEach((mainCat, idx) => {
     const li = document.createElement('li');
     li.className = "megabar-has-megamenu";
-    // Main nav link
-    const btn = document.createElement('button');
-    btn.className = 'megabar-link';
-    btn.textContent = mainCat;
-    btn.type = 'button';
-    btn.tabIndex = 0;
+    // Main nav link (now a button to show all in mainCat)
+    const mainBtn = document.createElement('button');
+    mainBtn.className = 'megabar-main-link';
+    mainBtn.textContent = mainCat;
+    mainBtn.type = 'button';
+    mainBtn.tabIndex = 0;
+    mainBtn.onclick = (e) => {
+      e.preventDefault();
+      selectMainCategory(mainCat);
+      closeAllMegamenus();
+      closeMobileMenu();
+    };
 
     // Megamenu panel (hidden on mobile, for desktop only)
     const panel = document.createElement('div');
@@ -69,9 +75,9 @@ function buildWPStyleMegaMenu() {
     ul.className = "megamenu-list";
     navStructure[mainCat].forEach(sub => {
       const li2 = document.createElement('li');
-      const link = document.createElement('a');
+      const link = document.createElement('button');
       link.className = 'megamenu-sublink';
-      link.href = "#";
+      link.type = 'button';
       link.textContent = sub;
       link.onclick = (e) => {
         e.preventDefault();
@@ -96,13 +102,13 @@ function buildWPStyleMegaMenu() {
       li.classList.remove('open');
       panel.style.display = "none";
     }
-    btn.addEventListener('mouseenter', openMenu);
-    btn.addEventListener('focus', openMenu);
-    btn.addEventListener('click', openMenu);
+    mainBtn.addEventListener('mouseenter', openMenu);
+    mainBtn.addEventListener('focus', openMenu);
+    mainBtn.addEventListener('click', openMenu);
     li.addEventListener('mouseleave', closeMenu);
 
     megabarMenu.appendChild(li);
-    li.appendChild(btn);
+    li.appendChild(mainBtn);
     li.appendChild(panel);
   });
 
@@ -164,7 +170,6 @@ function buildHeroCarouselFromSheet() {
   }
   hero.innerHTML = "";
   slides.forEach((s, i) => {
-    // Button text: "Browse [Subcategory]" or fallback to "Browse [Main Category]"
     const btnLabel = `Browse ${s.subCat ? s.subCat : s.mainCat}`;
     const slide = document.createElement('div');
     slide.className = "hero-carousel-slide" + (i === 0 ? " active" : "");
@@ -180,7 +185,6 @@ function buildHeroCarouselFromSheet() {
     `;
     hero.appendChild(slide);
   });
-  // Dots nav
   const nav = document.createElement('div');
   nav.className = "hero-carousel-nav";
   for (let i = 0; i < slides.length; ++i) {
@@ -192,7 +196,6 @@ function buildHeroCarouselFromSheet() {
   }
   hero.appendChild(nav);
 
-  // Attach event listeners for the CTA buttons
   hero.querySelectorAll('.hero-carousel-cta').forEach(btn => {
     btn.addEventListener('click', function () {
       const path = decodeURIComponent(this.getAttribute('data-path'));
@@ -203,7 +206,6 @@ function buildHeroCarouselFromSheet() {
     });
   });
 
-  // State
   let current = 0;
   let timer = null;
   function setHeroCarouselSlide(idx) {
@@ -233,7 +235,6 @@ function showMobileCategoryGrid() {
   const grid = document.getElementById('mobileCategoryGrid');
   grid.innerHTML = '';
   Object.entries(navStructure).forEach(([mainCat, subCats]) => {
-    // Find first product with image in this mainCat
     let prodImg = '';
     for (const p of allProducts) {
       if (p.mainCat === mainCat && p.image_url) {
@@ -263,9 +264,7 @@ function showMobileCategoryGrid() {
       link.type = "button";
       link.textContent = sub;
       link.onclick = () => {
-        // Use your existing product display logic
         selectCategoryByPath(`${mainCat} > ${sub}`);
-        // Hide mobile grid/tips/intro, show product section
         document.getElementById('siteIntro').style.display = "none";
         document.getElementById('mobileCategoryGrid').style.display = "none";
         document.getElementById('tipsBlock').style.display = "none";
@@ -289,6 +288,52 @@ function selectCategoryByPath(path) {
   const grid = document.getElementById('productsGrid');
   let filtered = allProducts.filter(p => p.category === path);
   title.textContent = path;
+  grid.innerHTML = '';
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
+  } else {
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      if (p.image_url) {
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = p.image_url;
+        img.alt = p.name;
+        card.appendChild(img);
+      }
+      const title = document.createElement('div');
+      title.className = 'product-title';
+      title.textContent = p.name;
+      card.appendChild(title);
+      const desc = document.createElement('div');
+      desc.className = 'product-desc';
+      desc.textContent = p.description || "";
+      card.appendChild(desc);
+      if (p.amazon_link) {
+        const btn = document.createElement('a');
+        btn.className = 'product-link';
+        btn.href = p.amazon_link;
+        btn.target = "_blank";
+        btn.rel = "noopener";
+        btn.textContent = "More Details";
+        card.appendChild(btn);
+      }
+      grid.appendChild(card);
+    });
+  }
+}
+
+// --- MAIN CATEGORY: Show all products under a main category (not subcat) ---
+function selectMainCategory(mainCat) {
+  document.getElementById('siteIntro').style.display = "none";
+  document.getElementById('tipsBlock').style.display = "none";
+  document.getElementById('mobileCategoryGrid').style.display = "none";
+  document.getElementById('categorySection').style.display = "";
+  const title = document.getElementById('productsSectionTitle');
+  const grid = document.getElementById('productsGrid');
+  let filtered = allProducts.filter(p => p.mainCat === mainCat);
+  title.textContent = mainCat;
   grid.innerHTML = '';
   if (!filtered.length) {
     grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #888;">No products found for this category.</div>`;
@@ -353,18 +398,9 @@ document.addEventListener('DOMContentLoaded', async function () {
   await fetchProductsFromSheet();
   buildWPStyleMegaMenu();
   buildHeroCarouselFromSheet();
-  if (window.innerWidth <= 900) {
-    showHome();
-  } else {
-    showHome();
-  }
+  showHome();
 });
 
-// Optional: support resizing (switch between mobile grid and desktop nav)
 window.addEventListener('resize', function() {
-  if (window.innerWidth <= 900) {
-    showHome();
-  } else {
-    showHome();
-  }
+  showHome();
 });
