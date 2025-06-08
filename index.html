@@ -14,7 +14,6 @@
       Wilderness Essentials UK
       <span>Your Definitive Guide to the UK's Hottest Selling Camping Gear.</span>
     </div>
-    <!-- Navigation will be loaded via nav.html include -->
     <div id="siteNav"></div>
   </header>
 
@@ -33,10 +32,7 @@
   </footer>
 
   <script>
-    // Load the shared navigation menu
-    fetch('nav.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('siteNav').innerHTML = html; });
+    loadNavAndApplyLinks('nav.html');
   </script>
   <script src="script.js"></script>
 </body>
