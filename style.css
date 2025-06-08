@@ -183,7 +183,7 @@ body {
   color: #fff;
   background: none;
   border: none;
-  font: inherit;
+  font-family: 'Quicksand', Arial, sans-serif;
   font-size: 1.15em;
   font-weight: 700;
   cursor: pointer;
@@ -223,35 +223,32 @@ body {
   text-align: left;
 }
 .megabar-menu > li:hover > ul,
-.megabar-menu > li:focus-within > ul {
+.megabar-menu > li:focus-within > ul,
+.megabar-menu > li > ul:hover {
   display: block;
 }
 .megabar-menu > li > ul > li {
   margin: 0;
 }
 
-/* Subcategory links - GREEN text */
+/* Subcategory links - GREEN text, main nav font */
 .megamenu-sublink {
   display: block;
   color: #406c38 !important;   /* Green text */
   background: transparent !important;
-  border: none;
-  font: inherit;
-  font-size: 1em;
-  cursor: pointer;
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 1.15em;
+  font-weight: 700;
   text-decoration: none;
-  padding: 0.45em 0.9em;
-  border-radius: 6px;
-  transition: color 0.2s, background 0.2s;
+  padding: 0.3em 0.9em;
+  border-radius: 7px;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
 }
-.megabar-menu ul .megamenu-sublink {
-  color: #406c38 !important;   /* Green text in dropdown */
-  background: transparent !important;
-}
-.megabar-menu ul .megamenu-sublink:hover,
-.megabar-menu ul .megamenu-sublink:focus {
+.megamenu-sublink:hover,
+.megamenu-sublink:focus {
+  background: #406c38 !important;
   color: #fff !important;
-  background: #274d22 !important;
 }
 
 /* Dropdown background & border for submenu */
