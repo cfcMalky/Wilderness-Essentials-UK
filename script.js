@@ -3,6 +3,40 @@ const SHEET_ID = "1w6NcZ9OPhjLcZtgK98ypsxM9eV13NLT9hOf4AVe5HR4";
 const API_KEY = "AIzaSyABNGnLmTXlik5fgBe_ooBI1Y5nrXKTePY";
 const RANGE = "Sheet1";
 
+// --- SEO INTROS FOR CATEGORIES ---
+const seoIntros = {
+  "Camp Kitchen > Grills & Accessories": `
+    <p>Elevate your outdoor dining with our exceptional selection of camping grills and accessories. Whether you’re a seasoned adventurer or new to camping, our range of portable grills, BBQs, and essential accessories ensures you can enjoy delicious, freshly grilled meals wherever your journey takes you. Our products are designed with convenience and durability in mind, making outdoor cooking effortless and enjoyable.</p>
+    <p>From compact, foldable grills to high-performance accessories like tongs, grill mats, and cleaning brushes, we offer everything you need to transform your campsite into a gourmet kitchen. Our grills are engineered for fast setup and even heat distribution, while our accessories ensure safe, clean, and efficient cooking. Lightweight and easy to transport, this gear is perfect for picnics, hiking trips, and family camping adventures.</p>
+    <p>Invest in quality camping grills and accessories to maximize your outdoor experience. Enjoy mouthwatering meals, create lasting memories around the campfire, and discover why great food is a highlight of every camping trip. Shop now for top-rated camp kitchen essentials that will make every meal an adventure.</p>
+  `,
+  "Camp Kitchen > Stoves & Accessories": `
+    <p>Prepare hot, satisfying meals anywhere with our top-rated camping stoves and accessories. Our collection features lightweight, efficient stoves that are easy to set up and operate, offering reliable performance in any weather condition. From solo hiking trips to group expeditions, you’ll find the perfect stove to suit your outdoor cooking needs.</p>
+    <p>Pair your stove with our curated range of accessories, including windshields, fuel canisters, igniters, and cookware adapters. These essential add-ons enhance safety and convenience, ensuring quick boiling times and effortless meal prep. Our gear is built for rugged use, ensuring you can count on it trip after trip.</p>
+    <p>Experience the freedom to cook your favorite dishes in the great outdoors. Our stoves and accessories are compact for easy packing, yet powerful enough to handle any recipe. Enjoy fresh coffee at sunrise or a hearty dinner after a long day—explore our camp kitchen range to upgrade your outdoor culinary adventures.</p>
+  `,
+  "Safety & Survival > First Aid Kits": `
+    <p>Safety comes first on every camping adventure, and our comprehensive first aid kits are designed to provide peace of mind in the wild. Packed with medical essentials to treat cuts, scrapes, burns, and minor injuries, our kits are a must-have for campers, hikers, and outdoor enthusiasts of all skill levels. Don’t let unexpected incidents spoil your trip—be prepared for anything.</p>
+    <p>Our first aid kits are compact, lightweight, and organized for quick access in emergencies. Each kit includes bandages, antiseptics, medical tools, and easy-to-follow instructions, ensuring you have the resources to respond swiftly and effectively. Whether you’re camping with family or exploring solo, our kits are an essential part of your safety gear.</p>
+    <p>Investing in a quality first aid kit means you’re ready for life’s little surprises on the trail. Protect yourself and your companions, and enjoy the great outdoors with confidence. Browse our selection to find the right first aid kit for your next adventure.</p>
+  `,
+  "Sleeping Gear > Air Beds": `
+    <p>Experience home-like comfort in the wild with our superior range of camping air beds. Designed for durability and support, our air beds provide a restful night’s sleep, even on rugged ground. Easy to inflate and deflate, these beds are the perfect choice for campers who value convenience and a good night’s rest.</p>
+    <p>Our air beds are crafted from tough, puncture-resistant materials and feature advanced air retention technology to prevent leaks and sagging. Choose from single or double sizes, raised or low-profile designs, to suit your tent and sleeping preferences. Many models come with built-in pumps or compact foot pumps for effortless setup.</p>
+    <p>Upgrade your sleep system and wake up refreshed for every day’s adventure. Lightweight and portable, our air beds pack down small, making them ideal for car camping, festivals, or family trips. Enjoy the luxury of a comfortable bed wherever your travels take you.</p>
+  `,
+  "Tents > Dome Tents": `
+    <p>Discover the versatility and convenience of dome tents—an essential for campers seeking quick setup and reliable shelter. Our collection of dome tents offers stability, weather resistance, and spacious interiors, making them the go-to choice for solo adventurers, couples, and families alike. The classic dome shape ensures excellent wind resistance and efficient water runoff, keeping you dry and comfortable.</p>
+    <p>Our dome tents feature intuitive pole systems, lightweight materials, and ample ventilation for a comfortable camping experience in any season. With a variety of sizes and configurations, you can find the perfect tent for everything from weekend getaways to extended expeditions. Easy to pitch and pack away, these tents are ideal for both beginners and experienced campers.</p>
+    <p>Enjoy peace of mind with tents designed for real-world adventures. Explore our selection of dome tents to find models with vestibules, multiple doors, and smart storage solutions to keep your gear organized. Start your next journey with a tent you can trust, wherever you roam.</p>
+  `,
+  "Tents > Tunnel Tents": `
+    <p>Maximize space and comfort on your next camping trip with our innovative tunnel tents. Known for their elongated, tunnel-like structure, these tents provide generous living areas and headroom—perfect for families and groups. The aerodynamic design ensures stability in wind while creating a roomy, open interior for sleeping, relaxing, and storing gear.</p>
+    <p>Tunnel tents in our range are easy to pitch with color-coded poles and clear instructions, allowing you to set up camp quickly and effortlessly. Large porches and multiple entrances offer flexibility and convenience, while high-quality materials provide reliable weather protection. Ventilation panels and mesh doors keep conditions fresh and bug-free.</p>
+    <p>Whether you’re planning a festival weekend or a wilderness expedition, tunnel tents deliver comfort and practicality. Explore our collection to find spacious, reliable shelters that make every outdoor adventure more enjoyable. Embrace the outdoors with a tent that feels like home—no matter where you pitch it.</p>
+  `
+};
+
 let allProducts = [];
 let navStructure = {};
 let allMainCats = [];
@@ -133,11 +167,10 @@ function showProductsSection(mainCat, subCat) {
   document.getElementById("searchResultsSection").style.display = "none";
   document.getElementById("subcatTilesSection").style.display = "none";
   document.getElementById("productsSectionTitle").textContent = `${mainCat} — ${subCat}`;
-  let seoText = "";
-  if (mainCat === "Camp Kitchen" && subCat === "Grills & Accessories") {
-    seoText = "Discover our range of grills and accessories for perfect outdoor cooking, from compact BBQs to versatile grill tools. Everything you need for an unforgettable campfire meal!";
-  }
-  document.getElementById("categorySEOText").textContent = seoText;
+  // --- SEO INTRO ---
+  const catKey = `${mainCat} > ${subCat}`;
+  const seoHtml = seoIntros[catKey] || "";
+  document.getElementById("categorySEOText").innerHTML = seoHtml;
   // Tabs
   const tabs = document.getElementById("productsTabs");
   tabs.innerHTML = "";
