@@ -1,4 +1,3 @@
-/* GENERAL */
 body {
   font-family: 'Quicksand', Arial, sans-serif;
   background: #f5f6f3;
@@ -6,17 +5,17 @@ body {
   padding: 0;
 }
 
-/* LOGO SIZING: Works for #logo, .logo, .logo-img, img.logo-img, etc. */
+/* LOGO SIZING */
 #logo, .logo, .logo-img, img.logo-img, #homeLogoLink img, header img {
-  max-width: 140px;
-  max-height: 140px;
+  max-width: 110px;
+  max-height: 110px;
   width: auto !important;
   height: auto !important;
   display: block;
-  margin: 1.5em auto 0 auto;
+  margin: 2em auto 0 auto;
 }
 
-/* --- HERO CAROUSEL --- */
+/* --- CAROUSEL: SIDE-BY-SIDE --- */
 #heroCarousel {
   max-width: 900px;
   margin: 2em auto 0 auto;
@@ -24,33 +23,46 @@ body {
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 16px #0002;
+  min-height: 260px;
+  min-width: 350px;
+  position: relative;
 }
 .hero-carousel-slide {
   display: none;
-  padding: 0;
   background: #fff;
+  align-items: center;
+  min-height: 260px;
 }
 .hero-carousel-slide.active {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
 }
 .hero-carousel-image {
-  width: 100%;
-  max-height: 340px;
+  width: 240px;
+  height: 240px;
   object-fit: cover;
+  border-radius: 12px 0 0 12px;
+  background: #eee;
+  flex-shrink: 0;
   display: block;
 }
 .hero-carousel-content {
-  padding: 2em;
+  flex: 1;
+  padding: 2em 2em 2em 2em;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .hero-carousel-title {
-  font-size: 1.6em;
+  font-size: 1.45em;
   font-weight: 900;
   margin-bottom: 0.4em;
   color: #2a3c16;
 }
 .hero-carousel-desc {
-  font-size: 1.08em;
+  font-size: 1.07em;
   color: #444;
   margin-bottom: 1.2em;
 }
@@ -64,6 +76,7 @@ body {
   cursor: pointer;
   font-size: 1.07em;
   transition: background 0.2s;
+  align-self: flex-start;
 }
 .hero-carousel-cta:hover {
   background: #274d22;
@@ -71,6 +84,10 @@ body {
 .hero-carousel-nav {
   text-align: center;
   padding: 0.7em 0 1.2em 0;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 .hero-carousel-dot {
   background: #b2c9b7;
@@ -167,34 +184,53 @@ body {
   color: #274d22;
 }
 
-/* --- Product grid, cards, etc. --- */
+/* --- Product grid: multi-column, card with image left, text right --- */
+#productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+  gap: 2em;
+  margin: 2em 0 2em 0;
+  justify-items: center;
+}
 .product-card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 16px #0001;
-  margin: 1em;
-  padding: 1em;
-  max-width: 260px;
+  margin: 0;
+  padding: 0;
+  max-width: 550px;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow: hidden;
+  min-height: 180px;
 }
 .product-image {
-  width: 100%;
-  max-width: 180px;
-  max-height: 180px;
-  object-fit: contain;
-  margin-bottom: 1em;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 12px 0 0 12px;
+  margin: 0;
+  background: #eee;
+}
+.product-details {
+  flex: 1;
+  padding: 1.2em 1.5em 1em 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .product-title {
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 1.13em;
   margin-bottom: 0.5em;
 }
 .product-desc {
   color: #444;
-  font-size: 0.95em;
-  margin-bottom: 1em;
+  font-size: 0.97em;
+  margin-bottom: 1.1em;
 }
 .product-link {
   background: #406c38;
@@ -207,25 +243,27 @@ body {
   font-size: 1em;
   cursor: pointer;
   transition: background 0.2s;
+  align-self: flex-start;
 }
 .product-link:hover {
   background: #274d22;
 }
 
 /* Responsive adjustments */
-@media (max-width: 1100px) {
-  #heroCarousel {
-    max-width: 100vw;
-  }
-}
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+  #heroCarousel,
+  .hero-carousel-slide.active,
   .product-card {
-    max-width: 90vw;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
   }
-  #heroCarousel {
-    max-width: 100vw;
+  .hero-carousel-image, .product-image {
+    width: 100%;
+    height: 180px;
+    border-radius: 12px 12px 0 0;
   }
-  .hero-carousel-content {
-    padding: 1em;
+  .hero-carousel-content, .product-details {
+    padding: 1.1em;
   }
 }
