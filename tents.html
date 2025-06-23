@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tents - Wilderness Essentials UK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="site-header"></div>
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('site-header').innerHTML = html;
+      });
+  </script>
+
+  <main id="mainContent">
+    <section class="page-intro" style="max-width:900px;margin:0.5em auto 1.5em auto;padding:1em 1.5em 1.5em 1.5em;">
+      <h1 style="color:#355f2e;font-size:2.3em;margin-bottom:0.7em;text-align:center;">Tents</h1>
+      <p style="font-size:1.18em;line-height:1.6;">Find the perfect tent for your next UK adventure. Our expert recommendations and guides help you choose the right size, style, and features for every camping trip, from solo wild camping to family holidays.</p>
+      <p style="font-size:1.13em;line-height:1.6;">We review top-rated tents available on Amazon UK and other trusted retailers, ensuring you have access to reliable, weatherproof, and easy-to-pitch options. Whether you're a seasoned camper or a first-timer, our curated selection will help you sleep soundly in the great outdoors.</p>
+    </section>
+    <section id="tentsSubnav" style="max-width:900px;margin:0 auto 2em auto;display:flex;gap:1em;justify-content:center;flex-wrap:wrap;"></section>
+    <section class="products-section" id="productsSection" style="max-width:900px;margin:0 auto 2.5em auto;">
+      <div class="datagrid" id="productsGrid" style="display:grid;grid-template-columns:1fr;gap:2em;width:100%;">
+        <!-- Dynamic product cards -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" style="text-align:center;">
+    &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
+  </footer>
+  <script src="script.js"></script>
+  <script>
+    function renderTentsSubnav(subcats) {
+      const nav = document.getElementById('tentsSubnav');
+      nav.innerHTML = subcats.map(subcat => {
+        const label = subcat.includes('>') ? subcat.split('>').pop().trim() : subcat;
+        return `<button class=\"subcat-btn\" data-subcat=\"${subcat}\">${label}</button>`;
+      }).join('');
+      nav.onclick = e => {
+        if (e.target.tagName === 'BUTTON') {
+          [...nav.querySelectorAll('button')].forEach(btn => btn.classList.remove('active'));
+          e.target.classList.add('active');
+          renderTentsGrid(e.target.dataset.subcat);
+        }
+      };
+    }
+    function renderTentsGrid(subcat = '') {
+      const grid = document.getElementById('productsGrid');
+      const products = window.tentsProducts || [];
+      const filtered = subcat ? products.filter(p => p.category === subcat) : products;
+      grid.innerHTML = filtered.map(item => `
+        <div class=\"datacard\" style=\"background-image: url('${item.image_url}'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;\">
+          <div style=\"position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;\"></div>
+          <div class=\"datacard-left\" style=\"position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;\">
+            ${item.image_url ? `<img class=\"datacard-image\" src=\"${item.image_url}\" alt=\"${item.name}\">` : ''}
+            ${item.amazon_link ? `<a class=\"datacard-link\" href=\"${item.amazon_link}\" target=\"_blank\">More Details</a>` : ''}
+          </div>
+          <div class=\"datacard-details\" style=\"position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;\">
+            <div class=\"datacard-title\">${item.name || 'No Name'}</div>
+            <div class=\"datacard-desc\">${(item.description || '').replace(/\r?\n/g, '<br>')}</div>
+          </div>
+        </div>
+      `).join('') || '<p>No products found in this subcategory.</p>';
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchProductsFromSheet(() => {
+        const all = allProducts.filter(p => p.category && p.category.toLowerCase().startsWith('tents'));
+        window.tentsProducts = all;
+        const subcats = [...new Set(all.map(p => p.category).filter(s => s && s.toLowerCase().startsWith('tents >')))].sort();
+        renderTentsSubnav(subcats);
+        renderTentsGrid();
+      });
+    });
+  </script>
+  <style>
+    .subcat-btn {
+      background: var(--nav-active);
+      border: none;
+      color: var(--green);
+      font-size: 1.08em;
+      font-family: inherit;
+      font-weight: 700;
+      padding: 0.6em 1.3em;
+      margin: 0.2em 0;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .subcat-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .subcat-btn:hover {
+      background: var(--green-light);
+      color: #fff;
+    }
+  </style>
+</body>
+</html>

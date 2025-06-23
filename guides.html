@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guides - Wilderness Essentials UK</title>
+    <meta name="description" content="Expert guides on camping, outdoor gear, and wilderness skills. Learn about tents, sleeping bags, camp cooking, and more from Wilderness Essentials UK.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="site-header"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('site-header').innerHTML = html;
+            });
+    </script>
+
+    <main id="mainContent">
+        <section class="page-intro" style="max-width:900px;margin:0.5em auto 1.5em auto;padding:1em 1.5em 1.5em 1.5em;">
+            <h1 style="color:#355f2e;font-size:2.3em;margin-bottom:0.7em;text-align:center;">Guides</h1>
+            <p style="font-size:1.18em;line-height:1.6;">Expert advice and comprehensive guides to help you make the most of your outdoor adventures. Browse our collection of in-depth guides on camping, gear, safety, and more.</p>
+        </section>
+        <section class="products-section" id="guidesSection" style="max-width:900px;margin:0 auto 2.5em auto;">
+            <div class="datagrid" id="guidesGrid" style="display:grid;grid-template-columns:1fr;gap:2em;width:100%;">
+                <div class="datacard" style="background-image: url('images/guides/camping-checklist.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/camping-checklist.png" alt="Camping Checklist Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Camping Checklist</div>
+                        <div class="datacard-desc">Essential items and gear for a successful camping trip. Never forget important equipment again.</div>
+                        <a class="datacard-link" href="guides/camping-checklist.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/choosing-tent.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/choosing-tent.png" alt="Choosing a Tent Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Choosing a Tent</div>
+                        <div class="datacard-desc">Find the perfect tent for your needs. Learn about different types, features, and what to consider.</div>
+                        <a class="datacard-link" href="guides/choosing-tent.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/sleeping-bags-mats.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/sleeping-bags-mats.png" alt="Sleeping Bags and Mats Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Sleeping Bags & Mats</div>
+                        <div class="datacard-desc">Stay warm and comfortable at night with the right sleeping gear for your camping style.</div>
+                        <a class="datacard-link" href="guides/sleeping-bags-mats.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/camp-cooking.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/camp-cooking.png" alt="Camp Cooking Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Camp Cooking</div>
+                        <div class="datacard-desc">Delicious and practical meal ideas for your outdoor adventures. Tips and recipes included.</div>
+                        <a class="datacard-link" href="guides/camp-cooking.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/staying-dry.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/staying-dry.png" alt="Staying Dry Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Staying Dry</div>
+                        <div class="datacard-desc">Essential tips for keeping dry in wet weather conditions. Gear and techniques for UK weather.</div>
+                        <a class="datacard-link" href="guides/staying-dry.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/wild-camping-uk.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/wild-camping-uk.png" alt="Wild Camping UK Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Wild Camping UK</div>
+                        <div class="datacard-desc">Everything you need to know about wild camping in the UK. Laws, locations, and best practices.</div>
+                        <a class="datacard-link" href="guides/wild-camping-uk.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/family-camping.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/family-camping.png" alt="Family Camping Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Family Camping</div>
+                        <div class="datacard-desc">Make camping fun for the whole family. Tips for planning and enjoying family camping trips.</div>
+                        <a class="datacard-link" href="guides/family-camping.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/survival-gear.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/survival-gear.png" alt="Survival Gear Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Survival Gear</div>
+                        <div class="datacard-desc">Essential survival equipment and skills for outdoor adventures. Stay safe in the wilderness.</div>
+                        <a class="datacard-link" href="guides/survival-gear.html">Read Guide</a>
+                    </div>
+                </div>
+                <div class="datacard" style="background-image: url('images/guides/campfire-safety.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
+                    <div style="position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;"></div>
+                    <div class="datacard-left" style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                        <img class="datacard-image" src="images/guides/campfire-safety.png" alt="Campfire Safety Guide">
+                    </div>
+                    <div class="datacard-details" style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="datacard-title">Campfire Safety</div>
+                        <div class="datacard-desc">Learn how to build and maintain safe campfires. Essential safety tips and best practices.</div>
+                        <a class="datacard-link" href="guides/campfire-safety.html">Read Guide</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" style="text-align:center;">
+        &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html> 

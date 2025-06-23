@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Safety & Survival - Wilderness Essentials UK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="site-header"></div>
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('site-header').innerHTML = html;
+      });
+  </script>
+
+  <main id="mainContent">
+    <section class="page-intro" style="max-width:900px;margin:0.5em auto 1.5em auto;padding:1em 1.5em 1.5em 1.5em;">
+      <h1 style="color:#355f2e;font-size:2.3em;margin-bottom:0.7em;text-align:center;">Safety & Survival</h1>
+      <p style="font-size:1.18em;line-height:1.6;">Stay safe and prepared in the wild with our top picks for safety and survival gear. Our guides and reviews help you choose the best first aid kits, emergency tools, and survival essentials for UK adventures.</p>
+      <p style="font-size:1.13em;line-height:1.6;">We feature the best safety and survival equipment available on Amazon UK and other trusted retailers, so you can explore with confidence. From solo hikes to group expeditions, our selection covers all your safety needs.</p>
+    </section>
+    <section id="safetySurvivalSubnav" style="max-width:900px;margin:0 auto 2em auto;display:flex;gap:1em;justify-content:center;flex-wrap:wrap;"></section>
+    <section class="products-section" id="productsSection" style="max-width:900px;margin:0 auto 2.5em auto;">
+      <div class="datagrid" id="productsGrid" style="display:grid;grid-template-columns:1fr;gap:2em;width:100%;">
+        <!-- Dynamic product cards -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" style="text-align:center;">
+    &copy; 2025 Wilderness Essentials UK &bull; All Rights Reserved.
+  </footer>
+  <script src="script.js"></script>
+  <script>
+    function renderSafetySurvivalSubnav(subcats) {
+      const nav = document.getElementById('safetySurvivalSubnav');
+      nav.innerHTML = subcats.map(subcat => {
+        const label = subcat.includes('>') ? subcat.split('>').pop().trim() : subcat;
+        return `<button class=\"subcat-btn\" data-subcat=\"${subcat}\">${label}</button>`;
+      }).join('');
+      nav.onclick = e => {
+        if (e.target.tagName === 'BUTTON') {
+          [...nav.querySelectorAll('button')].forEach(btn => btn.classList.remove('active'));
+          e.target.classList.add('active');
+          renderSafetySurvivalGrid(e.target.dataset.subcat);
+        }
+      };
+    }
+    function renderSafetySurvivalGrid(subcat = '') {
+      const grid = document.getElementById('productsGrid');
+      const products = window.safetySurvivalProducts || [];
+      const filtered = subcat ? products.filter(p => p.category === subcat) : products;
+      grid.innerHTML = filtered.map(item => `
+        <div class=\"datacard\" style=\"background-image: url('${item.image_url}'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;\">
+          <div style=\"position: absolute; inset: 0; background: rgba(255,255,255,0.78); z-index: 0;\"></div>
+          <div class=\"datacard-left\" style=\"position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;\">
+            ${item.image_url ? `<img class=\"datacard-image\" src=\"${item.image_url}\" alt=\"${item.name}\">` : ''}
+            ${item.amazon_link ? `<a class=\"datacard-link\" href=\"${item.amazon_link}\" target=\"_blank\">More Details</a>` : ''}
+          </div>
+          <div class=\"datacard-details\" style=\"position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;\">
+            <div class=\"datacard-title\">${item.name || 'No Name'}</div>
+            <div class=\"datacard-desc\">${(item.description || '').replace(/\r?\n/g, '<br>')}</div>
+          </div>
+        </div>
+      `).join('') || '<p>No products found in this subcategory.</p>';
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchProductsFromSheet(() => {
+        const all = allProducts.filter(p => p.category && p.category.toLowerCase().startsWith('safety & survival'));
+        window.safetySurvivalProducts = all;
+        const subcats = [...new Set(all.map(p => p.category).filter(s => s && s.toLowerCase().startsWith('safety & survival >')))].sort();
+        renderSafetySurvivalSubnav(subcats);
+        renderSafetySurvivalGrid();
+      });
+    });
+  </script>
+  <style>
+    .subcat-btn {
+      background: var(--nav-active);
+      border: none;
+      color: var(--green);
+      font-size: 1.08em;
+      font-family: inherit;
+      font-weight: 700;
+      padding: 0.6em 1.3em;
+      margin: 0.2em 0;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .subcat-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .subcat-btn:hover {
+      background: var(--green-light);
+      color: #fff;
+    }
+  </style>
+</body>
+</html>
